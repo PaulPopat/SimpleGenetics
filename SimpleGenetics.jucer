@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="bK1vf3" name="SimpleGenetics" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.SimpleGenetics" includeBinaryInAppConfig="1"
+              jucerVersion="3.2.0" companyName="PaulPopat" companyEmail="p.t.popat@googlemail.com">
+  <MAINGROUP id="POgAaW" name="SimpleGenetics">
+    <GROUP id="{4F74FEBA-4CF4-BFD5-E050-6E8D63CC37E1}" name="Source">
+      <GROUP id="{8DF5F502-113E-5B85-54EA-5BEA65152914}" name="UserInterface">
+        <FILE id="h3SLXE" name="NumberBox.cpp" compile="1" resource="0" file="Source/NumberBox.cpp"/>
+        <FILE id="MFMii4" name="NumberBox.h" compile="0" resource="0" file="Source/NumberBox.h"/>
+        <FILE id="yZA7pd" name="TargetDisplay.cpp" compile="1" resource="0"
+              file="Source/TargetDisplay.cpp"/>
+        <FILE id="Gb1put" name="TargetDisplay.h" compile="0" resource="0" file="Source/TargetDisplay.h"/>
+        <FILE id="BcwL46" name="ProgressBox.cpp" compile="1" resource="0" file="Source/ProgressBox.cpp"/>
+        <FILE id="ARhEv3" name="ProgressBox.h" compile="0" resource="0" file="Source/ProgressBox.h"/>
+        <FILE id="Bo10xt" name="DrawBox.cpp" compile="1" resource="0" file="Source/DrawBox.cpp"/>
+        <FILE id="EBLEcp" name="DrawBox.h" compile="0" resource="0" file="Source/DrawBox.h"/>
+        <FILE id="jOS1MH" name="InputGraph.cpp" compile="1" resource="0" file="Source/InputGraph.cpp"/>
+        <FILE id="ekZvzm" name="InputGraph.h" compile="0" resource="0" file="Source/InputGraph.h"/>
+      </GROUP>
+      <GROUP id="{C7A6BD57-C923-1769-C3E5-DCEEB94FB402}" name="Settings">
+        <FILE id="XPEhFC" name="Settings.cpp" compile="1" resource="0" file="Source/Settings.cpp"/>
+        <FILE id="eMSfZF" name="Settings.h" compile="0" resource="0" file="Source/Settings.h"/>
+        <FILE id="Ah76Gr" name="SettingsUtils.cpp" compile="1" resource="0"
+              file="Source/SettingsUtils.cpp"/>
+        <FILE id="ZdkZdR" name="SettingsUtils.h" compile="0" resource="0" file="Source/SettingsUtils.h"/>
+      </GROUP>
+      <GROUP id="{32A27F90-8460-356C-6C0A-F2C08F915370}" name="Algorithm">
+        <FILE id="GYJ1cq" name="GeneController.cpp" compile="1" resource="0"
+              file="Source/GeneController.cpp"/>
+        <FILE id="ahYxm6" name="GeneController.h" compile="0" resource="0"
+              file="Source/GeneController.h"/>
+        <FILE id="C1kR1n" name="FFTBin.cpp" compile="1" resource="0" file="Source/FFTBin.cpp"/>
+        <FILE id="qXWY47" name="FFTBin.h" compile="0" resource="0" file="Source/FFTBin.h"/>
+        <FILE id="ePFqlK" name="PopMember.cpp" compile="1" resource="0" file="Source/PopMember.cpp"/>
+        <FILE id="uhlhIt" name="PopMember.h" compile="0" resource="0" file="Source/PopMember.h"/>
+      </GROUP>
+      <FILE id="vzHreZ" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="JEM6Ng" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="OQbJpn" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
+                       isDebug="1" optimisation="1" targetName="SimpleGenetics"/>
+        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
+                       isDebug="0" optimisation="6" targetName="SimpleGenetics"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../Tools/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_events" path="../../Tools/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../Tools/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../Tools/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../Tools/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../Tools/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../Tools/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_video" path="../../Tools/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../Tools/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../Tools/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../Tools/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../Tools/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../Tools/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../Tools/JUCE-OSX/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_audio_devices" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_audio_formats" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_audio_processors" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_audio_utils" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_core" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_cryptography" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_data_structures" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_events" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_gui_basics" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_opengl" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_video" showAllCode="1" useLocalCopy="1"/>
+  </MODULES>
+  <JUCEOPTIONS/>
+</JUCERPROJECT>
