@@ -22,6 +22,7 @@ public:
     ~ProgressBox();
     void Draw(Graphics &g, double progress);
     void SetName(String Name);
+    bool PointInBox(std::pair<int, int> mPoint);
 private:
     String name;
     Colour color;

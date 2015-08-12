@@ -15,13 +15,12 @@
 #include "Settings.h"
 #include "GeneController.h"
 #include "DrawBox.h"
-#include "NumberBox.h"
 #include "InputGraph.h"
 #include "TargetDisplay.h"
 #include <vector>
 #include <utility>
 
-class MainContentComponent   : public AudioAppComponent, private Timer {
+class MainContentComponent   : public AudioAppComponent, private Timer, public TextEditorListener {
 public:
     MainContentComponent();
     ~MainContentComponent();
@@ -32,53 +31,68 @@ public:
     void resized() override;
     void timerCallback() override;
     void mouseDown (const MouseEvent& e) override;
+    void mouseDrag (const MouseEvent& e) override;
+    void mouseUp (const MouseEvent&) override;
+    void textEditorReturnKeyPressed(TextEditor &editor) override;
+    void textEditorEscapeKeyPressed(TextEditor &editor) override;
     
     
 private:
     Settings *settings = new Settings();
     GeneController *controller = new GeneController(settings);
     File *settingsPath = new File();
-    File *workingDirectory = new File();
+    File *workingDirectory = new File(File::getCurrentWorkingDirectory());
+    bool isPlaying = false;
+    int audioPos = 0;
+    std::vector<std::vector<double> > audio;
     
-    InputGraph* population = new InputGraph(std::make_pair(255, 55), std::make_pair(500, 100), Colour(0, 0, 0), Colour(255, 180, 0));
-    InputGraph* mAmount = new InputGraph(std::make_pair(255, 160), std::make_pair(500, 100), Colour(0, 0, 0), Colour(255, 180, 0));
-    InputGraph* mChance = new InputGraph(std::make_pair(255, 265), std::make_pair(500, 100), Colour(0, 0, 0), Colour(255, 180, 0));
-    InputGraph* cInt = new InputGraph(std::make_pair(255, 370), std::make_pair(500, 100), Colour(0, 0, 0), Colour(255, 180, 0));
-    TargetDisplay* target = new TargetDisplay(std::make_pair(255, 475), std::make_pair(500, 100), Colour(0, 0, 0), Colour(255, 180, 0));
-    DrawBox* loadSettings = LoadBox(std::make_pair(150, 30), std::make_pair(720, 245), "Load Settings");
-    DrawBox* saveSettings = LoadBox(std::make_pair(150, 30), std::make_pair(720, 280), "Save Settings");
-    DrawBox* runCalculation = LoadBox(std::make_pair(150, 30), std::make_pair(720, 315), "Run Calculation");
-    DrawBox* stopCalculation = LoadBox(std::make_pair(150, 30), std::make_pair(720, 350), "Stop Calculation");
-    DrawBox* listen = LoadBox(std::make_pair(150, 30), std::make_pair(720, 385), "Playback Product");
-    DrawBox* saveAudio = LoadBox(std::make_pair(150, 30), std::make_pair(720, 420), "Save Audio");
+    TextEditor *popHigh = new TextEditor("popHigh");
+    TextEditor *mAmountHigh = new TextEditor("mAmountHigh");
+    TextEditor *mChanceHigh = new TextEditor("mChanceHigh");
+    TextEditor *cIntHigh = new TextEditor("cIntHigh");
     
-    std::pair<DrawBox*, DrawBox*> fftSize = LoadDisplay<DrawBox, DrawBox>(std::make_pair(240, 30), std::make_pair(675, 20), "FFT Size");
-    std::pair<NumberBox*, DrawBox*> waveSize = LoadDisplay<NumberBox, DrawBox>(std::make_pair(240, 30), std::make_pair(675, 55), "Bins Per Frame");
-    std::pair<NumberBox*, DrawBox*> waveCount = LoadDisplay<NumberBox, DrawBox>(std::make_pair(240, 30), std::make_pair(675, 90), "Frames To Make");
-    std::pair<DrawBox*, DrawBox*> sampleRate = LoadDisplay<DrawBox, DrawBox>(std::make_pair(240, 30), std::make_pair(675, 125), "Sample Rate");
-    std::pair<NumberBox*, DrawBox*> channels = LoadDisplay<NumberBox, DrawBox>(std::make_pair(240, 30), std::make_pair(675, 160), "Channels");
-    std::pair<NumberBox*, DrawBox*> factor = LoadDisplay<NumberBox, DrawBox>(std::make_pair(240, 30), std::make_pair(675, 195), "Factor");
+    InputGraph* population = new InputGraph(255, 55, 500, 100, Colour(0, 0, 0), Colour(255, 180, 0), popHigh);
+    InputGraph* mAmount = new InputGraph(255, 160, 500, 100, Colour(0, 0, 0), Colour(255, 180, 0), mAmountHigh);
+    InputGraph* mChance = new InputGraph(255, 265, 500, 100, Colour(0, 0, 0), Colour(255, 180, 0), mChanceHigh);
+    InputGraph* cInt = new InputGraph(255, 370, 500, 100, Colour(0, 0, 0), Colour(255, 180, 0), cIntHigh);
+    TargetDisplay* target = new TargetDisplay(255, 475, 500, 100, Colour(0, 0, 0), Colour(255, 180, 0));
+    DrawBox* loadSettings = LoadBox(150, 30, 720, 245, "Load Settings");
+    DrawBox* saveSettings = LoadBox(150, 30, 720, 280, "Save Settings");
+    DrawBox* runCalculation = LoadBox(150, 30, 720, 315, "Run Calculation");
+    DrawBox* stopCalculation = LoadBox(150, 30, 720, 350, "Stop Calculation");
+    DrawBox* listen = LoadBox(150, 30, 720, 385, "Monitor Output");
+    DrawBox* saveAudio = LoadBox(150, 30, 720, 420, "Save Audio");
     
-    std::pair<DrawBox*, DrawBox*> closeness = LoadDisplay<DrawBox, DrawBox>(std::make_pair(260, 30), std::make_pair(665, 580), "Close To Target");
-    std::pair<DrawBox*, DrawBox*> fileLength = LoadDisplay<DrawBox, DrawBox>(std::make_pair(260, 30), std::make_pair(665, 545), "File Length (sec)");
-    std::pair<DrawBox*, DrawBox*> complete = LoadDisplay<DrawBox, DrawBox>(std::make_pair(260, 30), std::make_pair(665, 510), "Percent Complete");
-    std::pair<DrawBox*, DrawBox*> calculationsDone = LoadDisplay<DrawBox, DrawBox>(std::make_pair(260, 30), std::make_pair(665, 475), "Frames Complete");
+    std::pair<TextEditor*,DrawBox*> fftSize = LoadEditor(240, 30, 675, 20, "FFT Size", "FFTSize");
+    std::pair<TextEditor*,DrawBox*> waveSize = LoadEditor(240, 30, 675, 55, "Bins Per Frame", "WaveSize");
+    std::pair<TextEditor*,DrawBox*> waveCount = LoadEditor(240, 30, 675, 90, "Frames To Make", "WaveCount");
+    std::pair<TextEditor*,DrawBox*> sampleRate = LoadEditor(240, 30, 675, 125, "Sample Rate", "SampleRate");
+    std::pair<TextEditor*,DrawBox*> channels = LoadEditor(240, 30, 675, 160, "Channels", "Channels");
+    std::pair<TextEditor*,DrawBox*> factor = LoadEditor(240, 30, 675, 195, "Factor", "Factor");
+    
+    std::pair<DrawBox*,DrawBox*> closeness = LoadDisplay(260, 30, 665, 580, "Close To Target");
+    std::pair<DrawBox*,DrawBox*> fileLength = LoadDisplay(260, 30, 665, 545, "File Length (sec)");
+    std::pair<DrawBox*,DrawBox*> complete = LoadDisplay(260, 30, 665, 510, "Percent Complete");
+    std::pair<DrawBox*,DrawBox*> calcsDone = LoadDisplay(260, 30, 665, 475, "Frames Complete");
+    
+    void Execute();
     
     bool LoadSettings();
     bool SaveSettings();
-    File SaveAudio();
-    void Execute();
-    void WriteAudio(std::vector<std::vector<double> > audio, int sampleRate);
-    DrawBox *LoadBox(std::pair<int, int> size, std::pair<int, int> loc, String text);
+    void SaveAudio(std::vector<std::vector<double> > Audio, int SampleRate);
+    File LoadAudio();
+    void InsertAudio(int i, const MouseEvent& e, double pos);
     
-    template <class t1, class t2>
-    std::pair<t1*, t2*> LoadDisplay(std::pair<int, int> size, std::pair<int, int> loc, String text);
-    template <class t1, class t2>
-    void DrawDisplay(Graphics& g, int Val, std::pair<t1*, t2*> data);
+    DrawBox *LoadBox(int sx, int sy, int lx, int ly, String text);
+    std::pair<DrawBox*,DrawBox*> LoadDisplay(int sx, int sy, int lx, int ly, String text);
+    std::pair<TextEditor*,DrawBox*> LoadEditor(int sx, int sy, int lx, int ly, String text, String name);
+    void DrawDisplay(Graphics& g, int Val, std::pair<DrawBox*, DrawBox*> data);
     template <class t1, class t2>
     void DeleteDisplay(std::pair<t1*, t2*> data);
     
     void LoadGraphs();
+    void LoadSettingsText();
+    void CheckSettings(TextEditor &editor, int &setting);
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };

@@ -76,19 +76,41 @@ vector<double> GetBin(vector<double> Input, int FFTSize) {
     return returnVal;
 }
 
-vector<double> LoadFile(File *filepath) {
+vector<vector<double> > LoadFile(File *filepath) {
     // loads an audio file
-    vector<double> buf;
+    vector<vector<double> > buf;
     AiffAudioFormat reader;
     AudioFormatReader *formatReader = reader.createReaderFor(filepath->createInputStream(), true);
     AudioSampleBuffer *data = new AudioSampleBuffer(formatReader->numChannels, formatReader->lengthInSamples);
     formatReader->read(data, 0, formatReader->lengthInSamples, 0, true, false);
-    for (int i = 0 ; i < formatReader->lengthInSamples ; i++)
-        buf.push_back(data->getSample(0, i));
-    NormalizeAudio(buf);
+    for (int c = 0 ; c < formatReader->numChannels ; c++) {
+        buf.push_back(vector<double>());
+        for (int i = 0 ; i < formatReader->lengthInSamples ; i++) {
+            buf[c].push_back(data->getSample(c, i));
+        }
+    }
     delete data;
     delete formatReader;
     return buf;
+}
+
+void WriteAudio(vector<vector<double> > audio, int sampleRate, File Path) {
+    for (int i = 0 ; i < audio.size() ; i++) {
+        audio[i] = NormalizeAudio(audio[i]);
+    }
+    if (Path.existsAsFile()) {
+        return;
+    }
+    AiffAudioFormat wav;
+    AudioFormatWriter *writer = wav.createWriterFor(Path.createOutputStream(),
+                                                    sampleRate, audio.size(), 24, 1, 0);
+    AudioSampleBuffer *buf = new AudioSampleBuffer(audio.size(), audio[0].size());
+    for (int c = 0 ; c < audio.size() ; c++)
+        for (int s = 0 ; s < audio[c].size() ; s++)
+            buf->setSample(c, s, audio[c][s]);
+    writer->writeFromAudioSampleBuffer(*buf, 0, buf->getNumSamples());
+    delete writer;
+    delete buf;
 }
 
 vector<double> NormalizeLoudness(vector<double> audio, double targetLoudness) {
@@ -155,18 +177,11 @@ double Interpolate(double Position, vector< pair< double, double > > Data) {
 }
 
 void CopyAudio(File InputPath, File OutputDir) {
-    vector<double> buf;
     AiffAudioFormat reader;
     AudioFormatReader *formatReader = reader.createReaderFor(InputPath.createInputStream(), true);
-    AudioSampleBuffer *data = new AudioSampleBuffer(formatReader->numChannels, formatReader->lengthInSamples);
-    formatReader->read(data, 0, formatReader->lengthInSamples, 0, true, false);
-    
     File OutputPath = File(OutputDir.getFullPathName() + "/" + InputPath.getFileName());
-    
-    AiffAudioFormat aif;
-    AudioFormatWriter *writer = aif.createWriterFor(OutputPath.createOutputStream(), formatReader->numChannels, data->getNumChannels(), 24, 1, 0);
-    writer->writeFromAudioSampleBuffer(*data, 0, data->getNumSamples());
-    delete writer;
-    delete data;
+    File *LoadPath = new File(InputPath);
+    WriteAudio(LoadFile(LoadPath), formatReader->sampleRate, OutputPath);
+    delete LoadPath;
     delete formatReader;
 }

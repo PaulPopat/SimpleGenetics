@@ -24,60 +24,121 @@ void InputGraph::DrawLine(Graphics &g, pair<double, double> v1, pair<double, dou
     g.fillRect(start);
 }
 
-InputGraph::InputGraph(pair<double,double> Location,
-                          pair<double,double> Size,
-                          Colour FillColor,
-                          Colour LineColor) {
+InputGraph::InputGraph(int lx, int ly, int sx, int sy, Colour FillColor, Colour LineColor, TextEditor *HighVal) {
+    mainDisplay = new ProgressBox(make_pair(lx, ly), make_pair(sx, sy), FillColor, LineColor);
+    pair<int, int> boxSize = make_pair(sx / 6, sy / 4);
+    int xloc = (lx + (sx / 2)) - boxSize.first - 2;
+    int yloc = (ly + (sy / 2)) - boxSize.second - 2;
     
-    mainDisplay = new ProgressBox(Location, Size, FillColor, LineColor);
-    pair<int, int> boxSize = make_pair(Size.first / 8, Size.second / 8);
-    int offset = Size.first / 2;
-    int xloc = (Location.first + offset) - (boxSize.first / 2) - 2;
-    int yoffset = (Size.second / 2) - (boxSize.second / 2) - 2;
-    lowVal = new DrawBox(make_pair(xloc, Location.second + yoffset), boxSize);
-    highVal = new DrawBox(make_pair(xloc, Location.second - yoffset), boxSize);
+    highVal = HighVal;
+    highVal->setMultiLine(false);
+    highVal->setCentrePosition(xloc, yloc);
+    highVal->setSize(boxSize.first, boxSize.second);
+    highVal->setText(to_string(highPoint));
     
-    lowVal->SetFillColor(Colour((uint8)0, (uint8)0, (uint8)0, (uint8)0));
-    lowVal->SetLineColor(LineColor);
-    lowVal->SetFontSize(8);
-    lowVal->SetText("High");
-    
-    highVal->SetFillColor(Colour((uint8)0, (uint8)0, (uint8)0, (uint8)0));
-    highVal->SetLineColor(LineColor);
-    highVal->SetFontSize(8);
-    highVal->SetText("Low");
-    
-    size = Size;
-    bLeftLoc = make_pair(Location.first - (Size.first / 2), Location.second - (Size.second / 2));
+    size = make_pair(sx, sy);
+    bLeftLoc = make_pair(lx - (size.first / 2), ly - (size.second / 2));
     graphColor = Colour(255,255,255);
 }
 
 InputGraph::~InputGraph() {
     delete mainDisplay;
     delete highVal;
-    delete lowVal;
 }
 
 void InputGraph::Draw(Graphics &g, double progress) {
+    vector<pair<double, double> > toDraw;
+    for (int i = 0 ; i < data.size() ; i++) {
+        toDraw.push_back(data[i]);
+    }
+    sort(toDraw.begin(), toDraw.end(), Sorter);
     mainDisplay->Draw(g, progress);
     for (int i = 0 ; i < data.size() - 1 ; i++) {
-        DrawLine(g, data[i], data[i + 1]);
+        DrawLine(g, toDraw[i], toDraw[i + 1]);
     }
-    DrawLine(g, data[data.size() - 1], make_pair(data[data.size() - 1].first, 1));
-    highVal->Draw(g);
-    lowVal->Draw(g);
+    DrawLine(g, toDraw[data.size() - 1], make_pair(toDraw[data.size() - 1].first, 1));
 }
 
-void InputGraph::LoadGraph(std::vector<std::pair<double, double> >Input) {
+void InputGraph::LoadGraph(vector<pair<double, double> >Input) {
     data = Input;
     highPoint = 0;
-    lowVal->SetText(to_string(0));
     for (int i = 0 ; i < data.size(); i++) {
         if (highPoint < data[i].first) highPoint = data[i].first + (data[i].first / 4);
     }
-    highVal->SetText(to_string(highPoint));
+    highVal->setText(to_string(highPoint));
 }
 
 void InputGraph::SetName(juce::String Name) {
     mainDisplay->SetName(Name);
+}
+
+void InputGraph::textEditorReturnKeyPressed(TextEditor &editor) {
+    String text = editor.getText();
+    if (atof(text.getCharPointer())) {
+        highPoint = atof(text.getCharPointer());
+    }
+    editor.setText(to_string(highPoint));
+}
+
+void InputGraph::textEditorEscapeKeyPressed(TextEditor &editor) {
+    editor.setText(to_string(highPoint));
+}
+
+void InputGraph::Click(pair<int, int> MousePoint, bool Alt, bool Ctl) {
+    for (int i = 0 ; i < data.size() ; i++) {
+        int sx = (data[i].second * size.first) + bLeftLoc.first;
+        int sy = (bLeftLoc.second + size.second) - ((data[i].first / highPoint) * size.second);
+        if (MousePoint.first < sx + 4 &&
+            MousePoint.first > sx - 4 &&
+            MousePoint.second < sy + 4 &&
+            MousePoint.second > sy - 4) {
+            if (Ctl) {
+                data.erase(data.begin() + i);
+                return;
+            }
+            selectedPoint = i;
+            return;
+        }
+    }
+    if (Alt) {
+        if (!mainDisplay->PointInBox(MousePoint)) {
+            return;
+        }
+        double x = ((double)MousePoint.second - (double)bLeftLoc.second) / (double)size.second;
+        x = 1 - x;
+        x *= highPoint;
+        double y = ((double)MousePoint.first - (double)bLeftLoc.first) / (double)size.first;
+        data.push_back(make_pair(x, y));
+        selectedPoint = data.size() - 1;
+    }
+}
+
+void InputGraph::Drag(pair<int, int> MousePoint) {
+    if (selectedPoint < 0)
+        return;
+    if (selectedPoint > 0) {
+        data[selectedPoint].second = ((double)MousePoint.first - (double)bLeftLoc.first) / (double)size.first;
+        if (data[selectedPoint].second > 1)
+            data[selectedPoint].second = 1;
+        if (data[selectedPoint].second < 0)
+            data[selectedPoint].second = 0;
+    }
+    data[selectedPoint].first = ((double)MousePoint.second - (double)bLeftLoc.second) / (double)size.second;
+    if (data[selectedPoint].first > 1)
+        data[selectedPoint].first = 1;
+    if (data[selectedPoint].first < 0)
+        data[selectedPoint].first = 0;
+    data[selectedPoint].first = 1 - data[selectedPoint].first;
+    data[selectedPoint].first *= highPoint;
+}
+
+vector<pair<double, double> > InputGraph::ClickUp() {
+    sort(data.begin(), data.end(), Sorter);
+    selectedPoint = -1;
+    return data;
+}
+
+bool InputGraph::Sorter(const pair<double, double> &left, const pair<double, double> &right) {
+    // sorts the closeness index
+    return left.second < right.second;
 }

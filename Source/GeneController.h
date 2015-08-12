@@ -28,6 +28,7 @@ public:
     int GetAudioLength();
     std::vector<std::vector<double> > GetAudio();
     void LoadSettings(Settings *Setting);
+    std::vector<std::vector<double> > GetCurrentAudio();
 private:
     double RandomVal(double min, double max, double weighting);
     bool RandomBool();
@@ -36,9 +37,10 @@ private:
     double pos = 0;
     double cPos = 0;
     Settings *settings;
-    std::vector<std::pair<int, double> > closeness;
+    double closeness = 0;
     std::vector<PopMember*> population;
     PopMember *final = new PopMember;
+    std::vector<std::vector<double> > mostRecent;
 };
 
 

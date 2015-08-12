@@ -20,6 +20,7 @@ class PopMember {
 public:
     PopMember();
     PopMember(PopMember *Mother, PopMember *Father);
+    PopMember(PopMember *Copy);
     PopMember(int BinLength, int NumBins, int NumChannels);
     ~PopMember();
     void AddMember(PopMember *Addition);

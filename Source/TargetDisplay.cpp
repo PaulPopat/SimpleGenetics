@@ -12,11 +12,11 @@
 #include "TargetDisplay.h"
 using namespace std;
 
-TargetDisplay::TargetDisplay(pair<double, double> Location, pair<double, double> Size, Colour FillColor, Colour LineColor) {
-    display = new ProgressBox(Location, Size, FillColor, LineColor);
+TargetDisplay::TargetDisplay(int lx, int ly, int sx, int sy, Colour FillColor, Colour LineColor) {
+    display = new ProgressBox(make_pair(lx, ly), make_pair(sx, sy), FillColor, LineColor);
     lineColor = Colour(255,255,255);
-    size = Size;
-    bLeftLoc = make_pair(Location.first - (Size.first / 2), Location.second - (Size.second / 2));
+    size = make_pair(sx, sy);
+    bLeftLoc = make_pair(lx - (sx / 2), ly - (sy / 2));
 }
 
 TargetDisplay::~TargetDisplay() {
@@ -42,4 +42,59 @@ void TargetDisplay::LoadGraph(vector<pair<String, double> >Input) {
 
 void TargetDisplay::SetName(String Name) {
     display->SetName(Name);
+}
+
+double TargetDisplay::Click(pair<int, int> MousePoint, bool Alt, bool Ctl) {
+    if (Alt) {
+        if (display->PointInBox(MousePoint)) {
+            double x = ((double)MousePoint.first - (double)bLeftLoc.first) / (double)size.first;
+            if (data[selectedPoint].second > 1)
+                data[selectedPoint].second = 1;
+            if (data[selectedPoint].second < 0)
+                data[selectedPoint].second = 0;
+            return x;
+        }
+    }
+    for (int i = 0 ; i < data.size() ; i++) {
+        int sx = (data[i].second * size.first) + bLeftLoc.first;
+        if (MousePoint.first < sx + 4 &&
+            MousePoint.first > sx - 4 &&
+            MousePoint.second < bLeftLoc.second + size.second &&
+            MousePoint.second > bLeftLoc.second) {
+            if (Ctl) {
+                data.erase(data.begin() + i);
+                return -1;
+            }
+            selectedPoint = i;
+            return -1;
+        }
+    }
+    return -1;
+}
+
+void TargetDisplay::Drag(pair<int, int> MousePoint) {
+    if (selectedPoint < 0)
+        return;
+    if (selectedPoint > 0) {
+        data[selectedPoint].second = ((double)MousePoint.first - (double)bLeftLoc.first) / (double)size.first;
+        if (data[selectedPoint].second > 1)
+            data[selectedPoint].second = 1;
+        if (data[selectedPoint].second < 0)
+            data[selectedPoint].second = 0;
+    }
+}
+
+vector<pair<string, double> > TargetDisplay::ClickUp() {
+    sort(data.begin(), data.end(), Sorter);
+    selectedPoint = -1;
+    vector<pair<string, double> > retVal;
+    for (int i = 0 ; i < data.size() ; i++) {
+        retVal.push_back(make_pair(data[i].first.toRawUTF8(), data[i].second));
+    }
+    return retVal;
+}
+
+bool TargetDisplay::Sorter(const pair<String, double> &left, const pair<String, double> &right) {
+    // sorts the closeness index
+    return left.second < right.second;
 }

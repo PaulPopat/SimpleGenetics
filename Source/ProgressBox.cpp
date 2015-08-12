@@ -38,3 +38,7 @@ void ProgressBox::SetName(String Name) {
     name = Name;
     display->SetText(name);
 }
+
+bool ProgressBox::PointInBox(pair<int, int> mPoint) {
+    return display->PointIsInBox(mPoint);
+}

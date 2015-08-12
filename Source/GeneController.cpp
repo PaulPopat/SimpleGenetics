@@ -11,8 +11,13 @@
 #include "GeneController.h"
 using namespace std;
 
+void SwapData(PopMember *valToFill, PopMember *newVal) {
+    swap(valToFill, newVal);
+    delete newVal;
+}
+
 GeneController::GeneController(Settings *Setting) : Thread("GeneThread") {
-    settings = Setting;
+    settings = new Settings(Setting);
 }
 
 GeneController::~GeneController() {
@@ -24,6 +29,8 @@ GeneController::~GeneController() {
 }
 
 void GeneController::run() {
+    delete final;
+    final = new PopMember;
     for (int i = 0 ; i < settings->GetPopulation(0) ; i++)
         population.push_back(new PopMember(settings->FFTSize, settings->WaveSize, settings->Channels));
     
@@ -34,18 +41,20 @@ void GeneController::run() {
         for (int p = 0 ; p < population.size() ; p++)
             Close.push_back(make_pair(p, population[p]->GetCloseness(settings->GetTarget(pos))));
         sort(Close.begin(), Close.end(), Sorter);
-        closeness = Close;
+        closeness = Close[0].second;
         
         cPos += settings->GetCaptureInterval(pos);
         if (cPos >= 1) {
             cPos = 0;
-            final->AddMember(population[closeness[0].first]);
+            final->AddMember(population[Close[0].first]);
         }
+        vector<vector<double> > temp = population[Close[0].first]->GetAudio();
+        mostRecent = temp;
         
         vector<PopMember*> breed;
         for (int i = 0 ; i < settings->GetPopulation(pos) ; i++) {
-            int tOne = closeness[RandomVal(0, population.size(), settings->Factor)].first;
-            int tTwo = closeness[RandomVal(0, population.size(), settings->Factor)].first;
+            int tOne = Close[RandomVal(0, population.size(), settings->Factor)].first;
+            int tTwo = Close[RandomVal(0, population.size(), settings->Factor)].first;
             breed.push_back(new PopMember(population[tOne], population[tTwo]));
         }
         for (int p = 0 ; p < population.size() ; p++)
@@ -64,21 +73,25 @@ void GeneController::run() {
 
 vector<vector<double> > GeneController::GetAudio() {return final->GetAudio();}
 
-void GeneController::LoadSettings(Settings *Setting) {settings = Setting;}
+void GeneController::LoadSettings(Settings *Setting) {
+    delete settings;
+    settings = new Settings(Setting);
+}
 
 double GeneController::GetPosition() {
     return pos;
 }
 
 double GeneController::GetCloseness() {
-    if (closeness.size() > 0)
-        return closeness[0].second;
-    else
-        return 0;
+    return closeness;
 }
 
 int GeneController::GetLoc() {
     return loc;
+}
+
+vector<vector<double> > GeneController::GetCurrentAudio() {
+    return mostRecent;
 }
 
 int GeneController::GetAudioLength() {

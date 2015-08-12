@@ -6,8 +6,6 @@
   <MAINGROUP id="POgAaW" name="SimpleGenetics">
     <GROUP id="{4F74FEBA-4CF4-BFD5-E050-6E8D63CC37E1}" name="Source">
       <GROUP id="{8DF5F502-113E-5B85-54EA-5BEA65152914}" name="UserInterface">
-        <FILE id="h3SLXE" name="NumberBox.cpp" compile="1" resource="0" file="Source/NumberBox.cpp"/>
-        <FILE id="MFMii4" name="NumberBox.h" compile="0" resource="0" file="Source/NumberBox.h"/>
         <FILE id="yZA7pd" name="TargetDisplay.cpp" compile="1" resource="0"
               file="Source/TargetDisplay.cpp"/>
         <FILE id="Gb1put" name="TargetDisplay.h" compile="0" resource="0" file="Source/TargetDisplay.h"/>
@@ -46,8 +44,8 @@
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
                        isDebug="1" optimisation="1" targetName="SimpleGenetics"/>
-        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
-                       isDebug="0" optimisation="6" targetName="SimpleGenetics"/>
+        <CONFIGURATION name="Release" osxSDK="10.9 SDK" osxCompatibility="10.9 SDK"
+                       osxArchitecture="64BitIntel" isDebug="0" optimisation="6" targetName="SimpleGenetics"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../Tools/JUCE-OSX/modules"/>

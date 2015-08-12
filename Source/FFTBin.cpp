@@ -17,7 +17,7 @@ double RandomVal(double min, double max, double weighting) {
 
 FFTBin::FFTBin(int size) {
     for (int i = 0 ; i < size ; i++) {
-        data.push_back(make_pair(RandomVal(-1, 1, 1), RandomVal(-1, 1, 1)));
+        data.push_back(make_pair(0, 0));
     }
 }
 

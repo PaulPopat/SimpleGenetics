@@ -16,11 +16,10 @@ void Settings::LoadTargets() {
         vector<double> TargetBinSummed (FFTSize, 0);
         if (Target[f].first != "Silence") {
             File *input = new File(workingDir->getFullPathName() + "/" + Target[f].first);
-            vector<double> InputAudio = LoadFile(input);
+            vector<vector<double> >InputAudio = LoadFile(input);
             delete input;
-            InputAudio = NormalizeAudio(InputAudio);
-            TargetBinSummed = GetBin(InputAudio, FFTSize);
-            TargetBinSummed = NormalizeLoudness(TargetBinSummed, 2);
+            InputAudio[0] = NormalizeAudio(InputAudio[0]);
+            TargetBinSummed = GetBin(InputAudio[0], FFTSize);
         }
         Targets.push_back(TargetBinSummed);
     }
@@ -39,6 +38,22 @@ Settings::Settings() {
     MutationChance.push_back(make_pair(0.2, 0));
     Population.push_back(make_pair(10, 0));
     workingDir = new File(File::getCurrentWorkingDirectory());
+    LoadTargets();
+}
+
+Settings::Settings(Settings *toCopy) {
+    FFTSize = toCopy->FFTSize;
+    WaveSize = toCopy->WaveSize;
+    WaveCount = toCopy->WaveCount;
+    SampleRate = toCopy->SampleRate;
+    Channels = toCopy->Channels;
+    Factor = toCopy->Factor;
+    CaptureInterval = toCopy->CaptureInterval;
+    Target = toCopy->Target;
+    MutationAmount = toCopy->MutationAmount;
+    MutationChance = toCopy->MutationChance;
+    Population = toCopy->Population;
+    workingDir = new File(*toCopy->workingDir);
     LoadTargets();
 }
 
@@ -98,6 +113,9 @@ void Settings::Save(File *Path) {
     String path = Path->getFullPathName();
     f.open(path.toRawUTF8(), fstream::out | fstream::trunc);
     
+    f << fixed << showpoint;
+    f << setprecision(10);
+    
     f << "FFTSize " << FFTSize << endl;
     f << "BinsPerFrame " << WaveSize << endl;
     f << "FramesToCalculate " << WaveCount << endl;
@@ -105,7 +123,7 @@ void Settings::Save(File *Path) {
     f << "Channels " << Channels << endl;
     f << "Factor " << Factor << endl;
     
-    f << "CapterInterval" << endl;
+    f << "CaptureInterval" << endl;
     for (int i = 0 ; i < CaptureInterval.size() ; i++) {
         f << CaptureInterval[i].first << " " << CaptureInterval[i].second << endl;
     }
@@ -114,7 +132,9 @@ void Settings::Save(File *Path) {
     f << "TargetFile" << endl;
     for (int i = 0 ; i < Target.size() ; i++) {
         f << Target[i].first << " " << Target[i].second << endl;
-        CopyAudio(File(workingDir->getFullPathName() + "/" + Target[i].first), Path->getParentDirectory());
+        if (Target[i].first != "Silence") {
+            CopyAudio(File(workingDir->getFullPathName() + "/" + Target[i].first), Path->getParentDirectory());
+        }
     }
     f << "end" << endl;
     

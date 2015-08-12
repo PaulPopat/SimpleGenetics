@@ -14,7 +14,7 @@
 #include <vector>
 #include <utility>
 #include <string>
-#include <iostream>
+#include <iomanip>
 #include <sstream>
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "SettingsUtils.h"
@@ -22,6 +22,7 @@
 class Settings{
 public:
     Settings();
+    Settings(Settings *toCopy);
     Settings(File *Path);
     ~Settings();
     void Save(File *Path);
@@ -36,6 +37,7 @@ public:
     double GetMutationAmount(double Position);
     std::vector<double> GetTarget(double Position);
     double GetCaptureInterval(double Position);
+    void LoadTargets();
     
     std::vector< std::pair< double, double > > Population;
     std::vector< std::pair< double, double > > MutationChance;
@@ -44,7 +46,6 @@ public:
     std::vector< std::vector < double > > Targets;
     std::vector< std::pair< double, double > > CaptureInterval;
 private:
-    void LoadTargets();
     File *workingDir;
 };
 

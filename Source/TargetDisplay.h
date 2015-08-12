@@ -19,17 +19,23 @@
 class TargetDisplay
 {
 public:
-    TargetDisplay(std::pair<double, double> Location, std::pair<double, double> Size, Colour FillColor, Colour LineColor);
+    TargetDisplay(int lx, int ly, int sx, int sy, Colour FillColor, Colour LineColor);
     ~TargetDisplay();
     void Draw(Graphics &g, double Position);
     void LoadGraph(std::vector<std::pair<String, double> >Input);
     void SetName(String Name);
+    double Click(std::pair<int,int> MousePoint, bool Alt, bool Ctl);
+    void Drag(std::pair<int, int> MousePoint);
+    std::vector<std::pair<std::string, double> > ClickUp();
 private:
+    int selectedPoint = -1;
     std::pair<int,int> size;
     std::pair<int,int> bLeftLoc;
     std::vector<std::pair<String, double> > data;
     ProgressBox* display;
     Colour lineColor;
+    
+    static bool Sorter(const std::pair<String, double> &left, const std::pair<String, double> &right);
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TargetDisplay)
 };
 

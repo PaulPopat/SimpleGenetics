@@ -29,6 +29,15 @@ PopMember::PopMember(PopMember *Mother, PopMember *Father) {
     }
 }
 
+PopMember::PopMember(PopMember *Copy) {
+    for (int c = 0 ; c < Copy->data.size() ; c++) {
+        data.push_back(vector<FFTBin*>());
+        for (int x = 0 ; x < Copy->data[c].size() ; x++) {
+            data[c].push_back(new FFTBin(Copy->data[c][x]));
+        }
+    }
+}
+
 PopMember::PopMember(int BinLength, int NumBins, int NumChannels) {
     for (int c = 0 ; c < NumChannels ; c++) {
         data.push_back(vector<FFTBin*>());
