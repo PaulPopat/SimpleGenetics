@@ -96,7 +96,7 @@ void MainContentComponent::releaseResources() {
 }
 
 void MainContentComponent::paint (Graphics& g) {
-    g.fillAll (Colour(25, 25, 25));
+    g.fillAll (Colour(180, 180, 180));
     fftSize.second->Draw(g);
     waveSize.second->Draw(g);
     waveCount.second->Draw(g);
@@ -108,17 +108,7 @@ void MainContentComponent::paint (Graphics& g) {
     DrawDisplay(g, controller->GetAudioLength(), fileLength);
     DrawDisplay(g, controller->GetPosition() * 100, complete);
     DrawDisplay(g, controller->GetLoc(), calcsDone);
-    
-    loadSettings->Draw(g);
-    saveSettings->Draw(g);
-    runCalculation->Draw(g);
-    stopCalculation->Draw(g);
-    if (isPlaying)
-        listen->SetFillColor(Colour(200, 200, 200));
-    else
-        listen->SetFillColor(Colour(255, 120, 0));
-    listen->Draw(g);
-    saveAudio->Draw(g);
+
     maxLevel->SetText(String(maxLevelVal).substring(0, 4));
     maxLevel->Draw(g);
     
@@ -133,41 +123,25 @@ void MainContentComponent::mouseDown (const MouseEvent& e) {
     pair<int,int> mousePoint;
     mousePoint.first = e.getMouseDownX();
     mousePoint.second = e.getMouseDownY();
-    if (loadSettings->PointIsInBox(mousePoint))
-        LoadSettings();
-    else if (saveSettings->PointIsInBox(mousePoint))
-        SaveSettings();
-    else if (runCalculation->PointIsInBox(mousePoint)) {
-        controller->stopThread(10000);
-        controller->LoadSettings(settings);
-        controller->startThread();
-    }
-    else if (stopCalculation->PointIsInBox(mousePoint))
-        controller->stopThread(10000);
-    else if (saveAudio->PointIsInBox(mousePoint))
-        SaveAudio(controller->GetAudio(), settings->SampleRate);
-    else if (listen->PointIsInBox(mousePoint))
-        isPlaying = !isPlaying;
-    else {
-        population->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
-        mAmount->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
-        mChance->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
-        cInt->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
-        double pos = target->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
-        if (pos >= 0) {
-            for (int i = settings->Target.size() - 1 ; i >= 0 ; i--) {
-                if (pos < settings->Target[i].second + 0.05 &&
-                    pos > settings->Target[i].second - 0.05) {
-                    settings->Target.erase(settings->Target.begin() + i);
-                    InsertAudio(i, e, pos);
-                    return;
-                }
+    
+    population->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
+    mAmount->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
+    mChance->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
+    cInt->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
+    double pos = target->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
+    if (pos >= 0) {
+        for (int i = settings->Target.size() - 1 ; i >= 0 ; i--) {
+            if (pos < settings->Target[i].second + 0.05 &&
+                pos > settings->Target[i].second - 0.05) {
+                settings->Target.erase(settings->Target.begin() + i);
+                InsertAudio(i, e, pos);
+                return;
             }
-            for (int i = settings->Target.size() - 1 ; i >= 0 ; i--) {
-                if (pos < settings->Target[i].second) {
-                    InsertAudio(i, e, pos);
-                    return;
-                }
+        }
+        for (int i = settings->Target.size() - 1 ; i >= 0 ; i--) {
+            if (pos < settings->Target[i].second) {
+                InsertAudio(i, e, pos);
+                return;
             }
         }
     }
@@ -242,6 +216,25 @@ void MainContentComponent::textEditorEscapeKeyPressed(TextEditor &editor) {
     else if (editor.getName() == "cIntHigh")
         cInt->textEditorEscapeKeyPressed(editor);
     editor.unfocusAllComponents();
+}
+
+void MainContentComponent::buttonClicked(Button *button) {
+    if (button->getName() == "Load Settings")
+        LoadSettings();
+    else if (button->getName() == "Save Settings")
+        SaveSettings();
+    else if (button->getName() == "Run Calculation") {
+        controller->stopThread(10000);
+        controller->LoadSettings(settings);
+        controller->startThread();
+    }
+    else if (button->getName() == "Stop Calculation")
+        controller->stopThread(10000);
+    else if (button->getName() == "Monitor Output") {
+        isPlaying = button->getToggleState();
+    }
+    else if (button->getName() == "Save Audio")
+        SaveAudio(controller->GetAudio(), settings->SampleRate);
 }
 
 void MainContentComponent::resized() {
@@ -333,6 +326,24 @@ DrawBox *MainContentComponent::LoadBox(int sx, int sy, int lx, int ly, String te
     val->SetLineColor(Colour(0, 0, 0));
     val->SetFontSize(16);
     val->SetText(text);
+    return val;
+}
+
+TextButton *MainContentComponent::LoadButton(int sx, int sy, int lx, int ly, String text) {
+    TextButton *val = new TextButton(text);
+    val->setSize(sx, sy);
+    val->setCentrePosition(lx, ly);
+    addAndMakeVisible(val);
+    val->addListener(this);
+    return val;
+}
+
+ToggleButton *MainContentComponent::LoadToggle(int sx, int sy, int lx, int ly, String text) {
+    ToggleButton *val = new ToggleButton(text);
+    val->setSize(sx, sy);
+    val->setCentrePosition(lx, ly);
+    addAndMakeVisible(val);
+    val->addListener(this);
     return val;
 }
 

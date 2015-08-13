@@ -45,10 +45,6 @@ void DrawBox::SetText(juce::String Text) {
     text = Text;
 }
 
-void DrawBox::SetFontSize(int Size) {
-    fontSize = Size;
-}
-
 bool DrawBox::PointIsInBox(pair<double, double> Input) {
     if(Input.first > coords[0] &&
        Input.second > coords[1] &&
@@ -60,3 +56,7 @@ bool DrawBox::PointIsInBox(pair<double, double> Input) {
 }
 
 pair<double, double> DrawBox::GetLocation() {return location;}
+
+void DrawBox::SetFontSize(int Size) {
+    fontSize = Size;
+}

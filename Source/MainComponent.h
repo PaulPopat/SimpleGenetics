@@ -20,7 +20,8 @@
 #include <vector>
 #include <utility>
 
-class MainContentComponent   : public AudioAppComponent, private Timer, public TextEditorListener {
+class MainContentComponent :
+public AudioAppComponent, private Timer, public TextEditorListener, public ButtonListener {
 public:
     MainContentComponent();
     ~MainContentComponent();
@@ -35,6 +36,7 @@ public:
     void mouseUp (const MouseEvent&) override;
     void textEditorReturnKeyPressed(TextEditor &editor) override;
     void textEditorEscapeKeyPressed(TextEditor &editor) override;
+    void buttonClicked(Button *button);
     
     
 private:
@@ -57,12 +59,12 @@ private:
     InputGraph* mChance = new InputGraph(255, 265, 500, 100, Colour(0, 0, 0), Colour(255, 180, 0), mChanceHigh);
     InputGraph* cInt = new InputGraph(255, 370, 500, 100, Colour(0, 0, 0), Colour(255, 180, 0), cIntHigh);
     TargetDisplay* target = new TargetDisplay(255, 475, 500, 100, Colour(0, 0, 0), Colour(255, 180, 0));
-    DrawBox* loadSettings = LoadBox(150, 30, 720, 245, "Load Settings");
-    DrawBox* saveSettings = LoadBox(150, 30, 720, 280, "Save Settings");
-    DrawBox* runCalculation = LoadBox(150, 30, 720, 315, "Run Calculation");
-    DrawBox* stopCalculation = LoadBox(150, 30, 720, 350, "Stop Calculation");
-    DrawBox* listen = LoadBox(150, 30, 720, 385, "Monitor Output");
-    DrawBox* saveAudio = LoadBox(150, 30, 720, 420, "Save Audio");
+    TextButton* loadSettings = LoadButton(150, 30, 720, 245, "Load Settings");
+    TextButton* saveSettings = LoadButton(150, 30, 720, 280, "Save Settings");
+    TextButton* runCalculation = LoadButton(150, 30, 720, 315, "Run Calculation");
+    TextButton* stopCalculation = LoadButton(150, 30, 720, 350, "Stop Calculation");
+    ToggleButton* listen = LoadToggle(150, 30, 720, 385, "Monitor Output");
+    TextButton* saveAudio = LoadButton(150, 30, 720, 420, "Save Audio");
     DrawBox* maxLevel = LoadBox(100, 30, 400, 580, "Audio Level");
     
     std::pair<TextEditor*,DrawBox*> fftSize = LoadEditor(240, 30, 675, 20, "FFT Size", "FFTSize");
@@ -86,6 +88,8 @@ private:
     void InsertAudio(int i, const MouseEvent& e, double pos);
     
     DrawBox *LoadBox(int sx, int sy, int lx, int ly, String text);
+    TextButton *LoadButton(int sx, int sy, int lx, int ly, String text);
+    ToggleButton *LoadToggle(int sx, int sy, int lx, int ly, String text);
     std::pair<DrawBox*,DrawBox*> LoadDisplay(int sx, int sy, int lx, int ly, String text);
     std::pair<TextEditor*,DrawBox*> LoadEditor(int sx, int sy, int lx, int ly, String text, String name);
     void DrawDisplay(Graphics& g, int Val, std::pair<DrawBox*, DrawBox*> data);

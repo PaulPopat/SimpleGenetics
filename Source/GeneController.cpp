@@ -31,6 +31,12 @@ GeneController::~GeneController() {
 void GeneController::run() {
     delete final;
     final = new PopMember;
+    if (population.size() > 0) {
+        for (int i = 0 ; i < population.size() ; i++) {
+            delete population[i];
+        }
+        population.clear();
+    }
     for (int i = 0 ; i < settings->GetPopulation(0) ; i++)
         population.push_back(new PopMember(settings->FFTSize, settings->WaveSize, settings->Channels));
     
