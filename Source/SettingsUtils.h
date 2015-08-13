@@ -16,6 +16,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include "fftw3.h"
 #include "../JuceLibraryCode/JuceHeader.h"
 
 std::vector<std::string> GetFileData(File *Path);

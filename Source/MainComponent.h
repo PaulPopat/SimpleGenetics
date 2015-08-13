@@ -53,11 +53,13 @@ private:
     TextEditor *mAmountHigh = new TextEditor("mAmountHigh");
     TextEditor *mChanceHigh = new TextEditor("mChanceHigh");
     TextEditor *cIntHigh = new TextEditor("cIntHigh");
+    TextEditor *wHigh = new TextEditor("wHigh");
     
     InputGraph* population = new InputGraph(255, 55, 500, 100, Colour(0, 0, 0), Colour(255, 180, 0), popHigh);
     InputGraph* mAmount = new InputGraph(255, 160, 500, 100, Colour(0, 0, 0), Colour(255, 180, 0), mAmountHigh);
     InputGraph* mChance = new InputGraph(255, 265, 500, 100, Colour(0, 0, 0), Colour(255, 180, 0), mChanceHigh);
     InputGraph* cInt = new InputGraph(255, 370, 500, 100, Colour(0, 0, 0), Colour(255, 180, 0), cIntHigh);
+    InputGraph* weighting = new InputGraph(155, 560, 300, 60, Colour(0, 0, 0), Colour(255, 180, 0), wHigh);
     TargetDisplay* target = new TargetDisplay(255, 475, 500, 100, Colour(0, 0, 0), Colour(255, 180, 0));
     TextButton* loadSettings = LoadButton(150, 30, 720, 245, "Load Settings");
     TextButton* saveSettings = LoadButton(150, 30, 720, 280, "Save Settings");

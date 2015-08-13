@@ -37,8 +37,11 @@ public:
     double GetMutationAmount(double Position);
     std::vector<double> GetTarget(double Position);
     double GetCaptureInterval(double Position);
+    double GetWeighting(double Position);
     void LoadTargets();
+    double GetHighWeighting();
     
+    std::vector< std::pair< double, double >> BandWeighting;
     std::vector< std::pair< double, double > > Population;
     std::vector< std::pair< double, double > > MutationChance;
     std::vector< std::pair< double, double > > MutationAmount;

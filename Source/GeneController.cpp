@@ -17,7 +17,10 @@ void SwapData(PopMember *valToFill, PopMember *newVal) {
 }
 
 GeneController::GeneController(Settings *Setting) : Thread("GeneThread") {
-    settings = new Settings(Setting);
+    settings = Setting;
+    input = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * settings->FFTSize + 1);
+    output = (double*) fftw_malloc(sizeof(double) * (settings->FFTSize * 2));
+    ifft = fftw_plan_dft_c2r_1d(settings->FFTSize * 2, input, output, FFTW_ESTIMATE);
 }
 
 GeneController::~GeneController() {
@@ -26,6 +29,9 @@ GeneController::~GeneController() {
         delete population[i];
     }
     delete final;
+    fftw_destroy_plan(ifft);
+    fftw_free(input);
+    fftw_free(output);
 }
 
 void GeneController::run() {
@@ -45,7 +51,7 @@ void GeneController::run() {
         
         vector<pair<int, double> > Close;
         for (int p = 0 ; p < population.size() ; p++)
-            Close.push_back(make_pair(p, population[p]->GetCloseness(settings->GetTarget(pos))));
+            Close.push_back(make_pair(p, population[p]->GetCloseness(settings->GetTarget(pos), settings)));
         sort(Close.begin(), Close.end(), Sorter);
         closeness = Close[0].second;
         
@@ -54,7 +60,7 @@ void GeneController::run() {
             cPos = 0;
             final->AddMember(population[Close[0].first]);
         }
-        vector<vector<double> > temp = population[Close[0].first]->GetAudio();
+        vector<vector<double> > temp = population[Close[0].first]->GetAudio(input, output, ifft);
         mostRecent = temp;
         
         vector<PopMember*> breed;
@@ -69,7 +75,7 @@ void GeneController::run() {
         
         for (int m = 0 ; m < settings->GetMutationChance(pos) ; m++) {
             int p = RandomVal(0, population.size(), 1);
-            population[p]->Mutate(settings->GetMutationAmount(pos));
+            population[p]->Mutate(settings->GetMutationAmount(pos), settings);
         }
         
         if (threadShouldExit())
@@ -77,11 +83,16 @@ void GeneController::run() {
     }
 }
 
-vector<vector<double> > GeneController::GetAudio() {return final->GetAudio();}
+vector<vector<double> > GeneController::GetAudio() {return final->GetAudio(input, output, ifft);}
 
 void GeneController::LoadSettings(Settings *Setting) {
-    delete settings;
-    settings = new Settings(Setting);
+    settings = Setting;
+    fftw_destroy_plan(ifft);
+    fftw_free(input);
+    fftw_free(output);
+    input = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * settings->FFTSize + 1);
+    output = (double*) fftw_malloc(sizeof(double) * (settings->FFTSize * 2));
+    ifft = fftw_plan_dft_c2r_1d(settings->FFTSize * 2, input, output, FFTW_ESTIMATE);
 }
 
 double GeneController::GetPosition() {

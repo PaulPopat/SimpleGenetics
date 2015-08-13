@@ -56,23 +56,26 @@ vector<string> StringSplit(string Input) {
 
 vector<double> GetBin(vector<double> Input, int FFTSize) {
     vector<double> returnVal(FFTSize);
-    FFT *fft = new FFT(log2(FFTSize), false);
-    FFT::Complex *input = new FFT::Complex[FFTSize];
-    FFT::Complex *output = new FFT::Complex[FFTSize];
+    double *input = (double*) fftw_malloc(sizeof(double) * (FFTSize * 2));
+    fftw_complex *output = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * (FFTSize + 1));
+    fftw_plan fft = fftw_plan_dft_r2c_1d(FFTSize * 2, input, output, FFTW_ESTIMATE);
+    
     int calc = Input.size() / FFTSize;
     for (int i = 0 ; i < calc ; i++) {
-        for (int x = 0 ; x < FFTSize ; x++) {
-            input[x].r = Input[x + (i * FFTSize)];
-            input[x].i = 0;
+        for (int x = 0 ; x < FFTSize * 2 ; x++) {
+            input[x] = Input[x + (i * FFTSize)];
         }
-        fft->perform(input, output);
+        
+        fftw_execute(fft);
+        
         for (int x = 0 ; x < FFTSize ; x++) {
-            returnVal[x] += sqrt(pow(output[x].r, 2) + pow(output[x].i, 2)) / calc;
+            returnVal[x] += sqrt(pow(output[x][0], 2) + pow(output[x][1], 2)) / calc;
         }
     }
-    delete fft;
-    delete input;
-    delete output;
+    
+    fftw_destroy_plan(fft);
+    fftw_free(input);
+    fftw_free(output);
     return returnVal;
 }
 

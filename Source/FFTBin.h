@@ -12,6 +12,7 @@
 #define FFTBIN_H_INCLUDED
 #include <utility>
 #include <vector>
+#include "Settings.h"
 #include "../JuceLibraryCode/JuceHeader.h"
 double RandomVal(double min, double max, double weighting);
 
@@ -22,7 +23,7 @@ public:
     FFTBin(FFTBin* other);
     ~FFTBin();
     std::vector<double> GetMagnitudes();
-    void Mutate(double amount);
+    void Mutate(double amount, Settings *settings);
     std::vector<std::pair<double, double> > GetData();
     int GetBinSize();
 private:

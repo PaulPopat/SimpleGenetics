@@ -20,6 +20,7 @@ MainContentComponent::MainContentComponent() {
     mChance->SetName("Mutation Number");
     cInt->SetName("Capture Interval");
     target->SetName("Target Audio");
+    weighting->SetName("Frequency Weighting");
     
     startTimerHz(30);
 }
@@ -55,6 +56,7 @@ MainContentComponent::~MainContentComponent() {
     delete mAmount;
     delete mChance;
     delete cInt;
+    delete weighting;
     delete target;
 }
 
@@ -65,17 +67,11 @@ void MainContentComponent::getNextAudioBlock (const AudioSourceChannelInfo& buff
     if (!isPlaying || audio.size() < 1) {
         bufferToFill.clearActiveBufferRegion();
         audio = controller->GetCurrentAudio();
-        for (int c = 0 ; c < audio.size() ; c++) {
-            audio[c] = NormalizeAudio(audio[c]);
-        }
         return;
     }
     for (int i = 0 ; i < bufferToFill.numSamples ; i++) {
         if (audioPos >= audio[0].size()) {
             audio = controller->GetCurrentAudio();
-            for (int c = 0 ; c < audio.size() ; c++) {
-                audio[c] = NormalizeAudio(audio[c]);
-            }
             audioPos = 0;
         }
         for (int c = 0 ; c < bufferToFill.buffer->getNumChannels() ; c++) {
@@ -116,6 +112,7 @@ void MainContentComponent::paint (Graphics& g) {
     mAmount->Draw(g, controller->GetPosition());
     mChance->Draw(g, controller->GetPosition());
     cInt->Draw(g, controller->GetPosition());
+    weighting->Draw(g, 0);
     target->Draw(g, controller->GetPosition());
 }
 
@@ -128,6 +125,7 @@ void MainContentComponent::mouseDown (const MouseEvent& e) {
     mAmount->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
     mChance->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
     cInt->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
+    weighting->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
     double pos = target->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
     if (pos >= 0) {
         for (int i = settings->Target.size() - 1 ; i >= 0 ; i--) {
@@ -156,6 +154,7 @@ void MainContentComponent::mouseDrag (const MouseEvent& e) {
     mAmount->Drag(mousePoint);
     mChance->Drag(mousePoint);
     cInt->Drag(mousePoint);
+    weighting->Drag(mousePoint);
     target->Drag(mousePoint);
     repaint();
 }
@@ -165,6 +164,7 @@ void MainContentComponent::mouseUp (const MouseEvent&) {
     settings->MutationAmount = mAmount->ClickUp();
     settings->MutationChance = mChance->ClickUp();
     settings->CaptureInterval = cInt->ClickUp();
+    settings->BandWeighting = weighting->ClickUp();
     settings->Target = target->ClickUp();
     settings->LoadTargets();
     repaint();
@@ -191,6 +191,8 @@ void MainContentComponent::textEditorReturnKeyPressed(TextEditor &editor) {
         settings->MutationChance = mChance->textEditorReturnKeyPressed(editor);
     else if (editor.getName() == "cIntHigh")
         settings->CaptureInterval = cInt->textEditorReturnKeyPressed(editor);
+    else if (editor.getName() == "wHigh")
+        settings->BandWeighting = weighting->textEditorReturnKeyPressed(editor);
     editor.unfocusAllComponents();
 }
 
@@ -215,6 +217,8 @@ void MainContentComponent::textEditorEscapeKeyPressed(TextEditor &editor) {
         mChance->textEditorEscapeKeyPressed(editor);
     else if (editor.getName() == "cIntHigh")
         cInt->textEditorEscapeKeyPressed(editor);
+    else if (editor.getName() == "wHigh")
+        weighting->textEditorEscapeKeyPressed(editor);
     editor.unfocusAllComponents();
 }
 
@@ -408,6 +412,10 @@ void MainContentComponent::LoadGraphs() {
     cInt->LoadGraph(settings->CaptureInterval);
     addAndMakeVisible(cIntHigh);
     cIntHigh->addListener(this);
+    
+    weighting->LoadGraph(settings->BandWeighting);
+    addAndMakeVisible(wHigh);
+    wHigh->addListener(this);
     
     vector<pair<String, double> > targets;
     for (int i = 0 ; i < settings->Target.size() ; i++) {

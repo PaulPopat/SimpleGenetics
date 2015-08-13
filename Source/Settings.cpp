@@ -12,6 +12,7 @@
 using namespace std;
 
 void Settings::LoadTargets() {
+    vector< vector < double > > targets;
     for (int f = 0 ; f < Target.size() ; f++) {
         vector<double> TargetBinSummed (FFTSize, 0);
         if (Target[f].first != "Silence") {
@@ -21,8 +22,9 @@ void Settings::LoadTargets() {
             InputAudio[0] = NormalizeAudio(InputAudio[0]);
             TargetBinSummed = GetBin(InputAudio[0], FFTSize);
         }
-        Targets.push_back(TargetBinSummed);
+        targets.push_back(TargetBinSummed);
     }
+    Targets = targets;
 }
 
 Settings::Settings() {
@@ -39,22 +41,8 @@ Settings::Settings() {
     Population.push_back(make_pair(10, 0));
     workingDir = new File(File::getCurrentWorkingDirectory());
     LoadTargets();
-}
-
-Settings::Settings(Settings *toCopy) {
-    FFTSize = toCopy->FFTSize;
-    WaveSize = toCopy->WaveSize;
-    WaveCount = toCopy->WaveCount;
-    SampleRate = toCopy->SampleRate;
-    Channels = toCopy->Channels;
-    Factor = toCopy->Factor;
-    CaptureInterval = toCopy->CaptureInterval;
-    Target = toCopy->Target;
-    MutationAmount = toCopy->MutationAmount;
-    MutationChance = toCopy->MutationChance;
-    Population = toCopy->Population;
-    workingDir = new File(*toCopy->workingDir);
-    LoadTargets();
+    
+    BandWeighting.push_back(make_pair(10, 0));
 }
 
 Settings::Settings(File *Path) {
@@ -73,6 +61,7 @@ Settings::Settings(File *Path) {
         else if (line[0] == "MutationAmount") MutationAmount = LoadVectorSettings(i, settingsData);
         else if (line[0] == "MutationChance") MutationChance = LoadVectorSettings(i, settingsData);
         else if (line[0] == "PopulationSize") Population = LoadVectorSettings(i, settingsData);
+        else if (line[0] == "BandWeighting") BandWeighting = LoadVectorSettings(i, settingsData);
         i++;
     }
     workingDir = new File(Path->getParentDirectory());
@@ -97,6 +86,10 @@ double Settings::GetMutationAmount(double Position) {
 
 double Settings::GetCaptureInterval(double Position) {
     return Interpolate(Position, CaptureInterval);
+}
+
+double Settings::GetWeighting(double Position) {
+    return Interpolate(Position, BandWeighting);
 }
 
 vector<double> Settings::GetTarget(double Position) {
@@ -156,9 +149,25 @@ void Settings::Save(File *Path) {
     }
     f << "end" << endl;
     
+    f << "BandWeighting" << endl;
+    for (int i = 0 ; i < BandWeighting.size() ; i++) {
+        f << BandWeighting[i].first << " " << BandWeighting[i].second << endl;
+    }
+    f << "end" << endl;
+    
     delete workingDir;
     workingDir = new File(Path->getParentDirectory());
     
     f.close();
 }
 
+
+double Settings::GetHighWeighting() {
+    double weighting = 0;
+    for (int i = 0 ; i < BandWeighting.size() ; i++) {
+        if (BandWeighting[i].first > weighting) {
+            weighting = BandWeighting[i].first;
+        }
+    }
+    return weighting;
+}

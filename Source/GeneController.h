@@ -12,6 +12,7 @@
 #define GENECONTROLLER_H_INCLUDED
 #include <vector>
 #include <utility>
+#include "fftw3.h"
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PopMember.h"
 #include "Settings.h"
@@ -30,6 +31,10 @@ public:
     void LoadSettings(Settings *Setting);
     std::vector<std::vector<double> > GetCurrentAudio();
 private:
+    fftw_complex* input;
+    double *output;
+    fftw_plan ifft;
+    
     double RandomVal(double min, double max, double weighting);
     bool RandomBool();
     static bool Sorter(const std::pair<int, double> &left, const std::pair<int, double> &right);

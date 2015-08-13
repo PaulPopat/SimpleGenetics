@@ -64,7 +64,7 @@ void PopMember::AddMember(PopMember *Addition) {
     }
 }
 
-double PopMember::GetCloseness(vector<double> Target) {
+double PopMember::GetCloseness(vector<double> Target, Settings *settings) {
     double closeness = 0;
     vector<double> SummedMember(Target.size());
     for (int c = 0 ; c < data.size() ; c++) {
@@ -77,40 +77,37 @@ double PopMember::GetCloseness(vector<double> Target) {
     }
     for (int i = 0 ; i < SummedMember.size() ; i++) {
         SummedMember[i] /= data.size();
-        closeness += abs(SummedMember[i] - Target[i]) * (SummedMember.size() - i);
+        closeness += abs(SummedMember[i] - Target[i]) * settings->GetWeighting(i / SummedMember.size());
     }
     return closeness;
 }
 
-void PopMember::Mutate(double Amount) {
+void PopMember::Mutate(double Amount, Settings *settings) {
     int c = RandomVal(0, data.size(), 1);
     int b = RandomVal(0, data[c].size(), 1);
-    data[c][b]->Mutate(Amount);
+    data[c][b]->Mutate(Amount, settings);
 }
 
 
-vector<vector<double> > PopMember::GetAudio() {
+vector<vector<double> > PopMember::GetAudio(fftw_complex* input, double *output, fftw_plan &ifft) {
     int fftSize = data[0][0]->GetBinSize();
     vector<vector<double> > returnVal(data.size());
-    FFT *fft = new FFT(log2(fftSize), true);
-    FFT::Complex *input = new FFT::Complex[fftSize];
-    FFT::Complex *output = new FFT::Complex[fftSize];
-    for (int c = 0 ; c < data.size(); c++) {
+    
+    for (int c = 0 ; c < data.size() ; c++) {
         for (int i = 0 ; i < data[c].size() ; i++) {
-            vector<pair<double, double> > audio = data[c][i]->GetData();
+            vector<pair<double, double> > binData = data[c][i]->GetData();
+            input[fftSize][0] = 0;
+            input[fftSize][1] = 0;
             for (int x = 0 ; x < fftSize ; x++) {
-                input[x].r = audio[x].first;
-                input[x].i = audio[x].second;
+                input[x][0] = binData[x].first;
+                input[x][1] = binData[x].second;
             }
-            fft->perform(input, output);
-            for (int x = 0 ; x < fftSize ; x++) {
-                returnVal[c].push_back(output[x].r);
+            fftw_execute(ifft);
+            for (int y = 0 ; y < fftSize * 2 ; y++) {
+                returnVal[c].push_back(output[y] / fftSize);
             }
         }
     }
-    delete fft;
-    delete input;
-    delete output;
     return returnVal;
 }
 

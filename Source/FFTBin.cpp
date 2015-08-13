@@ -17,7 +17,7 @@ double RandomVal(double min, double max, double weighting) {
 
 FFTBin::FFTBin(int size) {
     for (int i = 0 ; i < size ; i++) {
-        data.push_back(make_pair(0, 0));
+        data.push_back(make_pair(RandomVal(-1, 1, 1), RandomVal(-1, 1, 1)));
     }
 }
 
@@ -47,10 +47,11 @@ vector<double> FFTBin::GetMagnitudes() {
     return output;
 }
 
-void FFTBin::Mutate(double amount) {
+void FFTBin::Mutate(double amount, Settings *settings) {
     int t = RandomVal(0, data.size(), 1);
-    data[t].first += RandomVal(-1, 1, 1) * amount;
-    data[t].second += RandomVal(-1, 1, 1) * amount;
+    double weighting = settings->GetWeighting(t / data.size()) / settings->GetHighWeighting();
+    data[t].first += RandomVal(-1, 1, 1) * amount * weighting;
+    data[t].second += RandomVal(-1, 1, 1) * amount * weighting;
 }
 
 vector< pair<double, double> > FFTBin::GetData() {
