@@ -26,15 +26,15 @@ void InputGraph::DrawLine(Graphics &g, pair<double, double> v1, pair<double, dou
 
 InputGraph::InputGraph(int lx, int ly, int sx, int sy, Colour FillColor, Colour LineColor, TextEditor *HighVal) {
     mainDisplay = new ProgressBox(make_pair(lx, ly), make_pair(sx, sy), FillColor, LineColor);
-    pair<int, int> boxSize = make_pair(sx / 6, sy / 4);
-    int xloc = (lx + (sx / 2)) - boxSize.first - 2;
+    pair<int, int> boxSize = make_pair(sx / 7, sy / 4);
+    int xloc = lx + (sx / 2) + 2;
     int yloc = (ly + (sy / 2)) - boxSize.second - 2;
     
     highVal = HighVal;
     highVal->setMultiLine(false);
     highVal->setCentrePosition(xloc, yloc);
     highVal->setSize(boxSize.first, boxSize.second);
-    highVal->setText(to_string(highPoint));
+    highVal->setText(String(highPoint));
     
     size = make_pair(sx, sy);
     bLeftLoc = make_pair(lx - (size.first / 2), ly - (size.second / 2));
@@ -65,23 +65,28 @@ void InputGraph::LoadGraph(vector<pair<double, double> >Input) {
     for (int i = 0 ; i < data.size(); i++) {
         if (highPoint < data[i].first) highPoint = data[i].first + (data[i].first / 4);
     }
-    highVal->setText(to_string(highPoint));
+    highVal->setText(String(highPoint));
 }
 
 void InputGraph::SetName(juce::String Name) {
     mainDisplay->SetName(Name);
 }
 
-void InputGraph::textEditorReturnKeyPressed(TextEditor &editor) {
+vector<pair<double, double> > InputGraph::textEditorReturnKeyPressed(TextEditor &editor) {
     String text = editor.getText();
     if (atof(text.getCharPointer())) {
         highPoint = atof(text.getCharPointer());
     }
-    editor.setText(to_string(highPoint));
+    editor.setText(String(highPoint));
+    for (int i = 0 ; i < data.size() ; i++) {
+        if (data[i].first > highPoint)
+            data[i].first = highPoint;
+    }
+    return data;
 }
 
 void InputGraph::textEditorEscapeKeyPressed(TextEditor &editor) {
-    editor.setText(to_string(highPoint));
+    editor.setText(String(highPoint));
 }
 
 void InputGraph::Click(pair<int, int> MousePoint, bool Alt, bool Ctl) {

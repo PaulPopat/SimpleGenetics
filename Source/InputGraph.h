@@ -23,7 +23,7 @@ public:
     void Draw(Graphics &g, double progress);
     void LoadGraph(std::vector<std::pair<double, double> >Input);
     void SetName(String Name);
-    void textEditorReturnKeyPressed(TextEditor &editor);
+    std::vector<std::pair<double, double> > textEditorReturnKeyPressed(TextEditor &editor);
     void textEditorEscapeKeyPressed(TextEditor &editor);
     void Click(std::pair<int,int> MousePoint, bool Alt, bool Ctl);
     void Drag(std::pair<int, int> MousePoint);

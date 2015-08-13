@@ -49,6 +49,7 @@ MainContentComponent::~MainContentComponent() {
     delete stopCalculation;
     delete listen;
     delete saveAudio;
+    delete maxLevel;
     
     delete population;
     delete mAmount;
@@ -65,7 +66,7 @@ void MainContentComponent::getNextAudioBlock (const AudioSourceChannelInfo& buff
         bufferToFill.clearActiveBufferRegion();
         audio = controller->GetCurrentAudio();
         for (int c = 0 ; c < audio.size() ; c++) {
-            NormalizeAudio(audio[c]);
+            audio[c] = NormalizeAudio(audio[c]);
         }
         return;
     }
@@ -73,7 +74,7 @@ void MainContentComponent::getNextAudioBlock (const AudioSourceChannelInfo& buff
         if (audioPos >= audio[0].size()) {
             audio = controller->GetCurrentAudio();
             for (int c = 0 ; c < audio.size() ; c++) {
-                NormalizeAudio(audio[c]);
+                audio[c] = NormalizeAudio(audio[c]);
             }
             audioPos = 0;
         }
@@ -81,7 +82,11 @@ void MainContentComponent::getNextAudioBlock (const AudioSourceChannelInfo& buff
             int channel = c;
             if (channel >= audio.size())
                 channel = audio.size() - 1;
-            bufferToFill.buffer->setSample(c, i, audio[c][audioPos]);
+            bufferToFill.buffer->setSample(c, i, audio[channel][audioPos]);
+            if (abs(audio[channel][audioPos]) > maxLevelVal)
+                maxLevelVal = abs(audio[channel][audioPos]);
+            else
+                maxLevelVal -= 0.000001;
         }
         audioPos++;
     }
@@ -114,6 +119,8 @@ void MainContentComponent::paint (Graphics& g) {
         listen->SetFillColor(Colour(255, 120, 0));
     listen->Draw(g);
     saveAudio->Draw(g);
+    maxLevel->SetText(String(maxLevelVal).substring(0, 4));
+    maxLevel->Draw(g);
     
     population->Draw(g, controller->GetPosition());
     mAmount->Draw(g, controller->GetPosition());
@@ -203,13 +210,13 @@ void MainContentComponent::textEditorReturnKeyPressed(TextEditor &editor) {
     else if (editor.getName() == "Factor")
         CheckSettings(editor, settings->Factor);
     else if (editor.getName() == "popHigh")
-        population->textEditorReturnKeyPressed(editor);
+        settings->Population = population->textEditorReturnKeyPressed(editor);
     else if (editor.getName() == "mAmountHigh")
-        mAmount->textEditorReturnKeyPressed(editor);
+        settings->MutationAmount = mAmount->textEditorReturnKeyPressed(editor);
     else if (editor.getName() == "mChanceHigh")
-        mChance->textEditorReturnKeyPressed(editor);
+        settings->MutationChance = mChance->textEditorReturnKeyPressed(editor);
     else if (editor.getName() == "cIntHigh")
-        cInt->textEditorReturnKeyPressed(editor);
+        settings->CaptureInterval = cInt->textEditorReturnKeyPressed(editor);
     editor.unfocusAllComponents();
 }
 
@@ -348,8 +355,8 @@ pair<DrawBox*,DrawBox*>MainContentComponent::LoadDisplay(int sx, int sy, int lx,
 pair<TextEditor*,DrawBox*>MainContentComponent::LoadEditor(int sx, int sy, int lx, int ly, String text, String name) {
     TextEditor *part1 = new TextEditor(name);
     part1->setMultiLine(false);
-    part1->setCentrePosition(lx - (sx / 2), ly - (sy / 2));
-    part1->setSize(sx / 2, sy);
+    part1->setCentrePosition(lx - (sx / 3), ly - (sy / 2));
+    part1->setSize(sx / 3, sy);
     addAndMakeVisible(part1);
     part1->addListener(this);
     DrawBox *part2 = new DrawBox(make_pair(lx + (sx / 4), ly), make_pair(sx / 2, sy));
@@ -412,7 +419,7 @@ void MainContentComponent::CheckSettings(TextEditor &editor, int &setting) {
     if (atoi(text.getCharPointer())) {
         setting = atoi(text.getCharPointer());
     }
-    editor.setText(to_string(setting));
+    editor.setText(String(setting));
     
 }
 

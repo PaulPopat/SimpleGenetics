@@ -44,6 +44,7 @@ private:
     File *workingDirectory = new File(File::getCurrentWorkingDirectory());
     bool isPlaying = false;
     int audioPos = 0;
+    double maxLevelVal = 0;
     std::vector<std::vector<double> > audio;
     
     TextEditor *popHigh = new TextEditor("popHigh");
@@ -62,6 +63,7 @@ private:
     DrawBox* stopCalculation = LoadBox(150, 30, 720, 350, "Stop Calculation");
     DrawBox* listen = LoadBox(150, 30, 720, 385, "Monitor Output");
     DrawBox* saveAudio = LoadBox(150, 30, 720, 420, "Save Audio");
+    DrawBox* maxLevel = LoadBox(100, 30, 400, 580, "Audio Level");
     
     std::pair<TextEditor*,DrawBox*> fftSize = LoadEditor(240, 30, 675, 20, "FFT Size", "FFTSize");
     std::pair<TextEditor*,DrawBox*> waveSize = LoadEditor(240, 30, 675, 55, "Bins Per Frame", "WaveSize");
