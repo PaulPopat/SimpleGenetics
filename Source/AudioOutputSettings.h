@@ -13,20 +13,18 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "AudioWriter.h"
-#include "Settings.h"
 #include "CustomLookAndFeel.h"
+#include "Settings.h"
 
-
-class AudioOutputSettings    : public Component, public Button::Listener
-{
+class AudioOutputSettings : public Component, public Button::Listener {
 public:
     AudioOutputSettings(File Input, File Output);
     ~AudioOutputSettings();
 
-    void paint (Graphics&) override;
+    void paint(Graphics&) override;
     void resized() override;
-    
-    void buttonClicked(Button *) override;
+
+    void buttonClicked(Button*) override;
 
 private:
     TextEditor bitDepth;
@@ -36,10 +34,9 @@ private:
     ScopedPointer<FFTW::AudioWriter> writer;
     File input;
     File output;
-    
+
     TextButton goButton;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioOutputSettings)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioOutputSettings)
 };
 
-
-#endif  // AUDIOOUTPUTSETTINGS_H_INCLUDED
+#endif // AUDIOOUTPUTSETTINGS_H_INCLUDED

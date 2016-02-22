@@ -12,59 +12,58 @@
 #define MAINCOMPONENT_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Settings.h"
-#include "GeneController.h"
 #include "AudioOutputSettings.h"
-#include "RandomGen.h"
-#include "UserInterface.h"
 #include "CustomLookAndFeel.h"
+#include "GeneController.h"
 #include "LiveAudioDecoder.h"
-
+#include "RandomGen.h"
+#include "Settings.h"
+#include "UserInterface.h"
 
 class SimpleDocumentWindow : public DocumentWindow {
     using DocumentWindow::DocumentWindow;
-    void closeButtonPressed() override {
+    void closeButtonPressed() override
+    {
         delete this;
     }
 };
 
-class MainContentComponent :
-public AudioAppComponent,
-public MenuBarModel,
-public ApplicationCommandTarget {
+class MainContentComponent : public AudioAppComponent,
+                             public MenuBarModel,
+                             public ApplicationCommandTarget {
 public:
     MainContentComponent();
     ~MainContentComponent();
-    
-    void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override;
-    void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override;
+
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
+    void getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill) override;
     void releaseResources() override;
-    void paint (Graphics& g) override;
+    void paint(Graphics& g) override;
     void resized() override;
-    
-    ApplicationCommandTarget * getNextCommandTarget() override;
-    void getAllCommands(Array<CommandID> &commands) override;
-    void getCommandInfo(CommandID commandID, ApplicationCommandInfo &result) override;
-    bool perform(const InvocationInfo &info) override;
-    
+
+    ApplicationCommandTarget* getNextCommandTarget() override;
+    void getAllCommands(Array<CommandID>& commands) override;
+    void getCommandInfo(CommandID commandID, ApplicationCommandInfo& result) override;
+    bool perform(const InvocationInfo& info) override;
+
     StringArray getMenuBarNames() override;
-    PopupMenu getMenuForIndex (int menuIndex, const String&) override;
-    void menuItemSelected (int menuItemID, int) override;
-    
+    PopupMenu getMenuForIndex(int menuIndex, const String&) override;
+    void menuItemSelected(int menuItemID, int) override;
+
     enum CommandIDs {
-        Open                = 0x1001,
-        Save                = 0x1002,
-        SaveAs              = 0x1003,
-        Create              = 0x1004,
-        SaveOutput          = 0x2001,
-        PlaybackSettings    = 0x2002,
-        Run                 = 0x3001,
-        Cancel              = 0x3002,
+        Open = 0x1001,
+        Save = 0x1002,
+        SaveAs = 0x1003,
+        Create = 0x1004,
+        SaveOutput = 0x2001,
+        PlaybackSettings = 0x2002,
+        Run = 0x3001,
+        Cancel = 0x3002,
     };
-    
+
 private:
     ScopedPointer<Settings> settings;
-    Array<ScopedPointer<GeneController>> bands;
+    Array<ScopedPointer<GeneController> > bands;
     Utilities::Random gen;
     ScopedPointer<UserInterface> interface;
     Component::SafePointer<SimpleDocumentWindow> writeAudio;
@@ -73,17 +72,15 @@ private:
     ScopedPointer<FFTW::LiveAudioDecoder> decoder;
     ScopedPointer<ApplicationCommandManager> commands;
     bool isRunning;
-    
+
     CustomLookAndFeel laf;
-    
+
     void SaveAudio();
     void AudioSettings();
     void RunAlgorithm();
     void CancelAlgorithm();
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainContentComponent)
 };
 
-
-
-#endif  // MAINCOMPONENT_H_INCLUDED
+#endif // MAINCOMPONENT_H_INCLUDED

@@ -12,30 +12,27 @@
 #define PROGRESSWATCHER_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "ListenerComponents.h"
 #include "CustomLookAndFeel.h"
+#include "ListenerComponents.h"
 
-
-class ProgressWatcher    : public GeneControllerListenerComponent
-{
+class ProgressWatcher : public GeneControllerListenerComponent {
 public:
     ProgressWatcher(String Type);
     ~ProgressWatcher();
 
-    void paint (Graphics&) override;
+    void paint(Graphics&) override;
     void resized() override;
-    
-    void BreedComplete(const BreedCompleteData & data) override;
+
+    void BreedComplete(const BreedCompleteData& data) override;
 
 private:
     Array<double> progress;
-    Array<Rectangle<int>> bounds;
-    
+    Array<Rectangle<int> > bounds;
+
     String type;
-    
+
     void SetUpBounds();
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ProgressWatcher)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ProgressWatcher)
 };
 
-
-#endif  // PROGRESSWATCHER_H_INCLUDED
+#endif // PROGRESSWATCHER_H_INCLUDED

@@ -19,11 +19,11 @@ AudioOutputSettings::AudioOutputSettings(File Input, File Output)
     addAndMakeVisible(bitDepth);
     addAndMakeVisible(sampleRate);
     addAndMakeVisible(channels);
-    
+
     goButton.setButtonText("Start");
     addAndMakeVisible(goButton);
     goButton.addListener(this);
-    
+
     input = Input;
     output = Output;
 }
@@ -32,7 +32,7 @@ AudioOutputSettings::~AudioOutputSettings()
 {
 }
 
-void AudioOutputSettings::paint (Graphics& g)
+void AudioOutputSettings::paint(Graphics& g)
 {
     g.fillAll(findColour(CustomLookAndFeel::ColourIDs::Background));
     g.setColour(findColour(CustomLookAndFeel::ColourIDs::Text));
@@ -49,11 +49,12 @@ void AudioOutputSettings::resized()
     goButton.setBounds(0, getHeight() / 5 * 3, getWidth(), getHeight() / 5);
 }
 
-void AudioOutputSettings::buttonClicked(Button * b) {
+void AudioOutputSettings::buttonClicked(Button* b)
+{
     writer = new FFTW::AudioWriter(input, output,
-                                   sampleRate.getText().getIntValue(),
-                                   channels.getText().getIntValue(),
-                                   bitDepth.getText().getIntValue());
+        sampleRate.getText().getIntValue(),
+        channels.getText().getIntValue(),
+        bitDepth.getText().getIntValue());
     bar = new ProgressBar(writer->Progress);
     bar->setBounds(0, getHeight() / 5 * 4, getWidth(), getHeight() / 5);
     addAndMakeVisible(bar);

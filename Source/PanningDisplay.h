@@ -12,28 +12,26 @@
 #define PANNINGDISPLAY_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "ListenerComponents.h"
 #include "CustomLookAndFeel.h"
+#include "ListenerComponents.h"
 
-class PanningDisplay    : public GeneControllerListenerComponent
-{
+class PanningDisplay : public GeneControllerListenerComponent {
 public:
     PanningDisplay();
     ~PanningDisplay();
 
-    void paint (Graphics&) override;
+    void paint(Graphics&) override;
     void resized() override;
-    
-    void BreedComplete(const BreedCompleteData & data) override;
+
+    void BreedComplete(const BreedCompleteData& data) override;
 
 private:
     Array<FFT::Complex> positions;
     Array<FFT::Complex> targets;
     Rectangle<int> bounds;
-    
+
     Colour InterpolateColour(Colour c1, Colour c2, double progress);
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PanningDisplay)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PanningDisplay)
 };
 
-
-#endif  // PANNINGDISPLAY_H_INCLUDED
+#endif // PANNINGDISPLAY_H_INCLUDED

@@ -18,19 +18,19 @@ namespace Biology {
 class Gene {
 public:
     /** default for arrays and such. Greats an empty object so not very useful */
-    Gene() { }
+    Gene() {}
     /** COPIES data into this gene to breed. Takes some from mother and some from father.
      Also takes timbre mode bool from the mother. */
-    Gene(const Gene & Mother, const Gene & Father);
+    Gene(const Gene& Mother, const Gene& Father);
     /** creates new data with the random generator pointer. stores generator but
      does not take owner ship so keep it in scope!*/
-    Gene(int FrameLength, int NumFrames, bool TimbreMode, Utilities::Random * Gen);
+    Gene(int FrameLength, int NumFrames, bool TimbreMode, Utilities::Random* Gen);
     /** if you are using this for timbre call this for the metric. if it is in
      panning mode rather than timbre then this will return nothing */
-    double GetMetric(const Array<double> & Target) const;
+    double GetMetric(const Array<double>& Target) const;
     /** if you are using this for panning call this for the metric. if it is in
      timbre mode rather than panning then this will return nothing */
-    double GetMetric(const FFT::Complex & Target) const;
+    double GetMetric(const FFT::Complex& Target) const;
     /** mutates with a weighting for how much each band should be affected.
      weighting must be at least the size of a frame */
     void Mutate(double Amount, const Array<double> Weighting);
@@ -39,21 +39,20 @@ public:
     /** returns the number of frames in this gene */
     int GetNumFrames() const;
     /** returns the average band amplitude. will do nothing if not in timbre mode */
-    const Array<double> & GetSpectrum() const;
+    const Array<double>& GetSpectrum() const;
     /** returns the average location. will do nothing if in timbre mode */
-    const FFT::Complex & GetLocation() const;
+    const FFT::Complex& GetLocation() const;
     /** returns a reference to the fft frame of given index */
-    const ComplexFrame & GetFrame(int i) const;
+    const ComplexFrame& GetFrame(int i) const;
+
 private:
     void CalculateSpectrumOrLocation();
     Array<ComplexFrame> data;
     Array<double> spectrum;
     FFT::Complex location;
-    Utilities::Random * gen;
+    Utilities::Random* gen;
     bool timbreMode;
 };
-    
 }
 
-
-#endif  // POPMEMBER_H_INCLUDED
+#endif // POPMEMBER_H_INCLUDED

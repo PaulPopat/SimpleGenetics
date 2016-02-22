@@ -10,7 +10,8 @@
 
 #include "CustomLookAndFeel.h"
 
-CustomLookAndFeel::CustomLookAndFeel() {
+CustomLookAndFeel::CustomLookAndFeel()
+{
     background = Colour(20, 20, 20);
     outline = Colour(180, 180, 180);
     line = Colour(240, 240, 240);
@@ -22,7 +23,7 @@ CustomLookAndFeel::CustomLookAndFeel() {
     text = Colour(255, 255, 180);
     textLow = Colour(90, 90, 90);
     richbackground = Colour(40, 40, 40);
-    
+
     setColour(ColourIDs::Background, background);
     setColour(ColourIDs::Outline, outline);
     setColour(ColourIDs::Line, line);
@@ -63,19 +64,24 @@ CustomLookAndFeel::CustomLookAndFeel() {
     setColour(ListBox::ColourIds::textColourId, text);
 }
 
-void CustomLookAndFeel::drawTickBox (Graphics& g, Component& component,
-                  float x, float y, float w, float h,
-                  bool ticked,
-                  bool isEnabled,
-                  bool isMouseOverButton,
-                  bool isButtonDown) {
-    if (isMouseOverButton) g.setColour(findColour(ColourIDs::Line));
-    else g.setColour(findColour(ColourIDs::Outline));
+void CustomLookAndFeel::drawTickBox(Graphics& g, Component& component,
+    float x, float y, float w, float h,
+    bool ticked,
+    bool isEnabled,
+    bool isMouseOverButton,
+    bool isButtonDown)
+{
+    if (isMouseOverButton)
+        g.setColour(findColour(ColourIDs::Line));
+    else
+        g.setColour(findColour(ColourIDs::Outline));
     g.drawRect((int)x, (int)y, (int)w, (int)h, 2);
-    
+
     if (ticked || isButtonDown) {
-        if (ticked) g.setColour(findColour(ColourIDs::Text));
-        else g.setColour(findColour(ColourIDs::DataLow));
+        if (ticked)
+            g.setColour(findColour(ColourIDs::Text));
+        else
+            g.setColour(findColour(ColourIDs::DataLow));
         g.fillRect((int)x + 2, (int)y + 2, (int)w - 4, (int)h - 4);
     }
 }

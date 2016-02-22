@@ -10,39 +10,45 @@
 
 #ifndef RANDOMGEN_H_INCLUDED
 #define RANDOMGEN_H_INCLUDED
-#include <cmath>
 #include "../JuceLibraryCode/JuceHeader.h"
+#include <cmath>
 
 namespace Utilities {
 
 class Random {
 public:
-    Random() {
+    Random()
+    {
         rng.setSeedRandomly();
     }
-    double GetDouble(double min, double max) {
+    double GetDouble(double min, double max)
+    {
         return rng.nextDouble() * (max - min) + min;
     }
-    float GetFloat(float min, float max) {
+    float GetFloat(float min, float max)
+    {
         return rng.nextFloat() * (max - min) + min;
     }
-    int GetInt(int min, int max) {
+    int GetInt(int min, int max)
+    {
         return rng.nextInt(Range<int>(min, max));
     }
-    int GetWeightedInt(int min, int max, double weighting) {
+    int GetWeightedInt(int min, int max, double weighting)
+    {
         return std::pow(rng.nextDouble(), weighting) * ((double)max - (double)min) + (double)min;
     }
-    double GetWeightedDouble(double min, double max, double weighting) {
+    double GetWeightedDouble(double min, double max, double weighting)
+    {
         return std::pow(rng.nextDouble(), weighting) * (max - min) + min;
     }
-    bool GetBool() {
+    bool GetBool()
+    {
         return rng.nextBool();
     }
+
 private:
     juce::Random rng;
 };
-    
 }
 
-
-#endif  // RANDOMGEN_H_INCLUDED
+#endif // RANDOMGEN_H_INCLUDED

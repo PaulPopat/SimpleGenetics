@@ -12,28 +12,25 @@
 #define PROGRESSLINE_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "ListenerComponents.h"
 #include "CustomLookAndFeel.h"
+#include "ListenerComponents.h"
 #include "Settings.h"
 
-
-class ProgressLine    : public GeneControllerListenerComponent
-{
+class ProgressLine : public GeneControllerListenerComponent {
 public:
-    ProgressLine(Settings * s);
+    ProgressLine(Settings* s);
     ~ProgressLine();
 
-    void paint (Graphics&) override;
+    void paint(Graphics&) override;
     void resized() override;
-    
-    void BreedComplete(const BreedCompleteData & data) override;
+
+    void BreedComplete(const BreedCompleteData& data) override;
 
 private:
     Rectangle<int> bounds;
     Array<double> progress;
-    Settings * settings;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ProgressLine)
+    Settings* settings;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ProgressLine)
 };
 
-
-#endif  // PROGRESSLINE_H_INCLUDED
+#endif // PROGRESSLINE_H_INCLUDED

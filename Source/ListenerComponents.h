@@ -15,23 +15,22 @@
 #include "GeneController.h"
 #include "Settings.h"
 
-class GeneControllerListenerComponent :
-public GeneController::Listener,
-public Component,
-protected AsyncUpdater {
+class GeneControllerListenerComponent : public GeneController::Listener,
+                                        public Component,
+                                        protected AsyncUpdater {
 public:
     ~GeneControllerListenerComponent() = default;
     void handleAsyncUpdate() override { repaint(); }
 };
 
-class SettingsListenerComponent :
-public Settings::Listener,
-public Component {
+class SettingsListenerComponent : public Settings::Listener,
+                                  public Component {
 public:
-    SettingsListenerComponent(String Name) : Settings::Listener(Name) {}
+    SettingsListenerComponent(String Name)
+        : Settings::Listener(Name)
+    {
+    }
     ~SettingsListenerComponent() = default;
 };
 
-
-
-#endif  // LISTENERCOMPONENTS_H_INCLUDED
+#endif // LISTENERCOMPONENTS_H_INCLUDED

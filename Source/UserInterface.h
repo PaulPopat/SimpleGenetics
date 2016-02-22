@@ -12,42 +12,40 @@
 #define USERINTERFACE_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "ListenerComponents.h"
-#include "Settings.h"
-#include "GeneController.h"
-#include "FrequencyGraph.h"
-#include "PanningDisplay.h"
-#include "ProgressWatcher.h"
-#include "ValueEditor.h"
-#include "GraphEditor.h"
-#include "EQCurveEditor.h"
 #include "AudioBin.h"
-#include "TargetEditor.h"
-#include "ProgressLine.h"
 #include "CustomLookAndFeel.h"
+#include "EQCurveEditor.h"
+#include "FrequencyGraph.h"
+#include "GeneController.h"
+#include "GraphEditor.h"
+#include "ListenerComponents.h"
+#include "PanningDisplay.h"
+#include "ProgressLine.h"
+#include "ProgressWatcher.h"
+#include "Settings.h"
+#include "TargetEditor.h"
+#include "ValueEditor.h"
 
-
-class UserInterface    : public Component
-{
+class UserInterface : public Component {
 public:
-    UserInterface(XmlElement * e, Settings * s);
+    UserInterface(XmlElement* e, Settings* s);
     ~UserInterface();
 
-    void paint (Graphics&);
+    void paint(Graphics&);
     void resized();
-    
-    void LoadDisplay(XmlElement * e, GeneControllerListenerComponent * l);
-    void LoadInterface(XmlElement * e, SettingsListenerComponent * l);
-    void LoadTargetEditor(XmlElement * e, TargetEditor * l);
-    void LoadAudioBin(XmlElement * e, AudioBin * l);
-    void LoadGraphEditor(XmlElement * e, GraphEditor * l);
-    
-    void AddControllerListeners(GeneController * controller);
-    void AddSettingsListeners(Settings * settings);
+
+    void LoadDisplay(XmlElement* e, GeneControllerListenerComponent* l);
+    void LoadInterface(XmlElement* e, SettingsListenerComponent* l);
+    void LoadTargetEditor(XmlElement* e, TargetEditor* l);
+    void LoadAudioBin(XmlElement* e, AudioBin* l);
+    void LoadGraphEditor(XmlElement* e, GraphEditor* l);
+
+    void AddControllerListeners(GeneController* controller);
+    void AddSettingsListeners(Settings* settings);
 
 private:
     void LinkInternals();
-    
+
     struct DisplayWithBounds {
         ScopedPointer<GeneControllerListenerComponent> Display;
         Rectangle<double> Bounds;
@@ -68,13 +66,12 @@ private:
         ScopedPointer<GraphEditor> Interface;
         Rectangle<double> Bounds;
     };
-    
-    Array<ScopedPointer<DisplayWithBounds>> displays;
-    Array<ScopedPointer<InterfaceWithBounds>> interfaces;
-    Array<ScopedPointer<AudioBinWithBounds>> audioBins;
-    Array<ScopedPointer<TargetEditorWithBounds>> targetEditors;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (UserInterface)
+
+    Array<ScopedPointer<DisplayWithBounds> > displays;
+    Array<ScopedPointer<InterfaceWithBounds> > interfaces;
+    Array<ScopedPointer<AudioBinWithBounds> > audioBins;
+    Array<ScopedPointer<TargetEditorWithBounds> > targetEditors;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(UserInterface)
 };
 
-
-#endif  // USERINTERFACE_H_INCLUDED
+#endif // USERINTERFACE_H_INCLUDED

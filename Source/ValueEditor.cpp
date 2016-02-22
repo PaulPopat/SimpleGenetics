@@ -11,7 +11,8 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ValueEditor.h"
 
-ValueEditor::ValueEditor(String Title, String Name) : SettingsListenerComponent(Name)
+ValueEditor::ValueEditor(String Title, String Name)
+    : SettingsListenerComponent(Name)
 {
     editor.addListener(this);
     editor.setText("No Settings!");
@@ -25,7 +26,7 @@ ValueEditor::~ValueEditor()
 {
 }
 
-void ValueEditor::paint (Graphics& g)
+void ValueEditor::paint(Graphics& g)
 {
     g.setColour(findColour(CustomLookAndFeel::ColourIDs::Text));
     g.setFont(12);
@@ -37,34 +38,37 @@ void ValueEditor::paint (Graphics& g)
 
 void ValueEditor::resized()
 {
-    bounds = Rectangle<int> (2, 2, getWidth() - 4, getHeight() - 4);
-    titleBounds = Rectangle<int> (bounds.getX(), bounds.getY(), bounds.getWidth() / 2, bounds.getHeight());
-    editorBounds = Rectangle<int> (titleBounds.getTopRight(), bounds.getBottomRight());
+    bounds = Rectangle<int>(2, 2, getWidth() - 4, getHeight() - 4);
+    titleBounds = Rectangle<int>(bounds.getX(), bounds.getY(), bounds.getWidth() / 2, bounds.getHeight());
+    editorBounds = Rectangle<int>(titleBounds.getTopRight(), bounds.getBottomRight());
     editor.setBounds(editorBounds.reduced(2));
 }
 
-void ValueEditor::SettingsChanged(Settings * s) {
+void ValueEditor::SettingsChanged(Settings* s)
+{
     if (!s->IsLoaded()) {
         editor.setText("No Settings");
         editor.setReadOnly(true);
         return;
     }
-    //editor.setText(e->getStringAttribute("value"));
     editor.setText(s->GetStringValue(elementName));
     editor.setReadOnly(false);
     repaint();
 }
 
-void ValueEditor::GetSettings(Settings * s) {
-    XmlElement * e = new XmlElement(elementName);
+void ValueEditor::GetSettings(Settings* s)
+{
+    XmlElement* e = new XmlElement(elementName);
     e->setAttribute("value", editor.getText());
     s->AddXmlElement(e);
 }
 
-void ValueEditor::textEditorReturnKeyPressed(TextEditor &) {
+void ValueEditor::textEditorReturnKeyPressed(TextEditor&)
+{
     unfocusAllComponents();
 }
 
-void ValueEditor::textEditorEscapeKeyPressed(TextEditor &) {
+void ValueEditor::textEditorEscapeKeyPressed(TextEditor&)
+{
     unfocusAllComponents();
 }

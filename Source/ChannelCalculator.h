@@ -14,14 +14,11 @@
 
 namespace Utilities {
 
-    FFT::Complex GetChannelLocation(int Channel, int NumChannels);
+FFT::Complex GetChannelLocation(int Channel, int NumChannels);
 
-    double GetChannelAmp(FFT::Complex Location, int NumChannels, int Channel);
-    
-    FFT::Complex GetPosition(Array<double> Channels);
-    
+double GetChannelAmp(FFT::Complex Location, int NumChannels, int Channel);
+
+FFT::Complex GetPosition(Array<double> Channels);
 }
 
-
-
-#endif  // CHANNELCALCULATOR_H_INCLUDED
+#endif // CHANNELCALCULATOR_H_INCLUDED
