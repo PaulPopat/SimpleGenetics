@@ -1,38 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="bK1vf3" name="SimpleGenetics" projectType="guiapp" version="1.0.0"
-              bundleIdentifier="com.yourcompany.SimpleGenetics" includeBinaryInAppConfig="1"
-              jucerVersion="3.2.0" companyName="PaulPopat" companyEmail="p.t.popat@googlemail.com">
+              bundleIdentifier="com.PaulPopat.SimpleGenetics" includeBinaryInAppConfig="1"
+              jucerVersion="4.1.0" companyName="PaulPopat" companyEmail="p.t.popat@googlemail.com">
   <MAINGROUP id="POgAaW" name="SimpleGenetics">
+    <GROUP id="{E4B5AD75-D513-CD06-274E-264422D0E387}" name="Layouts">
+      <FILE id="TH1JAo" name="GenericSave.xml" compile="0" resource="1" file="Layouts/GenericSave.xml"/>
+      <FILE id="jdURd9" name="UILayout.xml" compile="0" resource="1" file="Layouts/UILayout.xml"/>
+    </GROUP>
     <GROUP id="{4F74FEBA-4CF4-BFD5-E050-6E8D63CC37E1}" name="Source">
-      <GROUP id="{8DF5F502-113E-5B85-54EA-5BEA65152914}" name="UserInterface">
-        <FILE id="yZA7pd" name="TargetDisplay.cpp" compile="1" resource="0"
-              file="Source/TargetDisplay.cpp"/>
-        <FILE id="Gb1put" name="TargetDisplay.h" compile="0" resource="0" file="Source/TargetDisplay.h"/>
-        <FILE id="BcwL46" name="ProgressBox.cpp" compile="1" resource="0" file="Source/ProgressBox.cpp"/>
-        <FILE id="ARhEv3" name="ProgressBox.h" compile="0" resource="0" file="Source/ProgressBox.h"/>
-        <FILE id="Bo10xt" name="DrawBox.cpp" compile="1" resource="0" file="Source/DrawBox.cpp"/>
-        <FILE id="EBLEcp" name="DrawBox.h" compile="0" resource="0" file="Source/DrawBox.h"/>
-        <FILE id="jOS1MH" name="InputGraph.cpp" compile="1" resource="0" file="Source/InputGraph.cpp"/>
-        <FILE id="ekZvzm" name="InputGraph.h" compile="0" resource="0" file="Source/InputGraph.h"/>
+      <GROUP id="{D3156A54-A3CE-7F99-00AB-C04D56E94C1B}" name="SettingsEditors">
+        <FILE id="bFyG4s" name="AudioBin.cpp" compile="1" resource="0" file="Source/AudioBin.cpp"/>
+        <FILE id="OC2aAH" name="AudioBin.h" compile="0" resource="0" file="Source/AudioBin.h"/>
+        <FILE id="k4fIt1" name="EQCurveEditor.cpp" compile="1" resource="0"
+              file="Source/EQCurveEditor.cpp"/>
+        <FILE id="rRjMFC" name="EQCurveEditor.h" compile="0" resource="0" file="Source/EQCurveEditor.h"/>
+        <FILE id="cTbHOB" name="GraphEditor.cpp" compile="1" resource="0" file="Source/GraphEditor.cpp"/>
+        <FILE id="Wt8mJy" name="GraphEditor.h" compile="0" resource="0" file="Source/GraphEditor.h"/>
+        <FILE id="wt0jA7" name="TargetEditor.cpp" compile="1" resource="0"
+              file="Source/TargetEditor.cpp"/>
+        <FILE id="CMZQWc" name="TargetEditor.h" compile="0" resource="0" file="Source/TargetEditor.h"/>
+        <FILE id="sNy2vc" name="ValueEditor.cpp" compile="1" resource="0" file="Source/ValueEditor.cpp"/>
+        <FILE id="cne24l" name="ValueEditor.h" compile="0" resource="0" file="Source/ValueEditor.h"/>
       </GROUP>
-      <GROUP id="{C7A6BD57-C923-1769-C3E5-DCEEB94FB402}" name="Settings">
-        <FILE id="XPEhFC" name="Settings.cpp" compile="1" resource="0" file="Source/Settings.cpp"/>
-        <FILE id="eMSfZF" name="Settings.h" compile="0" resource="0" file="Source/Settings.h"/>
-        <FILE id="Ah76Gr" name="SettingsUtils.cpp" compile="1" resource="0"
-              file="Source/SettingsUtils.cpp"/>
-        <FILE id="ZdkZdR" name="SettingsUtils.h" compile="0" resource="0" file="Source/SettingsUtils.h"/>
+      <GROUP id="{06D2FBFD-BA85-81FF-1E44-269DA3ADDD20}" name="ProgressUpdates">
+        <FILE id="i1vwZs" name="FrequencyGraph.cpp" compile="1" resource="0"
+              file="Source/FrequencyGraph.cpp"/>
+        <FILE id="So90ou" name="FrequencyGraph.h" compile="0" resource="0"
+              file="Source/FrequencyGraph.h"/>
+        <FILE id="ApyoiZ" name="PanningDisplay.cpp" compile="1" resource="0"
+              file="Source/PanningDisplay.cpp"/>
+        <FILE id="oVqqOy" name="PanningDisplay.h" compile="0" resource="0"
+              file="Source/PanningDisplay.h"/>
+        <FILE id="yM8k2A" name="ProgressLine.cpp" compile="1" resource="0"
+              file="Source/ProgressLine.cpp"/>
+        <FILE id="Uujs7V" name="ProgressLine.h" compile="0" resource="0" file="Source/ProgressLine.h"/>
+        <FILE id="ljP2aB" name="ProgressWatcher.cpp" compile="1" resource="0"
+              file="Source/ProgressWatcher.cpp"/>
+        <FILE id="PPxp39" name="ProgressWatcher.h" compile="0" resource="0"
+              file="Source/ProgressWatcher.h"/>
       </GROUP>
-      <GROUP id="{32A27F90-8460-356C-6C0A-F2C08F915370}" name="Algorithm">
-        <FILE id="GYJ1cq" name="GeneController.cpp" compile="1" resource="0"
+      <GROUP id="{9F89F9DB-2ACF-07B6-CE61-831191A7F350}" name="Utilities">
+        <FILE id="MnKCFG" name="ListenerComponents.h" compile="0" resource="0"
+              file="Source/ListenerComponents.h"/>
+        <FILE id="CO0GMP" name="LiveAudioDecoder.cpp" compile="1" resource="0"
+              file="Source/LiveAudioDecoder.cpp"/>
+        <FILE id="lYTc26" name="LiveAudioDecoder.h" compile="0" resource="0"
+              file="Source/LiveAudioDecoder.h"/>
+        <FILE id="wTPzcG" name="BandCalculator.h" compile="0" resource="0"
+              file="Source/BandCalculator.h"/>
+        <FILE id="EwaXzx" name="BandCalculator.cpp" compile="1" resource="0"
+              file="Source/BandCalculator.cpp"/>
+        <FILE id="xtbcoV" name="ChannelCalculator.h" compile="0" resource="0"
+              file="Source/ChannelCalculator.h"/>
+        <FILE id="FnJr26" name="ChannelCalculator.cpp" compile="1" resource="0"
+              file="Source/ChannelCalculator.cpp"/>
+        <FILE id="qqJhlk" name="AudioLoader.h" compile="0" resource="0" file="Source/AudioLoader.h"/>
+        <FILE id="u7ICck" name="AudioLoader.cpp" compile="1" resource="0" file="Source/AudioLoader.cpp"/>
+        <FILE id="bboGEl" name="RandomGen.h" compile="0" resource="0" file="Source/RandomGen.h"/>
+        <FILE id="NQEoxQ" name="AudioWriter.cpp" compile="1" resource="0" file="Source/AudioWriter.cpp"/>
+        <FILE id="OXgIwA" name="AudioWriter.h" compile="0" resource="0" file="Source/AudioWriter.h"/>
+      </GROUP>
+      <GROUP id="{69A41C81-01CC-5A82-4158-A0AB20E3A43B}" name="Settings">
+        <FILE id="nQSLbj" name="AudioOutputSettings.cpp" compile="1" resource="0"
+              file="Source/AudioOutputSettings.cpp"/>
+        <FILE id="eRWSfB" name="AudioOutputSettings.h" compile="0" resource="0"
+              file="Source/AudioOutputSettings.h"/>
+        <FILE id="n6h9mH" name="CustomLookAndFeel.cpp" compile="1" resource="0"
+              file="Source/CustomLookAndFeel.cpp"/>
+        <FILE id="RoquM2" name="CustomLookAndFeel.h" compile="0" resource="0"
+              file="Source/CustomLookAndFeel.h"/>
+        <FILE id="Zn1yCF" name="Settings.cpp" compile="1" resource="0" file="Source/Settings.cpp"/>
+        <FILE id="tUKBay" name="Settings.h" compile="0" resource="0" file="Source/Settings.h"/>
+      </GROUP>
+      <GROUP id="{7EB8C9F5-CB47-0F63-E50E-AF3E7ABD4DCC}" name="Algorithm">
+        <FILE id="QZFZXz" name="Gene.cpp" compile="1" resource="0" file="Source/Gene.cpp"/>
+        <FILE id="twTGbG" name="Gene.h" compile="0" resource="0" file="Source/Gene.h"/>
+        <FILE id="DFEJFU" name="ComplexFrame.cpp" compile="1" resource="0"
+              file="Source/ComplexFrame.cpp"/>
+        <FILE id="mjODSA" name="ComplexFrame.h" compile="0" resource="0" file="Source/ComplexFrame.h"/>
+        <FILE id="JmqD8W" name="GeneController.cpp" compile="1" resource="0"
               file="Source/GeneController.cpp"/>
-        <FILE id="ahYxm6" name="GeneController.h" compile="0" resource="0"
+        <FILE id="XnvAcG" name="GeneController.h" compile="0" resource="0"
               file="Source/GeneController.h"/>
-        <FILE id="C1kR1n" name="FFTBin.cpp" compile="1" resource="0" file="Source/FFTBin.cpp"/>
-        <FILE id="qXWY47" name="FFTBin.h" compile="0" resource="0" file="Source/FFTBin.h"/>
-        <FILE id="ePFqlK" name="PopMember.cpp" compile="1" resource="0" file="Source/PopMember.cpp"/>
-        <FILE id="uhlhIt" name="PopMember.h" compile="0" resource="0" file="Source/PopMember.h"/>
       </GROUP>
+      <FILE id="JPqNzJ" name="UserInterface.cpp" compile="1" resource="0"
+            file="Source/UserInterface.cpp"/>
+      <FILE id="KP5eZ5" name="UserInterface.h" compile="0" resource="0" file="Source/UserInterface.h"/>
       <FILE id="vzHreZ" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="JEM6Ng" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
@@ -40,28 +94,31 @@
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX">
+    <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="fftw3" extraCompilerFlags="-I/usr/local/include"
+               extraLinkerFlags="-L/usr/local/lib">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
-                       isDebug="1" optimisation="1" targetName="SimpleGenetics"/>
-        <CONFIGURATION name="Release" osxSDK="10.9 SDK" osxCompatibility="10.9 SDK"
-                       osxArchitecture="64BitIntel" isDebug="0" optimisation="6" targetName="SimpleGenetics"/>
+        <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="default" osxArchitecture="64BitIntel"
+                       isDebug="1" optimisation="1" targetName="SimpleGenetics" headerPath=""
+                       libraryPath="" cppLanguageStandard="c++14"/>
+        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="default" osxArchitecture="64BitIntel"
+                       isDebug="0" optimisation="6" targetName="SimpleGenetics" headerPath=""
+                       libraryPath="" cppLanguageStandard="c++14"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../../Tools/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_events" path="../../Tools/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_graphics" path="../../Tools/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../Tools/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../Tools/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../../Tools/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_cryptography" path="../../Tools/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_video" path="../../Tools/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_opengl" path="../../Tools/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../../Tools/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../Tools/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../Tools/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../Tools/JUCE-OSX/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../../Tools/JUCE-OSX/modules"/>
+        <MODULEPATH id="juce_core" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_events" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_graphics" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_data_structures" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_cryptography" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_video" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_opengl" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="JuceLibraryCode/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
   </EXPORTFORMATS>
@@ -82,4 +139,8 @@
     <MODULES id="juce_video" showAllCode="1" useLocalCopy="1"/>
   </MODULES>
   <JUCEOPTIONS/>
+  <LIVE_SETTINGS>
+    <OSX extraCompilerFlags="-I/usr/local/include" extraDLLs="fftw3" headerPath="/usr/local/include"
+         systemHeaderPath=""/>
+  </LIVE_SETTINGS>
 </JUCERPROJECT>

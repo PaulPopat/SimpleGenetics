@@ -9,165 +9,229 @@
 */
 
 #include "Settings.h"
-using namespace std;
 
-void Settings::LoadTargets() {
-    vector< vector < double > > targets;
-    for (int f = 0 ; f < Target.size() ; f++) {
-        vector<double> TargetBinSummed (FFTSize, 0);
-        if (Target[f].first != "Silence") {
-            File *input = new File(workingDir->getFullPathName() + "/" + Target[f].first);
-            vector<vector<double> >InputAudio = LoadFile(input);
-            delete input;
-            InputAudio[0] = NormalizeAudio(InputAudio[0]);
-            TargetBinSummed = GetBin(InputAudio[0], FFTSize);
-        }
-        targets.push_back(TargetBinSummed);
-    }
-    Targets = targets;
+double LinearInterp(double Distance, double Value1, double Value2) {
+    double difference = Value2 - Value1;
+    return Value1 + (difference * Distance);
 }
 
 Settings::Settings() {
-    FFTSize = 4096;
-    WaveSize = 20;
-    WaveCount = 50000;
-    SampleRate = 44100;
-    Channels = 2;
-    Factor = 3;
-    CaptureInterval.push_back(make_pair(1, 0));
-    Target.push_back(make_pair("Silence", 0));
-    MutationAmount.push_back(make_pair(0.5, 0));
-    MutationChance.push_back(make_pair(0.2, 0));
-    Population.push_back(make_pair(10, 0));
-    workingDir = new File(File::getCurrentWorkingDirectory());
-    LoadTargets();
-    
-    BandWeighting.push_back(make_pair(10, 0));
+    Reset();
 }
 
-Settings::Settings(File *Path) {
-    vector<string> settingsData = GetFileData(Path);
+void Settings::LoadSettings() {
+    FileChooser chooser("Load Settings", File::nonexistent, "*.xml");
+    if (chooser.browseForFileToOpen()) {
+        mainElement = XmlDocument::parse(chooser.getResult());
+        workingDir = chooser.getResult().getParentDirectory();
+        save = chooser.getResult();
+        isLoaded = true;
+        listeners.call(&Listener::SettingsChanged, this);
+    }
+    else Reset();
+}
+
+void Settings::SaveSettings() {
+    if (!isLoaded) return;
+    
+    UpdateFromUI();
+    mainElement->writeToFile(save, String::empty);
+}
+
+void Settings::SaveSettingsAs() {
+    if (!isLoaded) return;
+    FileChooser chooser("Save Settings", File::nonexistent, "*.xml");
+    if (!chooser.browseForFileToSave(true)) return;
+    save = chooser.getResult();
+    
+    UpdateFromUI();
+    mainElement->writeToFile(save, String::empty);
+    File(save.getParentDirectory().getFullPathName() + "/Audio").createDirectory();
+    File(save.getParentDirectory().getFullPathName() + "/Data").createDirectory();
+    File(save.getParentDirectory().getFullPathName() + "/Output").createDirectory();
+    
+    DirectoryIterator iter (File(workingDir.getFullPathName() + "/Audio"), true, "*.aif");
+    while (iter.next()) {
+        File res (iter.getFile());
+        String destination = save.getParentDirectory().getFullPathName() + "/Audio/" + res.getFileName();
+        if (!File(destination).exists()) {
+            std::ifstream  src(res.getFullPathName().toRawUTF8(), std::ios::binary);
+            std::ofstream  dst(destination.toRawUTF8(), std::ios::binary);
+            dst << src.rdbuf();
+        }
+    }
+    workingDir = save.getParentDirectory();
+}
+
+void Settings::CreateNew() {
+    FileChooser chooser("Create Settings", File::nonexistent, "*.xml");
+    if (!chooser.browseForFileToSave(true)) return;
+    File path = chooser.getResult();
+    
+    mainElement = XmlDocument::parse(BinaryData::GenericSave_xml);
+    mainElement->writeToFile(path, String::empty);
+    File(path.getParentDirectory().getFullPathName() + "/Audio").createDirectory();
+    File(path.getParentDirectory().getFullPathName() + "/Data").createDirectory();
+    File(path.getParentDirectory().getFullPathName() + "/Output").createDirectory();
+    workingDir = path.getParentDirectory();
+    save = path;
+    isLoaded = true;
+    listeners.call(&Listener::SettingsChanged, this);
+}
+
+void Settings::Reset() {
+    mainElement = new XmlElement("Gene");
+    workingDir = File::getCurrentWorkingDirectory();
+    isLoaded = false;
+    listeners.call(&Listener::SettingsChanged, this);
+}
+
+bool Settings::IsLoaded() { return isLoaded; }
+
+void Settings::LoadAudio() {
+    FileChooser chooser("Load An Audio File", File::nonexistent, "*.aif");
+    if (!chooser.browseForFileToOpen()) return;
+    File path = chooser.getResult();
+    
+    String destination = workingDir.getFullPathName() + "/Audio/" + path.getFileNameWithoutExtension() + ".aif";
+    if (!File(destination).exists()) {
+        std::ifstream  src(path.getFullPathName().toRawUTF8(), std::ios::binary);
+        std::ofstream  dst(destination.toRawUTF8(), std::ios::binary);
+        dst << src.rdbuf();
+    }
+    listeners.call(&Listener::SettingsChanged, this);
+}
+
+void Settings::DeleteAudio(String Name) {
+    File path = workingDir.getFullPathName() + "/Audio/" + Name + ".aif";
+    if (path.existsAsFile()) path.deleteFile();
+}
+
+StringArray Settings::GetAudioBin() {
+    StringArray output;
+    DirectoryIterator iter (File(workingDir.getFullPathName() + "/Audio"), true, "*.aif");
+    while (iter.next()) {
+        File res (iter.getFile());
+        output.add(res.getFileNameWithoutExtension());
+    }
+    return output;
+}
+
+double Settings::GetDoubleValue(String Name) const {
+    return mainElement->getChildByName(Name)->getDoubleAttribute("value");
+}
+
+int Settings::GetIntValue(String Name) const {
+    return mainElement->getChildByName(Name)->getIntAttribute("value");
+}
+
+String Settings::GetStringValue(String Name) const {
+    return mainElement->getChildByName(Name)->getStringAttribute("value");
+}
+
+
+Array<double> Settings::GetGraph(String Name, int Size) const {
+    Array<FFT::Complex> graph;
+    XmlElement * data = mainElement->getChildByName(Name);
+    forEachXmlChildElement(*data, d) {
+        graph.add(FFT::Complex{(float)d->getDoubleAttribute("value"), (float)d->getDoubleAttribute("loc")});
+    }
+    Array<double> out;
+    for (int i = 0 ; i < Size ; i++) {
+        out.add(Interpolate((double)i / (double)Size, graph));
+    }
+    return out;
+}
+
+Array<FFTW::AudioAnalysis> Settings::GetAudioData(String Name, int FFTSize, int NumBands, int Band) const {
+    Array<File> files;
+    XmlElement * data = mainElement->getChildByName(Name);
+    forEachXmlChildElement(*data, d) {
+        files.add(File(workingDir.getFullPathName() + "/Audio/" + d->getStringAttribute("value") + ".aif"));
+    }
+    FFTW::AudioLoader loader(FFTSize);
+    Array<FFTW::AudioAnalysis> out;
+    for (int f = 0 ; f < files.size() ; f++) {
+        out.add(loader.AnalyzeAudio(files[f], NumBands, Band));
+    }
+    return out;
+}
+
+Array<int> Settings::GetAudioGraph(String Name, int Size) const {
+    Array<int> out;
+    Array<double> positions;
+    
+    XmlElement * data = mainElement->getChildByName(Name);
+    forEachXmlChildElement(*data, d) {
+        positions.add(d->getDoubleAttribute("loc"));
+    }
+    
+    int pos = 0;
+    for (int i = 0 ; i < Size ; i++) {
+        if (pos < positions.size()) {
+            if ((double)i / (double)Size >= positions[pos + 1])
+                pos++;
+        }
+        out.add(pos);
+    }
+    return out;
+}
+
+Array<String> Settings::GetAudioNameGraph(String Name) const {
+    Array<String> out;
+    XmlElement * data = mainElement->getChildByName(Name);
+    forEachXmlChildElement(*data, d) {
+        out.add(d->getStringAttribute("value").trimCharactersAtEnd(".aif"));
+    }
+    return out;
+}
+
+XmlElement Settings::GetRawData(String Name) const {
+    return *mainElement->getChildByName(Name);
+}
+
+void Settings::AddXmlElement(XmlElement *ToAdd) {
+    if (!mainElement->replaceChildElement(mainElement->getChildByName(ToAdd->getTagName()), ToAdd)) {
+        mainElement->addChildElement(ToAdd);
+    }
+}
+
+const File & Settings::GetWorkingDirectory() const {
+    return workingDir;
+}
+
+void Settings::AddListener(Listener *l) {
+    listeners.add(l);
+    listeners.call(&Listener::SettingsChanged, this);
+}
+
+void Settings::UpdateFromUI() {
+    listeners.call(&Listener::GetSettings, this);
+}
+
+bool Settings::WarningAccepted(String warning) {
+    AlertWindow alert("Warning!", warning, AlertWindow::AlertIconType::QuestionIcon);
+    alert.addButton("Ok", true, KeyPress(), KeyPress());
+    alert.addButton("Cancel", false, KeyPress(), KeyPress());
+    alert.addToDesktop();
+    alert.setBounds(230, 150, 650, 150);
+    bool toContinue = alert.runModalLoop();
+    return toContinue;
+}
+
+double Settings::Interpolate(double Position, Array<FFT::Complex> Data) const {
+    double output = Data[Data.size() - 1].r;
     int i = 0;
-    while (i < settingsData.size()) {
-        vector<string> line = StringSplit(settingsData[i]);
-        if (line[0] == "FFTSize") FFTSize = atoi(line[1].c_str());
-        else if (line[0] == "BinsPerFrame") WaveSize = atoi(line[1].c_str());
-        else if (line[0] == "Factor") Factor = atoi(line[1].c_str());
-        else if (line[0] == "FramesToCalculate") WaveCount = atoi(line[1].c_str());
-        else if (line[0] == "SampleRate") SampleRate = atoi(line[1].c_str());
-        else if (line[0] == "Channels") Channels = atoi(line[1].c_str());
-        else if (line[0] == "CaptureInterval") CaptureInterval = LoadVectorSettings(i, settingsData);
-        else if (line[0] == "TargetFile") Target = LoadTargetSettings(i, settingsData);
-        else if (line[0] == "MutationAmount") MutationAmount = LoadVectorSettings(i, settingsData);
-        else if (line[0] == "MutationChance") MutationChance = LoadVectorSettings(i, settingsData);
-        else if (line[0] == "PopulationSize") Population = LoadVectorSettings(i, settingsData);
-        else if (line[0] == "BandWeighting") BandWeighting = LoadVectorSettings(i, settingsData);
+    while(i < Data.size()) {
+        if (i == 0 && Position < Data[i].i) return Data[i].r;
+        else if (Position < Data[i].i) {
+            double distance = (Position - Data[i - 1].i) / (Data[i].i - Data[i - 1].i);
+            return LinearInterp(distance, Data[i - 1].r, Data[i].r);
+        }
+        else if (Position == Data[i].i) {
+            return Data[i].r;
+        }
         i++;
     }
-    workingDir = new File(Path->getParentDirectory());
-    LoadTargets();
-}
-
-Settings::~Settings() {
-    delete workingDir;
-}
-
-int Settings::GetPopulation(double Position) {
-    return Interpolate(Position, Population);
-}
-
-int Settings::GetMutationChance(double Position) {
-    return Interpolate(Position, MutationChance);
-}
-
-double Settings::GetMutationAmount(double Position) {
-    return Interpolate(Position, MutationAmount);
-}
-
-double Settings::GetCaptureInterval(double Position) {
-    return Interpolate(Position, CaptureInterval);
-}
-
-double Settings::GetWeighting(double Position) {
-    return Interpolate(Position, BandWeighting);
-}
-
-vector<double> Settings::GetTarget(double Position) {
-    for (int i = Target.size() - 1 ; i >= 0 ; i--) {
-        if (Position >= Target[i].second) {
-            return Targets[i];
-        }
-    }
-    return Targets[0];
-}
-
-void Settings::Save(File *Path) {
-    ofstream f;
-    String path = Path->getFullPathName();
-    f.open(path.toRawUTF8(), fstream::out | fstream::trunc);
-    
-    f << fixed << showpoint;
-    f << setprecision(10);
-    
-    f << "FFTSize " << FFTSize << endl;
-    f << "BinsPerFrame " << WaveSize << endl;
-    f << "FramesToCalculate " << WaveCount << endl;
-    f << "SampleRate " << SampleRate << endl;
-    f << "Channels " << Channels << endl;
-    f << "Factor " << Factor << endl;
-    
-    f << "CaptureInterval" << endl;
-    for (int i = 0 ; i < CaptureInterval.size() ; i++) {
-        f << CaptureInterval[i].first << " " << CaptureInterval[i].second << endl;
-    }
-    f << "end" << endl;
-    
-    f << "TargetFile" << endl;
-    for (int i = 0 ; i < Target.size() ; i++) {
-        f << Target[i].first << " " << Target[i].second << endl;
-        if (Target[i].first != "Silence") {
-            CopyAudio(File(workingDir->getFullPathName() + "/" + Target[i].first), Path->getParentDirectory());
-        }
-    }
-    f << "end" << endl;
-    
-    f << "MutationAmount" << endl;
-    for (int i = 0 ; i < MutationAmount.size() ; i++) {
-        f << MutationAmount[i].first << " " << MutationAmount[i].second << endl;
-    }
-    f << "end" << endl;
-    
-    f << "MutationChance" << endl;
-    for (int i = 0 ; i < MutationChance.size() ; i++) {
-        f << MutationChance[i].first << " " << MutationChance[i].second << endl;
-    }
-    f << "end" << endl;
-    
-    f << "PopulationSize" << endl;
-    for (int i = 0 ; i < Population.size() ; i++) {
-        f << Population[i].first << " " << Population[i].second << endl;
-    }
-    f << "end" << endl;
-    
-    f << "BandWeighting" << endl;
-    for (int i = 0 ; i < BandWeighting.size() ; i++) {
-        f << BandWeighting[i].first << " " << BandWeighting[i].second << endl;
-    }
-    f << "end" << endl;
-    
-    delete workingDir;
-    workingDir = new File(Path->getParentDirectory());
-    
-    f.close();
-}
-
-
-double Settings::GetHighWeighting() {
-    double weighting = 0;
-    for (int i = 0 ; i < BandWeighting.size() ; i++) {
-        if (BandWeighting[i].first > weighting) {
-            weighting = BandWeighting[i].first;
-        }
-    }
-    return weighting;
+    return output;
 }

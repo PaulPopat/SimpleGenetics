@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Layout>
+	<FrequencyGraph left="0" top="0" width="0.3" height="0.2"/>
+	<PanningDisplay left="0.3" top="0" width="0.2" height="0.2"/>
+    <ProgressWatcher left="0" top="0.2" width="0.1" height="0.2" type="Frame"/>
+    <ProgressWatcher left="0.1" top="0.2" width="0.1" height="0.2" type="Timbre"/>
+    <ProgressWatcher left="0.2" top="0.2" width="0.1" height="0.2" type="Panning"/>
+    <ValueEditor left="0" top="0.4" width="0.3" height="0.04" title="FFT Frame Size" track="FFTSize"/>
+    <ValueEditor left="0" top="0.44" width="0.3" height="0.04" title="Frames Per Gene" track="FramesPerGene"/>
+    <ValueEditor left="0" top="0.48" width="0.3" height="0.04" title="Breeding Phases" track="BreedingLoops"/>
+    <ValueEditor left="0" top="0.52" width="0.3" height="0.04" title="Calculation Loops" track="CalculationLoops"/>
+    <ValueEditor left="0" top="0.56" width="0.3" height="0.04" title="Breeding Random Factor" track="BreedingFactor"/>
+    <ValueEditor left="0" top="0.60" width="0.3" height="0.04" title="Frequency Bands" track="FrequencyBands"/>
+    
+    <GraphEditor left="0.5" top="0" width="0.5" height="0.2" title="Population" track="Population"/>
+    <GraphEditor left="0.5" top="0.2" width="0.5" height="0.2" title="Mutation Number" track="MutationNumber"/>
+    <GraphEditor left="0.5" top="0.4" width="0.5" height="0.2" title="Timbre Mutation Amount" track="MutationAmount"/>
+    <GraphEditor left="0.5" top="0.6" width="0.5" height="0.2" title="Panning Mutation Amount" track="PanningMutation"/>
+    <GraphEditor left="0.5" top="0.8" width="0.5" height="0.2" title="Capture Interval" track="CaptureInterval"/>
+    
+    <EQCurveEditor left="0" top="0.84" width="0.5" height="0.16" title="Frequency Mutation Weighting" track="FrequencyWeighting"/>
+    
+    <AudioBin left="0.3" top="0.2" width="0.2" height="0.44" title="Audio Bin" track="AudioBin"/>
+    
+    <TargetEditor left="0" top="0.64" width="0.5" height="0.2" title="Targets" track="Target"/>
+    
+    <ProgressLine left="0.5" top="0" width="0.5" height="1"/>
+    <ProgressLine left="0" top="0.64" width="0.5" height="0.2"/>
+</Layout>

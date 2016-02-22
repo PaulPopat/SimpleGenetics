@@ -11,45 +11,62 @@
 #ifndef SETTINGS_H_INCLUDED
 #define SETTINGS_H_INCLUDED
 #include <fstream>
-#include <vector>
-#include <utility>
-#include <string>
-#include <iomanip>
-#include <sstream>
+#include "AudioLoader.h"
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "SettingsUtils.h"
 
 class Settings{
 public:
     Settings();
-    Settings(Settings *toCopy);
-    Settings(File *Path);
-    ~Settings();
-    void Save(File *Path);
-    int FFTSize;
-    int WaveSize;
-    int WaveCount;
-    int SampleRate;
-    int Channels;
-    int Factor;
-    int GetPopulation(double Position);
-    int GetMutationChance(double Position);
-    double GetMutationAmount(double Position);
-    std::vector<double> GetTarget(double Position);
-    double GetCaptureInterval(double Position);
-    double GetWeighting(double Position);
-    void LoadTargets();
-    double GetHighWeighting();
     
-    std::vector< std::pair< double, double >> BandWeighting;
-    std::vector< std::pair< double, double > > Population;
-    std::vector< std::pair< double, double > > MutationChance;
-    std::vector< std::pair< double, double > > MutationAmount;
-    std::vector< std::pair< std::string, double > > Target;
-    std::vector< std::vector < double > > Targets;
-    std::vector< std::pair< double, double > > CaptureInterval;
+    class Listener {
+    public:
+        Listener(String ElementName) { elementName = ElementName; }
+        virtual ~Listener() = default;
+        virtual void SettingsChanged(Settings *) = 0;
+        virtual void GetSettings(Settings *) = 0;
+        virtual void SetElementName(String ElementName) { elementName = ElementName; }
+        virtual String GetElementName() const { return elementName; }
+    protected:
+        String elementName;
+    };
+    
+    void LoadSettings();
+    void SaveSettings();
+    void SaveSettingsAs();
+    void CreateNew();
+    void Reset();
+    bool IsLoaded();
+    
+    void LoadAudio();
+    void DeleteAudio(String Name);
+    StringArray GetAudioBin();
+    
+    double GetDoubleValue(String Name) const;
+    int GetIntValue(String Name) const;
+    String GetStringValue(String Name) const;
+    Array<double> GetGraph(String Name, int Size) const;
+    Array<FFTW::AudioAnalysis> GetAudioData(String Name, int FFTSize, int NumBands, int Band) const;
+    Array<int> GetAudioGraph(String Name, int Size) const;
+    Array<String> GetAudioNameGraph(String Name) const;
+    XmlElement GetRawData(String Name) const;
+    
+    void AddXmlElement(XmlElement * ToAdd);
+    
+    void AddListener(Listener * l);
+    void UpdateFromUI();
+    
+    const File & GetWorkingDirectory() const;
+    
+    static bool WarningAccepted(String warning);
 private:
-    File *workingDir;
+    ScopedPointer<XmlElement> mainElement;
+    File workingDir;
+    File save;
+    ListenerList<Listener> listeners;
+    bool isLoaded;
+    double Interpolate(double Position, Array<FFT::Complex> Data) const;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Settings)
 };
 
 

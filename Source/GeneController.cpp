@@ -9,119 +9,144 @@
 */
 
 #include "GeneController.h"
-using namespace std;
 
-void SwapData(PopMember *valToFill, PopMember *newVal) {
-    swap(valToFill, newVal);
-    delete newVal;
+GeneController::GeneController(const Settings & Settings, File Path, int Band,  Utilities::Random * Gen) :
+Thread("Gene Thread " + String(Band)) {
+    fftSize = Settings.GetIntValue("FFTSize");
+    framesPerGene = Settings.GetIntValue("FramesPerGene");
+    breedingLoops = Settings.GetIntValue("BreedingLoops");
+    calculationLoops = Settings.GetIntValue("CalculationLoops");
+    breedingFactor = Settings.GetIntValue("BreedingFactor");
+    
+    bandSize = Utilities::GetBandSize(Settings.GetIntValue("FrequencyBands"), Band, fftSize);
+    
+    captureInterval = Settings.GetGraph("CaptureInterval", breedingLoops);
+    mutationAmount = Settings.GetGraph("MutationAmount", breedingLoops);
+    mutationNumber = Settings.GetGraph("MutationNumber", breedingLoops);
+    population = Settings.GetGraph("Population", breedingLoops);
+    panningMutation = Settings.GetGraph("PanningMutation", breedingLoops);
+    targetIdent = Settings.GetAudioGraph("Target", breedingLoops);
+    target = Settings.GetAudioData("Target", fftSize, Settings.GetIntValue("FrequencyBands"), Band);
+    
+    frequencyWeighting = Utilities::SplitToBand(Settings.GetGraph("FrequencyWeighting", fftSize),
+                                                 Settings.GetIntValue("FrequencyBands"), Band);
+    
+    if (Path.existsAsFile()) Path.deleteFile();
+    Path.create();
+    data = Path.createOutputStream();
+    data->writeInt(fftSize);
+    data->writeInt(bandSize);
+    
+    ident = Band;
+    gen = Gen;
 }
 
-GeneController::GeneController(Settings *Setting) : Thread("GeneThread") {
-    settings = Setting;
-    input = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * settings->FFTSize + 1);
-    output = (double*) fftw_malloc(sizeof(double) * (settings->FFTSize * 2));
-    ifft = fftw_plan_dft_c2r_1d(settings->FFTSize * 2, input, output, FFTW_ESTIMATE);
-}
-
-GeneController::~GeneController() {
-    int popSize = population.size();
-    for (int i = 0 ; i < popSize ; i++) {
-        delete population[i];
-    }
-    delete final;
-    fftw_destroy_plan(ifft);
-    fftw_free(input);
-    fftw_free(output);
-}
+void GeneController::AddListener(Listener *l) { listeners.add(l); }
 
 void GeneController::run() {
-    delete final;
-    final = new PopMember;
-    if (population.size() > 0) {
-        for (int i = 0 ; i < population.size() ; i++) {
-            delete population[i];
-        }
-        population.clear();
-    }
-    for (int i = 0 ; i < settings->GetPopulation(0) ; i++)
-        population.push_back(new PopMember(settings->FFTSize, settings->WaveSize, settings->Channels));
+    Array<Biology::Gene> timbre = InitializePopulation(population[0], true);
+    Array<Biology::Gene> paning = InitializePopulation(population[0], false);
     
-    for (loc = 0 ; loc < settings->WaveCount ; loc++) {
-        pos = (double)(loc + 1) / (double)settings->WaveCount;
-        
-        vector<pair<int, double> > Close;
-        for (int p = 0 ; p < population.size() ; p++)
-            Close.push_back(make_pair(p, population[p]->GetCloseness(settings->GetTarget(pos), settings)));
-        sort(Close.begin(), Close.end(), Sorter);
-        closeness = Close[0].second;
-        
-        cPos += settings->GetCaptureInterval(pos);
-        if (cPos >= 1) {
-            cPos = 0;
-            final->AddMember(population[Close[0].first]);
+    // setting up memory space for this loop
+    FFTW::AudioAnalysis & currenttarget = target.getReference(0); // for putting the current target in
+    double cpos = 0; // capture interval is added to this and when it reaches 1 a snapshot is taken
+    
+    for (int loop = 0 ; loop < calculationLoops ; loop++) {
+        for (int breed = 0 ; breed < breedingLoops ; breed++) {
+            
+            cpos += 1 / captureInterval[breed];
+            currenttarget = target.getReference(targetIdent[breed]);
+            
+            SortedSet<Metric> timbreMetric = GetSortedMetric(timbre, currenttarget.Amplitude);
+            SortedSet<Metric> paningMetric = GetSortedMetric(paning, currenttarget.Position);
+            
+            if (cpos >= 1) {
+                cpos = 0;
+                WriteData(timbre.getReference(timbreMetric[0].Index), paning.getReference(paningMetric[0].Index));
+            }
+            
+            // sending out a progress report for visual feedback
+            listeners.call(&Listener::BreedComplete,
+                            Listener::BreedCompleteData{
+                                timbre.getReference(timbreMetric[0].Index).GetSpectrum(),
+                                currenttarget.Amplitude,
+                                paning.getReference(paningMetric[0].Index).GetLocation(),
+                                currenttarget.Position,
+                                timbre.getReference(timbreMetric[0].Index),
+                                paning.getReference(paningMetric[0].Index),
+                                timbreMetric.getReference(0).Metric,
+                                paningMetric.getReference(0).Metric,
+                                breed + loop,
+                                ident});
+            
+            Array<Biology::Gene> ttemp = BreedPopulation(timbre, timbreMetric, population[breed], breedingFactor);
+            Array<Biology::Gene> ptemp = BreedPopulation(paning, paningMetric, population[breed], breedingFactor);
+            timbre = ttemp;
+            paning = ptemp;
+            
+            // defining the mutation inline since the method
+            // definition would have been larger than the text
+            for (int i = 0 ; i < mutationNumber[breed] ; i++) {
+                int target = gen->GetDouble(0, timbre.size());
+                timbre.getReference(target).Mutate(mutationAmount[breed], frequencyWeighting);
+                paning.getReference(target).Mutate(panningMutation[breed]);
+            }
+            
+            if (threadShouldExit()) {
+                return;
+            }
         }
-        vector<vector<double> > temp = population[Close[0].first]->GetAudio(input, output, ifft);
-        mostRecent = temp;
-        
-        vector<PopMember*> breed;
-        for (int i = 0 ; i < settings->GetPopulation(pos) ; i++) {
-            int tOne = Close[RandomVal(0, population.size(), settings->Factor)].first;
-            int tTwo = Close[RandomVal(0, population.size(), settings->Factor)].first;
-            breed.push_back(new PopMember(population[tOne], population[tTwo]));
-        }
-        for (int p = 0 ; p < population.size() ; p++)
-            delete population[p];
-        population = breed;
-        
-        for (int m = 0 ; m < settings->GetMutationChance(pos) ; m++) {
-            int p = RandomVal(0, population.size(), 1);
-            population[p]->Mutate(settings->GetMutationAmount(pos), settings);
-        }
-        
-        if (threadShouldExit())
-            return;
     }
 }
 
-vector<vector<double> > GeneController::GetAudio() {return final->GetAudio(input, output, ifft);}
-
-void GeneController::LoadSettings(Settings *Setting) {
-    settings = Setting;
-    fftw_destroy_plan(ifft);
-    fftw_free(input);
-    fftw_free(output);
-    input = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * settings->FFTSize + 1);
-    output = (double*) fftw_malloc(sizeof(double) * (settings->FFTSize * 2));
-    ifft = fftw_plan_dft_c2r_1d(settings->FFTSize * 2, input, output, FFTW_ESTIMATE);
+Array<Biology::Gene> GeneController::InitializePopulation(int size, bool timbreMode) {
+    Array<Biology::Gene> out;
+    for (int i = 0 ; i < size ; i++) {
+        Biology::Gene input(bandSize, framesPerGene, timbreMode, gen);
+        out.add(input);
+    }
+    return out;
 }
 
-double GeneController::GetPosition() {
-    return pos;
+SortedSet<Metric> GeneController::GetSortedMetric(Array<Biology::Gene> & input, const Array<double> & arg) {
+    SortedSet<Metric> out;
+    for (int i = 0 ; i < input.size() ; i++) {
+        out.add(Metric{i, input.getReference(i).GetMetric(arg)});
+    }
+    return out;
 }
 
-double GeneController::GetCloseness() {
-    return closeness;
+SortedSet<Metric> GeneController::GetSortedMetric(Array<Biology::Gene> & input, const FFT::Complex & arg) {
+    SortedSet<Metric> out;
+    for (int i = 0 ; i < input.size() ; i++) {
+        out.add(Metric{i, input.getReference(i).GetMetric(arg)});
+    }
+    return out;
 }
 
-int GeneController::GetLoc() {
-    return loc;
+void GeneController::WriteData(const Biology::Gene &timbre, const Biology::Gene &paning) {
+    for (int i = 0 ; i < timbre.GetNumFrames() ; i++) {
+        for (int t = 0 ; t < timbre.GetFrame(i).GetData().size() ; t++) {
+            data->writeFloat(timbre.GetFrame(i).GetData().getUnchecked(t).r);
+            data->writeFloat(timbre.GetFrame(i).GetData().getUnchecked(t).i);
+        }
+        for (int t = 0 ; t < paning.GetFrame(i).GetData().size() ; t++) {
+            data->writeFloat(paning.GetFrame(i).GetData().getUnchecked(t).r);
+            data->writeFloat(paning.GetFrame(i).GetData().getUnchecked(t).i);
+        }
+    }
 }
 
-vector<vector<double> > GeneController::GetCurrentAudio() {
-    return mostRecent;
-}
-
-int GeneController::GetAudioLength() {
-    return (final->GetNumBins() * settings->FFTSize) / settings->SampleRate;
-}
-
-double GeneController::RandomVal(double min, double max, double weighting) {
-    return pow((double)rand() / (double)RAND_MAX, weighting) * (max - min) + min;
-}
-
-bool GeneController::RandomBool() {return rand() % 2;}
-
-bool GeneController::Sorter(const pair<int, double> &left, const pair<int, double> &right) {
-    // sorts the closeness index
-    return left.second < right.second;
+Array<Biology::Gene> GeneController::BreedPopulation(const Array<Biology::Gene> & population,
+                                           const SortedSet<Metric> &metric,
+                                           int targetPopulation,
+                                           int factor) {
+    Array<Biology::Gene> output;
+    for (int i = 0 ; i < targetPopulation ; i++) {
+        int motherID = gen->GetWeightedInt(0, metric.size(), factor);
+        int fatherID = gen->GetWeightedInt(0, metric.size(), factor);
+        Biology::Gene input(population[metric[motherID].Index], population[metric[fatherID].Index]);
+        output.add(input);
+    }
+    return output;
 }

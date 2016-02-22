@@ -8,83 +8,51 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainComponent.h"
-using namespace std;
 
 MainContentComponent::MainContentComponent() {
-    setSize (800, 600);
     setAudioChannels (0, 2);
-    LoadGraphs();
-    LoadSettingsText();
-    population->SetName("Population Size");
-    mAmount->SetName("Mutation Amount");
-    mChance->SetName("Mutation Number");
-    cInt->SetName("Capture Interval");
-    target->SetName("Target Audio");
-    weighting->SetName("Frequency Weighting");
+    MenuBarModel::setMacMainMenu(this);
     
-    startTimerHz(30);
+    settings = new Settings();
+    devices = new AudioDeviceSelectorComponent(deviceManager, 0, 0, 0, 256, false, false, false, false);
+    
+    setLookAndFeel(&laf);
+    
+    ScopedPointer<XmlElement> e = XmlDocument::parse(BinaryData::UILayout_xml);
+    interface = new UserInterface(e, settings);
+    interface->AddSettingsListeners(settings);
+    addAndMakeVisible(interface);
+    isRunning = false;
+    
+    if (commands == nullptr) commands = new ApplicationCommandManager();
+    addKeyListener(commands->getKeyMappings());
+    
+    setApplicationCommandManagerToWatch(commands);
+    commands->registerAllCommandsForTarget(this);
+    
+    setSize (1200, 800);
 }
 
 MainContentComponent::~MainContentComponent() {
     shutdownAudio();
-    controller->stopThread(10000);
-    delete controller;
-    delete settings;
-    delete settingsPath;
-    delete workingDirectory;
-    
-    DeleteDisplay(fftSize);
-    DeleteDisplay(waveSize);
-    DeleteDisplay(waveCount);
-    DeleteDisplay(sampleRate);
-    DeleteDisplay(channels);
-    DeleteDisplay(factor);
-    DeleteDisplay(closeness);
-    DeleteDisplay(fileLength);
-    DeleteDisplay(complete);
-    DeleteDisplay(calcsDone);
-    
-    delete loadSettings;
-    delete saveSettings;
-    delete runCalculation;
-    delete stopCalculation;
-    delete listen;
-    delete saveAudio;
-    delete maxLevel;
-    
-    delete population;
-    delete mAmount;
-    delete mChance;
-    delete cInt;
-    delete weighting;
-    delete target;
+    CancelAlgorithm();
+    MenuBarModel::setMacMainMenu(nullptr);
+    PopupMenu::dismissAllActiveMenus();
+    writeAudio.deleteAndZero();
+    audioSettings.deleteAndZero();
 }
 
 void MainContentComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate) {
 }
 
 void MainContentComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) {
-    if (!isPlaying || audio.size() < 1) {
-        bufferToFill.clearActiveBufferRegion();
-        audio = controller->GetCurrentAudio();
-        return;
-    }
-    for (int i = 0 ; i < bufferToFill.numSamples ; i++) {
-        if (audioPos >= audio[0].size()) {
-            audio = controller->GetCurrentAudio();
-            audioPos = 0;
+    if (!isRunning) return;
+    AudioSampleBuffer * buffer = bufferToFill.buffer;
+    Array<double> audio = decoder->GetCurrentAudio(buffer->getNumSamples());
+    for (int c = 0 ; c < buffer->getNumChannels() ; c++) {
+        for (int s = 0 ; s < buffer->getNumSamples() ; s++) {
+            buffer->setSample(c, s, audio[s]);
         }
-        for (int c = 0 ; c < bufferToFill.buffer->getNumChannels() ; c++) {
-            int channel = c;
-            if (channel >= audio.size())
-                channel = audio.size() - 1;
-            bufferToFill.buffer->setSample(c, i, audio[channel][audioPos]);
-            if (abs(audio[channel][audioPos]) > maxLevelVal)
-                maxLevelVal = abs(audio[channel][audioPos]);
-            else
-                maxLevelVal -= 0.000001;
-        }
-        audioPos++;
     }
 }
 
@@ -92,354 +60,211 @@ void MainContentComponent::releaseResources() {
 }
 
 void MainContentComponent::paint (Graphics& g) {
-    g.fillAll (Colour(180, 180, 180));
-    fftSize.second->Draw(g);
-    waveSize.second->Draw(g);
-    waveCount.second->Draw(g);
-    sampleRate.second->Draw(g);
-    channels.second->Draw(g);
-    factor.second->Draw(g);
-    
-    DrawDisplay(g, controller->GetCloseness(), closeness);
-    DrawDisplay(g, controller->GetAudioLength(), fileLength);
-    DrawDisplay(g, controller->GetPosition() * 100, complete);
-    DrawDisplay(g, controller->GetLoc(), calcsDone);
-
-    maxLevel->SetText(String(maxLevelVal).substring(0, 4));
-    maxLevel->Draw(g);
-    
-    population->Draw(g, controller->GetPosition());
-    mAmount->Draw(g, controller->GetPosition());
-    mChance->Draw(g, controller->GetPosition());
-    cInt->Draw(g, controller->GetPosition());
-    weighting->Draw(g, 0);
-    target->Draw(g, controller->GetPosition());
-}
-
-void MainContentComponent::mouseDown (const MouseEvent& e) {
-    pair<int,int> mousePoint;
-    mousePoint.first = e.getMouseDownX();
-    mousePoint.second = e.getMouseDownY();
-    
-    population->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
-    mAmount->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
-    mChance->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
-    cInt->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
-    weighting->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
-    double pos = target->Click(mousePoint, e.mods.isAltDown(), e.mods.isCtrlDown());
-    if (pos >= 0) {
-        for (int i = settings->Target.size() - 1 ; i >= 0 ; i--) {
-            if (pos < settings->Target[i].second + 0.05 &&
-                pos > settings->Target[i].second - 0.05) {
-                settings->Target.erase(settings->Target.begin() + i);
-                InsertAudio(i, e, pos);
-                return;
-            }
-        }
-        for (int i = settings->Target.size() - 1 ; i >= 0 ; i--) {
-            if (pos < settings->Target[i].second) {
-                InsertAudio(i, e, pos);
-                return;
-            }
-        }
-    }
-    repaint();
-}
-
-void MainContentComponent::mouseDrag (const MouseEvent& e) {
-    pair<double, double> mousePoint;
-    mousePoint.first = e.x;
-    mousePoint.second = e.y;
-    population->Drag(mousePoint);
-    mAmount->Drag(mousePoint);
-    mChance->Drag(mousePoint);
-    cInt->Drag(mousePoint);
-    weighting->Drag(mousePoint);
-    target->Drag(mousePoint);
-    repaint();
-}
-
-void MainContentComponent::mouseUp (const MouseEvent&) {
-    settings->Population = population->ClickUp();
-    settings->MutationAmount = mAmount->ClickUp();
-    settings->MutationChance = mChance->ClickUp();
-    settings->CaptureInterval = cInt->ClickUp();
-    settings->BandWeighting = weighting->ClickUp();
-    settings->Target = target->ClickUp();
-    settings->LoadTargets();
-    repaint();
-}
-
-void MainContentComponent::textEditorReturnKeyPressed(TextEditor &editor) {
-    if (editor.getName() == "FFTSize")
-        CheckSettings(editor, settings->FFTSize);
-    else if (editor.getName() == "WaveSize")
-        CheckSettings(editor, settings->WaveSize);
-    else if (editor.getName() == "WaveCount")
-        CheckSettings(editor, settings->WaveCount);
-    else if (editor.getName() == "SampleRate")
-        CheckSettings(editor, settings->SampleRate);
-    else if (editor.getName() == "Channels")
-        CheckSettings(editor, settings->Channels);
-    else if (editor.getName() == "Factor")
-        CheckSettings(editor, settings->Factor);
-    else if (editor.getName() == "popHigh")
-        settings->Population = population->textEditorReturnKeyPressed(editor);
-    else if (editor.getName() == "mAmountHigh")
-        settings->MutationAmount = mAmount->textEditorReturnKeyPressed(editor);
-    else if (editor.getName() == "mChanceHigh")
-        settings->MutationChance = mChance->textEditorReturnKeyPressed(editor);
-    else if (editor.getName() == "cIntHigh")
-        settings->CaptureInterval = cInt->textEditorReturnKeyPressed(editor);
-    else if (editor.getName() == "wHigh")
-        settings->BandWeighting = weighting->textEditorReturnKeyPressed(editor);
-    editor.unfocusAllComponents();
-}
-
-void MainContentComponent::textEditorEscapeKeyPressed(TextEditor &editor) {
-    if (editor.getName() == "FFTSize")
-        editor.setText(to_string(settings->FFTSize));
-    else if (editor.getName() == "WaveSize")
-        editor.setText(to_string(settings->WaveSize));
-    else if (editor.getName() == "WaveCount")
-        editor.setText(to_string(settings->WaveCount));
-    else if (editor.getName() == "SampleRate")
-        editor.setText(to_string(settings->SampleRate));
-    else if (editor.getName() == "Channels")
-        editor.setText(to_string(settings->Channels));
-    else if (editor.getName() == "Factor")
-        editor.setText(to_string(settings->Factor));
-    else if (editor.getName() == "popHigh")
-        population->textEditorEscapeKeyPressed(editor);
-    else if (editor.getName() == "mAmountHigh")
-        mAmount->textEditorEscapeKeyPressed(editor);
-    else if (editor.getName() == "mChanceHigh")
-        mChance->textEditorEscapeKeyPressed(editor);
-    else if (editor.getName() == "cIntHigh")
-        cInt->textEditorEscapeKeyPressed(editor);
-    else if (editor.getName() == "wHigh")
-        weighting->textEditorEscapeKeyPressed(editor);
-    editor.unfocusAllComponents();
-}
-
-void MainContentComponent::buttonClicked(Button *button) {
-    if (button->getName() == "Load Settings")
-        LoadSettings();
-    else if (button->getName() == "Save Settings")
-        SaveSettings();
-    else if (button->getName() == "Run Calculation") {
-        controller->stopThread(10000);
-        controller->LoadSettings(settings);
-        controller->startThread();
-    }
-    else if (button->getName() == "Stop Calculation")
-        controller->stopThread(10000);
-    else if (button->getName() == "Monitor Output") {
-        isPlaying = button->getToggleState();
-    }
-    else if (button->getName() == "Save Audio")
-        SaveAudio(controller->GetAudio(), settings->SampleRate);
 }
 
 void MainContentComponent::resized() {
-    setSize (800, 600);
+    interface->setBounds(getBounds());
 }
 
-void MainContentComponent::timerCallback() {
-    repaint();
+ApplicationCommandTarget * MainContentComponent::getNextCommandTarget() {
+    return findFirstTargetParentComponent();
 }
 
-void MainContentComponent::Execute() {controller->startThread();}
+void MainContentComponent::getAllCommands(Array<CommandID>& commands) {
+    // this returns the set of all commands that this target can perform..
+    const CommandID ids[] = { MainContentComponent::CommandIDs::Open,
+        MainContentComponent::CommandIDs::Save,
+        MainContentComponent::CommandIDs::SaveAs,
+        MainContentComponent::CommandIDs::Create,
+        MainContentComponent::CommandIDs::SaveOutput,
+        MainContentComponent::CommandIDs::PlaybackSettings,
+        MainContentComponent::CommandIDs::Run,
+        MainContentComponent::CommandIDs::Cancel,
+    };
+    
+    commands.addArray (ids, numElementsInArray (ids));
+}
+
+void MainContentComponent::getCommandInfo (CommandID commandID, ApplicationCommandInfo& result) {
+    const String settingsCat ("Settings");
+    const String audioCat("Audio");
+    const String algorithmCat("Algorithm");
+    
+    switch (commandID)
+    {
+        case MainContentComponent::CommandIDs::Open:
+            result.setInfo ("Open", "Open up a new settings xml file", settingsCat, 0);
+            result.addDefaultKeypress ('o', ModifierKeys::commandModifier);
+            break;
+            
+        case MainContentComponent::CommandIDs::Save:
+            result.setInfo ("Save", "Save settings over currently loaded", settingsCat, 0);
+            result.addDefaultKeypress ('s', ModifierKeys::commandModifier);
+            break;
+            
+        case MainContentComponent::CommandIDs::SaveAs:
+            result.setInfo ("Save As", "Save settings in a new location", settingsCat, 0);
+            result.addDefaultKeypress ('w', ModifierKeys::commandModifier);
+            break;
+            
+        case MainContentComponent::CommandIDs::Create:
+            result.setInfo ("Create", "Create new settings file in a given location", settingsCat, 0);
+            result.addDefaultKeypress ('n', ModifierKeys::commandModifier);
+            break;
+            
+        case MainContentComponent::CommandIDs::SaveOutput:
+            result.setInfo ("Save Output", "Save the audio from the algorithm in the project folder", audioCat, 0);
+            result.addDefaultKeypress ('a', ModifierKeys::commandModifier);
+            break;
+            
+        case MainContentComponent::CommandIDs::PlaybackSettings:
+            result.setInfo ("Playback Settings", "Hardware settings for live playback", audioCat, 0);
+            result.addDefaultKeypress ('p', ModifierKeys::commandModifier);
+            break;
+            
+        case MainContentComponent::CommandIDs::Run:
+            result.setInfo ("Run", "Run the algorithm with current settings", algorithmCat, 0);
+            result.addDefaultKeypress ('r', ModifierKeys::commandModifier);
+            break;
+            
+        case MainContentComponent::CommandIDs::Cancel:
+            result.setInfo ("Cancel", "Cancel the algorithm if it is running", algorithmCat, 0);
+            result.addDefaultKeypress ('c', ModifierKeys::commandModifier);
+            break;
+            
+        default:
+            break;
+    }
+}
+
+bool MainContentComponent::perform(const InvocationInfo& info) {
+    switch (info.commandID)
+    {
+        case MainContentComponent::CommandIDs::Open:   settings->LoadSettings(); break;
+        case MainContentComponent::CommandIDs::Save:   settings->SaveSettings(); break;
+        case MainContentComponent::CommandIDs::SaveAs:   settings->SaveSettingsAs(); break;
+        case MainContentComponent::CommandIDs::Create:   settings->CreateNew(); break;
+        case MainContentComponent::CommandIDs::SaveOutput:   SaveAudio(); break;
+        case MainContentComponent::CommandIDs::PlaybackSettings:   AudioSettings(); break;
+        case MainContentComponent::CommandIDs::Run:   RunAlgorithm(); break;
+        case MainContentComponent::CommandIDs::Cancel:   CancelAlgorithm(); break;
+      
+        default:
+            return false;
+    }
+    
+    return true;
+}
+
+StringArray MainContentComponent::getMenuBarNames() {
+    const char* const names[] = { "Settings", "Audio", "Algorithm", nullptr };
+    return StringArray (names);
+}
+
+PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String & name) {
+    PopupMenu menu;
+    if (commands == nullptr) commands = new ApplicationCommandManager();
+    if (menuIndex == 0) {
+        menu.addCommandItem (commands, MainContentComponent::CommandIDs::Open);
+        menu.addCommandItem (commands, MainContentComponent::CommandIDs::Save);
+        menu.addCommandItem (commands, MainContentComponent::CommandIDs::SaveAs);
+        menu.addCommandItem (commands, MainContentComponent::CommandIDs::Create);
+    }
+    
+    if (menuIndex == 1) {
+        menu.addCommandItem (commands, MainContentComponent::CommandIDs::SaveOutput);
+        menu.addCommandItem (commands, MainContentComponent::CommandIDs::PlaybackSettings);
+    }
+    
+    if (menuIndex == 2) {
+        menu.addCommandItem (commands, MainContentComponent::CommandIDs::Run);
+        menu.addCommandItem (commands, MainContentComponent::CommandIDs::Cancel);
+    }
+    
+    return menu;
+}
+
+void MainContentComponent::menuItemSelected (int menuItemID, int topLevelMenuIndex) {
+}
 
 //************************************************************
 // utilities
 //************************************************************
 
-bool MainContentComponent::LoadSettings() {
-    FileChooser chooser("Load A File", File::nonexistent, "*.txt");
-    if (chooser.browseForFileToOpen()) {
-        delete settingsPath;
-        settingsPath = new File(chooser.getResult());
-        delete workingDirectory;
-        workingDirectory = new File(settingsPath->getParentDirectory());
-        delete settings;
-        settings = new Settings(settingsPath);
-        controller->LoadSettings(settings);
-        LoadGraphs();
-        LoadSettingsText();
-        return true;
-    }
-    return false;
-}
-
-bool MainContentComponent::SaveSettings() {
-    FileChooser chooser("Save A File", File::nonexistent, "*.txt");
-    if (chooser.browseForFileToSave(true)) {
-        delete settingsPath;
-        delete workingDirectory;
-        settingsPath = new File(chooser.getResult());
-        settings->Save(settingsPath);
-        workingDirectory = new File(settingsPath->getParentDirectory());
-        return true;
-    }
-    return false;
-}
-
-void MainContentComponent::SaveAudio(vector<vector<double> > Audio, int SampleRate) {
-    FileChooser chooser("Save Audio Output", File::nonexistent, "*.aif");
-    while (true) {
-        if (chooser.browseForFileToSave(true))
-            WriteAudio(Audio, SampleRate, File(chooser.getResult()));
-    }
-}
-
-File MainContentComponent::LoadAudio() {
-    FileChooser chooser("Load Target Audio", File::nonexistent, "*.aif");
-    if (chooser.browseForFileToOpen())
-        return File(chooser.getResult());
-    return File();
-}
-
-void MainContentComponent::InsertAudio(int i, const MouseEvent& e, double pos) {
-    if (workingDirectory->getFullPathName() == File::getCurrentWorkingDirectory().getFullPathName()) {
-        if(!SaveSettings())
+void MainContentComponent::SaveAudio() {
+    if (!settings->IsLoaded()) return;
+    File data(settings->GetWorkingDirectory().getFullPathName() + "/Output/Audio1.aif");
+    if (data.exists()) {
+        if (!Settings::WarningAccepted("There is already audio saved to these settings. Do you wish to overwrite this?"))
             return;
     }
-    if (e.mods.isCtrlDown()) {
-        settings->Target.insert(settings->Target.begin() + i, make_pair("Silence", pos));
-        LoadGraphs();
-        return;
+    
+    writeAudio = new SimpleDocumentWindow("Audio Output Settings",
+                                          findColour(CustomLookAndFeel::ColourIDs::Background),
+                                          DocumentWindow::TitleBarButtons::closeButton,
+                                          true);
+    writeAudio->setLookAndFeel(&laf);
+    writeAudio->setResizable(true, true);
+    writeAudio->setVisible(true);
+    writeAudio->setUsingNativeTitleBar(true);
+    writeAudio->centreWithSize(200, 300);
+    
+    writeAudio->setContentOwned(
+                new AudioOutputSettings(File(settings->GetWorkingDirectory().getFullPathName() + "/Data"),
+                                        File((settings->GetWorkingDirectory().getFullPathName() + "/Output"))), false);
+}
+
+void MainContentComponent::AudioSettings() {
+    audioSettings = new SimpleDocumentWindow("Playback Settings",
+                                          findColour(CustomLookAndFeel::ColourIDs::Background),
+                                          DocumentWindow::TitleBarButtons::closeButton,
+                                          true);
+    audioSettings->setLookAndFeel(&laf);
+    audioSettings->setResizable(true, true);
+    audioSettings->setVisible(true);
+    audioSettings->setUsingNativeTitleBar(true);
+    audioSettings->centreWithSize(400, 200);
+    
+    audioSettings->setContentNonOwned(devices, false);
+}
+
+void MainContentComponent::RunAlgorithm() {
+    if (!settings->IsLoaded()) return;
+    File data(settings->GetWorkingDirectory().getFullPathName() + "/Data/Data1.bin");
+    if (data.exists()) {
+        if (!Settings::WarningAccepted("There is already data saved to these settings. Do you wish to overwrite this?"))
+            return;
     }
-    File toCopy = LoadAudio();
-    if (!toCopy.exists()) {
-        return;
+    bands.clear();
+    settings->UpdateFromUI();
+    int numbands = settings->GetIntValue("FrequencyBands");
+    int fftsize = settings->GetIntValue("FFTSize");
+    int framesPerGene = settings->GetIntValue("FramesPerGene");
+    decoder = new FFTW::LiveAudioDecoder(numbands, fftsize, framesPerGene);
+    
+    for (int i = 0 ; i < numbands ; i++) {
+        File target(settings->GetWorkingDirectory().getFullPathName() + "/Data/Data" + String(i + 1) + ".bin");
+        GeneController * input = new GeneController(*settings, target, i, &gen);
+        input->startThread();
+        interface->AddControllerListeners(input);
+        input->AddListener(decoder);
+        bands.add(input);
     }
-    String name = toCopy.getFileName();
-    settings->Target.insert(settings->Target.begin() + i, make_pair(name.toRawUTF8(), pos));
-    CopyAudio(toCopy, *workingDirectory);
-    LoadGraphs();
-}
-
-//****************************************************************
-// box positioning
-//****************************************************************
-
-DrawBox *MainContentComponent::LoadBox(int sx, int sy, int lx, int ly, String text) {
-    DrawBox *val = new DrawBox(make_pair(lx, ly), make_pair(sx, sy));
-    val->SetFillColor(Colour(255, 120, 0));
-    val->SetLineColor(Colour(0, 0, 0));
-    val->SetFontSize(16);
-    val->SetText(text);
-    return val;
-}
-
-TextButton *MainContentComponent::LoadButton(int sx, int sy, int lx, int ly, String text) {
-    TextButton *val = new TextButton(text);
-    val->setSize(sx, sy);
-    val->setCentrePosition(lx, ly);
-    addAndMakeVisible(val);
-    val->addListener(this);
-    return val;
-}
-
-ToggleButton *MainContentComponent::LoadToggle(int sx, int sy, int lx, int ly, String text) {
-    ToggleButton *val = new ToggleButton(text);
-    val->setSize(sx, sy);
-    val->setCentrePosition(lx, ly);
-    addAndMakeVisible(val);
-    val->addListener(this);
-    return val;
-}
-
-pair<DrawBox*,DrawBox*>MainContentComponent::LoadDisplay(int sx, int sy, int lx, int ly, String text) {
-    DrawBox *part1 = new DrawBox(make_pair(lx - (sx / 4), ly), make_pair(sx / 2, sy));
-    part1->SetFillColor(Colour(0, 0, 0));
-    part1->SetLineColor(Colour(255, 180, 0));
-    part1->SetFontSize(16);
     
-    DrawBox *part2 = new DrawBox(make_pair(lx + (sx / 4), ly), make_pair(sx / 2, sy));
-    part2->SetFillColor(Colour(75, 75, 75));
-    part2->SetLineColor(Colour(255, 180, 0));
-    part2->SetFontSize(16);
-    part2->SetText(text);
+    decoder->startThread();
     
-    pair<DrawBox*, DrawBox*> val = make_pair(part1, part2);
-    return val;
+    isRunning = true;
 }
 
-pair<TextEditor*,DrawBox*>MainContentComponent::LoadEditor(int sx, int sy, int lx, int ly, String text, String name) {
-    TextEditor *part1 = new TextEditor(name);
-    part1->setMultiLine(false);
-    part1->setCentrePosition(lx - (sx / 3), ly - (sy / 2));
-    part1->setSize(sx / 3, sy);
-    addAndMakeVisible(part1);
-    part1->addListener(this);
-    DrawBox *part2 = new DrawBox(make_pair(lx + (sx / 4), ly), make_pair(sx / 2, sy));
-    part2->SetFillColor(Colour(75, 75, 75));
-    part2->SetLineColor(Colour(255, 180, 0));
-    part2->SetFontSize(16);
-    part2->SetText(text);
-    
-    pair<TextEditor*, DrawBox*> val = make_pair(part1, part2);
-    return val;
-}
-
-void MainContentComponent::DrawDisplay(Graphics& g, int Val, pair<DrawBox*, DrawBox*> data) {
-    data.first->SetText(to_string(Val));
-    data.first->Draw(g);
-    data.second->Draw(g);
-}
-
-template <class t1, class t2>
-void MainContentComponent::DeleteDisplay(pair<t1*, t2*> data) {
-    delete data.first;
-    delete data.second;
-}
-
-void MainContentComponent::LoadGraphs() {
-    population->LoadGraph(settings->Population);
-    addAndMakeVisible(popHigh);
-    popHigh->addListener(this);
-    
-    mAmount->LoadGraph(settings->MutationAmount);
-    addAndMakeVisible(mAmountHigh);
-    mAmountHigh->addListener(this);
-    
-    mChance->LoadGraph(settings->MutationChance);
-    addAndMakeVisible(mChanceHigh);
-    mChanceHigh->addListener(this);
-    
-    cInt->LoadGraph(settings->CaptureInterval);
-    addAndMakeVisible(cIntHigh);
-    cIntHigh->addListener(this);
-    
-    weighting->LoadGraph(settings->BandWeighting);
-    addAndMakeVisible(wHigh);
-    wHigh->addListener(this);
-    
-    vector<pair<String, double> > targets;
-    for (int i = 0 ; i < settings->Target.size() ; i++) {
-        targets.push_back(make_pair(settings->Target[i].first, settings->Target[i].second));
-    }
-    target->LoadGraph(targets);
-}
-
-void MainContentComponent::LoadSettingsText() {
-    fftSize.first->setText(to_string(settings->FFTSize));
-    waveSize.first->setText(to_string(settings->WaveSize));
-    waveCount.first->setText(to_string(settings->WaveCount));
-    sampleRate.first->setText(to_string(settings->SampleRate));
-    channels.first->setText(to_string(settings->Channels));
-    factor.first->setText(to_string(settings->Factor));
-}
-
-void MainContentComponent::CheckSettings(TextEditor &editor, int &setting) {
-    String text = editor.getText();
-    if (atoi(text.getCharPointer())) {
-        setting = atoi(text.getCharPointer());
-    }
-    editor.setText(String(setting));
-    
+void MainContentComponent::CancelAlgorithm() {
+    if (isRunning)
+        if (decoder->isThreadRunning())
+            decoder->stopThread(10000);
+    for (auto & b : bands)
+        if (b->isThreadRunning())
+            b->stopThread(10000);
+    bands.clear();
+    isRunning = false;
 }
 
 Component* createMainContentComponent()     { return new MainContentComponent(); }

@@ -8,7 +8,7 @@
     <key>CFBundleIconFile</key>
     <string></string>
     <key>CFBundleIdentifier</key>
-    <string>com.yourcompany.SimpleGenetics</string>
+    <string>com.PaulPopat.SimpleGenetics</string>
     <key>CFBundleName</key>
     <string>SimpleGenetics</string>
     <key>CFBundlePackageType</key>
