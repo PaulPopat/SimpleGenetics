@@ -12,9 +12,10 @@
 #define FFTWWRAPPER_H_INCLUDED
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ChannelCalculator.h"
+#include "ComplexFrame.h"
 #include "fftw3.h"
 
-using ComplexVector = Array<FFT::Complex>;
+using ComplexVector = Array<Biology::ComplexDouble>;
 
 namespace FFTW {
 

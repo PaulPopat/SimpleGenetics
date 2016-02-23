@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist>
+<plist version="1.0">
   <dict>
+    <key>CFBundleDocumentTypes</key>
+    <array>
+      <dict>
+        <key>LSTypeIsPackage</key>
+        <true/>
+        <key>CFBundleTypeExtensions</key>
+        <array>
+          <string>gene</string>
+        </array>
+        <key>CFBundleTypeName</key>
+        <string>Simple Genetics Save File</string>
+        <key>LSHandlerRank</key>
+        <string>Default</string>
+      </dict>
+    </array>
     <key>CFBundleExecutable</key>
     <string>${EXECUTABLE_NAME}</string>
     <key>CFBundleIconFile</key>

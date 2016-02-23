@@ -42,7 +42,7 @@ void FFTW::LiveAudioDecoder::run()
             Array<double> audioTemp;
 
             for (int i = 0; i < framesPerGene; i++) {
-                Array<FFT::Complex> frame;
+                Array<Biology::ComplexDouble> frame;
                 for (int j = 0; j < temp.size(); j++) {
                     int s = temp[j].GetFrame(i).GetData().size();
                     for (int b = 0; b < s; b++)
@@ -81,7 +81,7 @@ const Array<double> FFTW::LiveAudioDecoder::GetCurrentAudio(int numSamples)
     return returndata;
 }
 
-Array<double> FFTW::LiveAudioDecoder::audioFromFrame(const Array<FFT::Complex>& frame)
+Array<double> FFTW::LiveAudioDecoder::audioFromFrame(const Array<Biology::ComplexDouble>& frame)
 {
     input[fftSize][0] = 0;
     input[fftSize][1] = 0;

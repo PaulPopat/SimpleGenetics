@@ -10,9 +10,9 @@
 
 #include "ChannelCalculator.h"
 
-FFT::Complex Utilities::GetChannelLocation(int Channel, int NumChannels)
+Biology::ComplexDouble Utilities::GetChannelLocation(int Channel, int NumChannels)
 {
-    FFT::Complex output;
+    Biology::ComplexDouble output;
 
     double degrees = ((double)Channel / (double)NumChannels) * 360;
     double angle = (degrees * M_PI) / 180;
@@ -22,24 +22,24 @@ FFT::Complex Utilities::GetChannelLocation(int Channel, int NumChannels)
     return output;
 }
 
-double Utilities::GetChannelAmp(FFT::Complex Location, int NumChannels, int Channel)
+double Utilities::GetChannelAmp(Biology::ComplexDouble Location, int NumChannels, int Channel)
 {
-    std::vector<double> output(NumChannels, 0);
+    Array<double> output;
     double total = 0;
     for (int i = 0; i < NumChannels; i++) {
-        FFT::Complex channelLoc = GetChannelLocation(i, NumChannels);
-        output[i] = 1 - (std::sqrt(std::pow(channelLoc.r - Location.r, 2) + std::pow(channelLoc.i - Location.i, 2)) * 0.5);
-        output[i] = std::pow(output[i], 6);
+        Biology::ComplexDouble channelLoc = GetChannelLocation(i, NumChannels);
+        output.add(1 - (std::sqrt(std::pow(channelLoc.r - Location.r, 2) + std::pow(channelLoc.i - Location.i, 2)) * 0.5));
+        output.getReference(i) = std::pow(output[i], 6);
         total += output[i];
     }
     total = 1 / total;
     for (int i = 0; i < NumChannels; i++) {
-        output[i] *= total;
+        output.getReference(i) *= total;
     }
     return output[Channel];
 }
 
-FFT::Complex Utilities::GetPosition(Array<double> Channels)
+Biology::ComplexDouble Utilities::GetPosition(Array<double> Channels)
 {
     double total = 0;
     for (int i = 0; i < Channels.size(); i++) {
@@ -49,10 +49,10 @@ FFT::Complex Utilities::GetPosition(Array<double> Channels)
     for (int i = 0; i < Channels.size(); i++) {
         Channels.getReference(i) *= multiplier;
     }
-    FFT::Complex output{ 0, 0 };
+    Biology::ComplexDouble output{ 0, 0 };
 
     for (int i = 0; i < Channels.size(); i++) {
-        FFT::Complex channel = GetChannelLocation(i, Channels.size());
+        Biology::ComplexDouble channel = GetChannelLocation(i, Channels.size());
         output.r += channel.r * Channels[i];
         output.i += channel.i * Channels[i];
     }

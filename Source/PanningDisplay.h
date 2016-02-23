@@ -12,6 +12,7 @@
 #define PANNINGDISPLAY_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "ComplexFrame.h"
 #include "CustomLookAndFeel.h"
 #include "ListenerComponents.h"
 
@@ -26,8 +27,8 @@ public:
     void BreedComplete(const BreedCompleteData& data) override;
 
 private:
-    Array<FFT::Complex> positions;
-    Array<FFT::Complex> targets;
+    Array<Biology::ComplexDouble> positions;
+    Array<Biology::ComplexDouble> targets;
     Rectangle<int> bounds;
 
     Colour InterpolateColour(Colour c1, Colour c2, double progress);

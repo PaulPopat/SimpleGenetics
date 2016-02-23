@@ -13,6 +13,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "BandCalculator.h"
 #include "ChannelCalculator.h"
+#include "ComplexFrame.h"
 #include "fftw3.h"
 #include <cmath>
 
@@ -22,7 +23,7 @@ struct AudioAnalysis {
     AudioAnalysis() = default;
     AudioAnalysis(int bandSize) { Amplitude.insertMultiple(0, 0, bandSize); }
     Array<double> Amplitude;
-    FFT::Complex Position;
+    Biology::ComplexDouble Position;
 };
 
 class AudioLoader {

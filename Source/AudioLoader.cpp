@@ -60,7 +60,6 @@ FFTW::AudioAnalysis FFTW::AudioLoader::AnalyzeAudio(File Path, int NumBands, int
 
 AudioSampleBuffer FFTW::AudioLoader::LoadAudio(File Path)
 {
-    std::vector<std::vector<double> > buf;
     AiffAudioFormat reader;
     format = reader.createReaderFor(Path.createInputStream(), true);
     AudioSampleBuffer buffer = AudioSampleBuffer(format->numChannels, format->lengthInSamples);

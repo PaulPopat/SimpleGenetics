@@ -48,7 +48,7 @@ double Biology::Gene::GetMetric(const Array<double>& Target) const
     return metric;
 }
 
-double Biology::Gene::GetMetric(const FFT::Complex& Target) const
+double Biology::Gene::GetMetric(const ComplexDouble& Target) const
 {
     if (timbreMode)
         return 0;
@@ -73,7 +73,7 @@ void Biology::Gene::Mutate(double Amount)
 
 int Biology::Gene::GetNumFrames() const { return data.size(); }
 const Array<double>& Biology::Gene::GetSpectrum() const { return spectrum; }
-const FFT::Complex& Biology::Gene::GetLocation() const { return location; }
+const Biology::ComplexDouble& Biology::Gene::GetLocation() const { return location; }
 const Biology::ComplexFrame& Biology::Gene::GetFrame(int i) const { return data.getReference(i); }
 
 void Biology::Gene::CalculateSpectrumOrLocation()
@@ -85,7 +85,7 @@ void Biology::Gene::CalculateSpectrumOrLocation()
             spectrum.getReference(i) = 0;
 
         for (int d = 0; d < data.size(); d++) {
-            const Array<FFT::Complex>& frame = data.getReference(d).GetData();
+            const Array<ComplexDouble>& frame = data.getReference(d).GetData();
             for (int i = 0; i < frame.size(); i++) {
                 spectrum.getReference(i) += std::sqrt(std::pow(frame[i].r, 2) + std::pow(frame[i].i, 2)) / data.size();
             }
@@ -93,7 +93,7 @@ void Biology::Gene::CalculateSpectrumOrLocation()
     }
     else {
 
-        location = FFT::Complex{ 0, 0 };
+        location = ComplexDouble{ 0, 0 };
         for (int d = 0; d < data.size(); d++) {
             location.r += data.getReference(d).GetAveragePanning().r / data.size();
             location.i += data.getReference(d).GetAveragePanning().i / data.size();

@@ -23,7 +23,6 @@ MainContentComponent::MainContentComponent()
     interface = new UserInterface(e, settings);
     interface->AddSettingsListeners(settings);
     addAndMakeVisible(interface);
-    isRunning = false;
 
     if (commands == nullptr)
         commands = new ApplicationCommandManager();
@@ -227,11 +226,12 @@ void MainContentComponent::SaveAudio()
 {
     if (!settings->IsLoaded())
         return;
-    File data(settings->GetWorkingDirectory().getFullPathName() + "/Output/Audio1.aif");
-    if (data.exists()) {
-        if (!Settings::WarningAccepted("There is already audio saved to these settings. Do you wish to overwrite this?"))
-            return;
-    }
+    FileChooser chooser("Create Settings", File::nonexistent, "*.aif");
+    if (!chooser.browseForFileToSave(true))
+        return;
+    File path = chooser.getResult();
+    if (path.exists())
+        path.deleteRecursively();
 
     writeAudio = new SimpleDocumentWindow("Audio Output Settings",
         findColour(CustomLookAndFeel::ColourIDs::Background),
@@ -245,7 +245,7 @@ void MainContentComponent::SaveAudio()
 
     writeAudio->setContentOwned(
         new AudioOutputSettings(File(settings->GetWorkingDirectory().getFullPathName() + "/Data"),
-            File((settings->GetWorkingDirectory().getFullPathName() + "/Output"))),
+            path),
         false);
 }
 

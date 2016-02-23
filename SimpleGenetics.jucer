@@ -95,7 +95,7 @@
   </MAINGROUP>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="fftw3" extraCompilerFlags="-I/usr/local/include"
-               extraLinkerFlags="-L/usr/local/lib">
+               extraLinkerFlags="-L/usr/local/lib" customPList="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;&#10;&lt;plist version=&quot;1.0&quot;&gt;&#10;&lt;dict&gt;&#10;&#9;&lt;key&gt;CFBundleDocumentTypes&lt;/key&gt;&#10;&#9;&lt;array&gt;&#10;&#9;&#9;&lt;dict&gt;&#10;&#9;&#9;&#9;&lt;key&gt;LSTypeIsPackage&lt;/key&gt;&#10;&#9;&#9;&#9;&lt;true/&gt;&#10;&#9;&#9;&#9;&lt;key&gt;CFBundleTypeExtensions&lt;/key&gt;&#10;&#9;&#9;&#9;&lt;array&gt;&#10;&#9;&#9;&#9;&#9;&lt;string&gt;gene&lt;/string&gt;&#10;&#9;&#9;&#9;&lt;/array&gt;&#10;&#9;&#9;&#9;&lt;key&gt;CFBundleTypeName&lt;/key&gt;&#10;&#9;&#9;&#9;&lt;string&gt;Simple Genetics Save File&lt;/string&gt;&#10;&#9;&#9;&#9;&lt;key&gt;LSHandlerRank&lt;/key&gt;&#10;&#9;&#9;&#9;&lt;string&gt;Default&lt;/string&gt;&#10;&#9;&#9;&lt;/dict&gt;&#10;&#9;&lt;/array&gt;&#10;&lt;/dict&gt;&#10;&lt;/plist&gt;">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="default" osxArchitecture="64BitIntel"
                        isDebug="1" optimisation="1" targetName="SimpleGenetics" headerPath=""

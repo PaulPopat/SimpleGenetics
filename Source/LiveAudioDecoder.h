@@ -39,7 +39,7 @@ private:
 
     int playhead;
 
-    Array<double> audioFromFrame(const Array<FFT::Complex>& bands);
+    Array<double> audioFromFrame(const Array<Biology::ComplexDouble>& bands);
     bool vectorFull(const Array<Biology::Gene>& input);
 
     fftw_complex* input;

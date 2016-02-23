@@ -14,6 +14,11 @@
 
 namespace Biology {
 
+struct ComplexDouble {
+    double r;
+    double i;
+};
+
 class ComplexFrame {
 public:
     /** default for arrays and such. Greats an empty object so not very useful */
@@ -24,19 +29,19 @@ public:
 
     /** returns the average location of the frame on a 2d plane.
    assuming that each complex number is a coordinate not frequency data*/
-    FFT::Complex GetAveragePanning() const;
+    ComplexDouble GetAveragePanning() const;
     /** mutates with a weighting for how much each band should be affected.
    weighting must be at least the size of a frame */
     void Mutate(double Amount, const Array<double>& Weighting);
     /** mutates one band randomly */
     void Mutate(double Amount);
     /** returns the basic data for other uses */
-    const Array<FFT::Complex>& GetData() const;
+    const Array<ComplexDouble>& GetData() const;
     /** returns the number of complex numbers stored */
     int GetFrameSize() const;
 
 private:
-    Array<FFT::Complex> data;
+    Array<ComplexDouble> data;
     Utilities::Random* gen;
 };
 };

@@ -82,10 +82,8 @@ void GeneController::run()
                     breed + loop,
                     ident });
 
-            Array<Biology::Gene> ttemp = BreedPopulation(timbre, timbreMetric, population[breed], breedingFactor);
-            Array<Biology::Gene> ptemp = BreedPopulation(paning, paningMetric, population[breed], breedingFactor);
-            timbre = ttemp;
-            paning = ptemp;
+            timbre = BreedPopulation(timbreMetric, population[breed], breedingFactor);
+            paning = BreedPopulation(paningMetric, population[breed], breedingFactor);
 
             // defining the mutation inline since the method
             // definition would have been larger than the text
@@ -116,16 +114,16 @@ SortedSet<Metric> GeneController::GetSortedMetric(Array<Biology::Gene>& input, c
 {
     SortedSet<Metric> out;
     for (int i = 0; i < input.size(); i++) {
-        out.add(Metric{ i, input.getReference(i).GetMetric(arg) });
+        out.add(Metric{ i, input.getReference(i).GetMetric(arg), input[i] });
     }
     return out;
 }
 
-SortedSet<Metric> GeneController::GetSortedMetric(Array<Biology::Gene>& input, const FFT::Complex& arg)
+SortedSet<Metric> GeneController::GetSortedMetric(Array<Biology::Gene>& input, const Biology::ComplexDouble& arg)
 {
     SortedSet<Metric> out;
     for (int i = 0; i < input.size(); i++) {
-        out.add(Metric{ i, input.getReference(i).GetMetric(arg) });
+        out.add(Metric{ i, input.getReference(i).GetMetric(arg), input[i] });
     }
     return out;
 }
@@ -134,18 +132,17 @@ void GeneController::WriteData(const Biology::Gene& timbre, const Biology::Gene&
 {
     for (int i = 0; i < timbre.GetNumFrames(); i++) {
         for (int t = 0; t < timbre.GetFrame(i).GetData().size(); t++) {
-            data->writeFloat(timbre.GetFrame(i).GetData().getUnchecked(t).r);
-            data->writeFloat(timbre.GetFrame(i).GetData().getUnchecked(t).i);
+            data->writeDouble(timbre.GetFrame(i).GetData()[t].r);
+            data->writeDouble(timbre.GetFrame(i).GetData()[t].i);
         }
         for (int t = 0; t < paning.GetFrame(i).GetData().size(); t++) {
-            data->writeFloat(paning.GetFrame(i).GetData().getUnchecked(t).r);
-            data->writeFloat(paning.GetFrame(i).GetData().getUnchecked(t).i);
+            data->writeDouble(paning.GetFrame(i).GetData()[t].r);
+            data->writeDouble(paning.GetFrame(i).GetData()[t].i);
         }
     }
 }
 
-Array<Biology::Gene> GeneController::BreedPopulation(const Array<Biology::Gene>& population,
-    const SortedSet<Metric>& metric,
+Array<Biology::Gene> GeneController::BreedPopulation(const SortedSet<Metric>& metric,
     int targetPopulation,
     int factor)
 {
@@ -153,7 +150,7 @@ Array<Biology::Gene> GeneController::BreedPopulation(const Array<Biology::Gene>&
     for (int i = 0; i < targetPopulation; i++) {
         int motherID = gen->GetWeightedInt(0, metric.size(), factor);
         int fatherID = gen->GetWeightedInt(0, metric.size(), factor);
-        Biology::Gene input(population[metric[motherID].Index], population[metric[fatherID].Index]);
+        Biology::Gene input(metric[motherID].Gene, metric[fatherID].Gene);
         output.add(input);
     }
     return output;

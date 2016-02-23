@@ -19,8 +19,10 @@ FFTW::AudioWriter::AudioWriter(File DataPath, File OutputPath, int SampleRate, i
         File f(dir.getFile());
         data.add(f.createInputStream());
     }
+    String name = OutputPath.getFileNameWithoutExtension();
+    OutputPath = OutputPath.getParentDirectory();
     for (int i = 0; i < Channels; i++) {
-        File loc(File(OutputPath.getFullPathName() + "/Audio" + String(i + 1) + ".aif"));
+        File loc(File(OutputPath.getFullPathName() + "/" + name + String(i + 1) + ".aif"));
         if (loc.existsAsFile())
             loc.deleteFile();
         AiffAudioFormat f;
@@ -76,7 +78,7 @@ void FFTW::AudioWriter::run()
 void FFTW::AudioWriter::AddFrameToComplexVector(ComplexVector& input, InputStream* stream, int streamSize)
 {
     for (int i = 0; i < streamSize; i++) {
-        input.add(FFT::Complex{ stream->readFloat(), stream->readFloat() });
+        input.add(Biology::ComplexDouble{ stream->readDouble(), stream->readDouble() });
     }
 }
 
@@ -85,7 +87,7 @@ ComplexVector FFTW::AudioWriter::GetPannedVector(ComplexVector frame, ComplexVec
     ComplexVector output;
     for (int i = 0; i < frame.size(); i++) {
         float camp = Utilities::GetChannelAmp(panning[i], channels, Channel);
-        FFT::Complex input{ frame[i].r * camp, frame[i].i * camp };
+        Biology::ComplexDouble input{ frame[i].r * camp, frame[i].i * camp };
         output.add(input);
     }
     return output;
