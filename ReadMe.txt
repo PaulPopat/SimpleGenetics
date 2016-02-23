@@ -2,13 +2,13 @@
 --- About Simple Genetics -----------------------------------------------------
 -------------------------------------------------------------------------------
 Simple Genetics is an Evolutionary Algorithm designed to make interesting
-timbres and micro rythms that slowly evolve over time. It work with target
+timbres and micro rhythms that slowly evolve over time. It work with target
 audio files that can be changed as the algorithm is running. The algorithm will
 use these files as a reference but will not create copies so play around and
 have fun!
 
 A more detailed description of the process will be given a the bottom of the
-readme.
+read me.
 
 -------------------------------------------------------------------------------
 --- Building Simple Genetics --------------------------------------------------
@@ -19,7 +19,9 @@ This program requires FFTW to build. The default location is;
 /usr/local/lib --Library--
 
 Other than that it should build happily on Mac OS. It has been tested on Mac Os
-El Capitan.
+El Capitan. Please note that the live build is currently not working because it
+cannot work with fftw. I made this before live build was a thing and haven’t
+really looked into it. The Xcode project should build fine.
 
 
 -------------------------------------------------------------------------------
@@ -38,7 +40,7 @@ included a sample save for you to try out.
 -------------------------------------------------------------------------------
 --- Using the options ---------------------------------------------------------
 -------------------------------------------------------------------------------
-As this is a Evolutionary Alrithm there are many settings that a standard user
+As this is a Evolutionary Algorithm there are many settings that a standard user
 will be unfamiliar with. I will go over each one (including the obvious) here
 so that you can be confident with what you are doing.
 
@@ -62,7 +64,7 @@ Breeding Random Factor:
 Frequency Bands:
 	How many sections the algorithm will process in. This means that the
 	algorithm will split the data into a given number of frequency bands and
-	process them complete seperately. It will also run them on seperate threads
+	process them complete separately. It will also run them on separate threads
 	for better performance.
 
 Targets:
@@ -71,7 +73,7 @@ Targets:
 
 Frequency Mutation Weighting:
 	Allows you to set how much each frequency will be affected by mutations.
-	Most runs will want the high frequencues mutating a lot less. This is for
+	Most runs will want the high frequencies mutating a lot less. This is for
 	that!
 
 Population:
@@ -117,7 +119,7 @@ the population member will die before it can breed.
 
 EAs simulate this with a collections of numbers representing the population.
 Each collection of numbers is sometimes referred to as a Gene and this is the
-term that I will using in this document. The environment will generaly be
+term that I will using in this document. The environment will generally be
 another algorithm that defines what to do with each Gene. This can be anything
 the programmer wants and is the most open part of this algorithm. Some examples
 of what has been done are musical staves where each number in the Gene

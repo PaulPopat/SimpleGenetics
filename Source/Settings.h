@@ -12,7 +12,6 @@
 #define SETTINGS_H_INCLUDED
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "AudioLoader.h"
-#include <fstream>
 
 class Settings {
 public:

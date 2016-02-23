@@ -55,20 +55,13 @@ void Settings::SaveSettingsAs()
 
     UpdateFromUI();
     mainElement->writeToFile(save, String::empty);
-    File(save.getParentDirectory().getFullPathName() + "/Audio").createDirectory();
+    File audiodir(save.getParentDirectory().getFullPathName() + "/Audio");
+    audiodir.createDirectory();
     File(save.getParentDirectory().getFullPathName() + "/Data").createDirectory();
     File(save.getParentDirectory().getFullPathName() + "/Output").createDirectory();
 
-    DirectoryIterator iter(File(workingDir.getFullPathName() + "/Audio"), true, "*.aif");
-    while (iter.next()) {
-        File res(iter.getFile());
-        String destination = save.getParentDirectory().getFullPathName() + "/Audio/" + res.getFileName();
-        if (!File(destination).exists()) {
-            std::ifstream src(res.getFullPathName().toRawUTF8(), std::ios::binary);
-            std::ofstream dst(destination.toRawUTF8(), std::ios::binary);
-            dst << src.rdbuf();
-        }
-    }
+    File(workingDir.getFullPathName() + "/Audio").copyDirectoryTo(audiodir);
+
     workingDir = save.getParentDirectory();
 }
 
@@ -107,11 +100,9 @@ void Settings::LoadAudio()
         return;
     File path = chooser.getResult();
 
-    String destination = workingDir.getFullPathName() + "/Audio/" + path.getFileNameWithoutExtension() + ".aif";
-    if (!File(destination).exists()) {
-        std::ifstream src(path.getFullPathName().toRawUTF8(), std::ios::binary);
-        std::ofstream dst(destination.toRawUTF8(), std::ios::binary);
-        dst << src.rdbuf();
+    File destination(workingDir.getFullPathName() + "/Audio/" + path.getFileNameWithoutExtension() + ".aif");
+    if (!destination.exists()) {
+        path.copyFileTo(destination);
     }
     listeners.call(&Listener::SettingsChanged, this);
 }
