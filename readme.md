@@ -45,53 +45,53 @@ As this is a Evolutionary Algorithm there are many settings that a standard user
 will be unfamiliar with. I will go over each one (including the obvious) here
 so that you can be confident with what you are doing.
 
-FFT Frame Size:
+* *FFT Frame Size:*
 	The number of frequency bands in a frame of fft data. There will be
 	multiple frames per Gene/Chromosome.
 
-Frames Per Gene:
+* *Frames Per Gene:*
 	The number of frames of fft data that will be stored in one Gene/Chromosome
 
-Breeding Phases:
+* *Breeding Phases:*
 	The number of times the algorithm will loop in one run.
 
-Calculation Loops:
+* *Calculation Loops:*
 	The number of times the algorithm will run with the same population.
 
-Breeding Random Factor:
+* *Breeding Random Factor:*
 	The chance of more successful Genes to breed compared to less. Higher
 	numbers mean the successful ones have a higher chance.
 
-Frequency Bands:
+* *Frequency Bands:*
 	How many sections the algorithm will process in. This means that the
 	algorithm will split the data into a given number of frequency bands and
 	process them complete separately. It will also run them on separate threads
 	for better performance.
 
-Targets:
+* *Targets:*
 	The target audio files. ctrl click on a target to remove it and drag them
 	to move. To add another target double click on it in the audio bin.
 
-Frequency Mutation Weighting:
+* *Frequency Mutation Weighting:*
 	Allows you to set how much each frequency will be affected by mutations.
 	Most runs will want the high frequencies mutating a lot less. This is for
 	that!
 
-Population:
+* *Population:*
 	The population size at any given time.
 
-Mutation Number:
+* *Mutation Number:*
 	The number of mutations applied in each breeding phase. These will be added
 	randomly across the new population.
 
-Timbre Mutation Amount:
+* *Timbre Mutation Amount:*
 	How much one mutation will affect a timbre Gene. This is will be applied
 	before the weighting.
 
-Panning Mutation Amount:
+* *Panning Mutation Amount:*
 	How much one mutation will affect a panning Gene.
 
-Capture Interval:
+* *Capture Interval:*
 	This will affect how often a snap shot will be taken of the best of the
 	population. Setting this at one or below will cause each breeding phase to
 	take a snapshot (this is not adviced as the result would be notably boring)
