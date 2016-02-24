@@ -14,7 +14,7 @@
 #include "BandCalculator.h"
 #include "ChannelCalculator.h"
 #include "ComplexFrame.h"
-#include "fftw3.h"
+#include "FFTWHelper.h"
 #include <cmath>
 
 namespace FFTW {
@@ -29,16 +29,15 @@ struct AudioAnalysis {
 class AudioLoader {
 public:
     AudioLoader(int FFTSize);
-    ~AudioLoader();
     AudioAnalysis AnalyzeAudio(File Path, int NumBands, int Band);
 
 private:
     AudioSampleBuffer LoadAudio(File Path);
     Array<Array<double> > GetAmplitudes(const AudioSampleBuffer& Buf);
-    fftw_complex* output;
-    double* input;
-    fftw_plan fft;
     int fftSize;
+    fftw_c output;
+    fftw_r input;
+    SelfDestructPlan fft;
     ScopedPointer<AudioFormatReader> format;
 };
 }
