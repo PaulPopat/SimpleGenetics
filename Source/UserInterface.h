@@ -29,10 +29,9 @@
 class UserInterface : public Component {
 public:
     UserInterface(XmlElement* e, Settings* s);
-    ~UserInterface();
 
-    void paint(Graphics&);
-    void resized();
+    void paint(Graphics&) override;
+    void resized() override;
 
     void LoadDisplay(XmlElement* e, GeneControllerListenerComponent* l);
     void LoadInterface(XmlElement* e, SettingsListenerComponent* l);

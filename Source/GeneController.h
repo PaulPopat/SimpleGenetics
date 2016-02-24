@@ -68,13 +68,13 @@ private:
     /** creates a brand new population of a given size */
     Array<Biology::Gene> InitializePopulation(int size, bool timbreMode);
     /** returns a sorted metric for a timbre gene */
-    SortedSet<Metric> GetSortedMetric(Array<Biology::Gene>& input, const Array<double>& arg);
+    SortedSet<Metric> GetSortedMetric(Array<Biology::Gene>& input, const Array<double>& arg) const;
     /** returns a sorted metric for a panning gene */
-    SortedSet<Metric> GetSortedMetric(Array<Biology::Gene>& input, const std::complex<double>& arg);
+    SortedSet<Metric> GetSortedMetric(Array<Biology::Gene>& input, const std::complex<double>& arg) const;
     /** writes the timbre and panning data to a bin to be read by the AudioWriter class later */
     void WriteData(const Biology::Gene& timbre, const Biology::Gene& paning);
     /** takes the population with the metrics attached and breeds them together for a shiney new one! */
-    Array<Biology::Gene> BreedPopulation(const SortedSet<Metric>& metric, int targetPopulation, int factor);
+    Array<Biology::Gene> BreedPopulation(const SortedSet<Metric>& metric, int targetPopulation, int factor) const;
 
     /** the bin file for writing to */
     ScopedPointer<FileOutputStream> data;

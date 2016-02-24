@@ -30,7 +30,6 @@ public:
         : Settings::Listener(Name)
     {
     }
-    ~SettingsListenerComponent() = default;
 };
 
 #endif // LISTENERCOMPONENTS_H_INCLUDED

@@ -110,7 +110,7 @@ Array<Biology::Gene> GeneController::InitializePopulation(int size, bool timbreM
     return out;
 }
 
-SortedSet<Metric> GeneController::GetSortedMetric(Array<Biology::Gene>& input, const Array<double>& arg)
+SortedSet<Metric> GeneController::GetSortedMetric(Array<Biology::Gene>& input, const Array<double>& arg) const
 {
     SortedSet<Metric> out;
     for (int i = 0; i < input.size(); i++) {
@@ -119,7 +119,7 @@ SortedSet<Metric> GeneController::GetSortedMetric(Array<Biology::Gene>& input, c
     return out;
 }
 
-SortedSet<Metric> GeneController::GetSortedMetric(Array<Biology::Gene>& input, const std::complex<double>& arg)
+SortedSet<Metric> GeneController::GetSortedMetric(Array<Biology::Gene>& input, const std::complex<double>& arg) const
 {
     SortedSet<Metric> out;
     for (int i = 0; i < input.size(); i++) {
@@ -144,7 +144,7 @@ void GeneController::WriteData(const Biology::Gene& timbre, const Biology::Gene&
 
 Array<Biology::Gene> GeneController::BreedPopulation(const SortedSet<Metric>& metric,
     int targetPopulation,
-    int factor)
+    int factor) const
 {
     Array<Biology::Gene> output;
     for (int i = 0; i < targetPopulation; i++) {

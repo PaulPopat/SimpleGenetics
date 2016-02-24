@@ -22,10 +22,6 @@ ValueEditor::ValueEditor(String Title, String Name)
     title = Title;
 }
 
-ValueEditor::~ValueEditor()
-{
-}
-
 void ValueEditor::paint(Graphics& g)
 {
     g.setColour(findColour(CustomLookAndFeel::ColourIDs::Text));
