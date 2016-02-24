@@ -19,17 +19,16 @@
 
 /** A simple contain for holding a metric and an index so that the Gene with that
  metric can be accessed later*/
-class Metric {
-public:
+struct Metric {
     int Index;
     double Metric;
-};
 
-inline bool operator==(const Metric& l, const Metric& r) { return l.Metric == r.Metric; }
-inline bool operator<(const Metric& l, const Metric& r) { return l.Metric < r.Metric; }
-inline bool operator>(const Metric& l, const Metric& r) { return l.Metric > r.Metric; }
-inline bool operator<=(const Metric& l, const Metric& r) { return l.Metric <= r.Metric; }
-inline bool operator>=(const Metric& l, const Metric& r) { return l.Metric >= r.Metric; }
+    bool operator==(const Metric& a, const Metric& b) {return a.Metric == b.Metric;}
+    bool operator<(const Metric& a, const Metric& b) {return a.Metric < b.Metric;}
+    bool operator>(const Metric& a, const Metric& b) {return a.Metric > b.Metric;}
+    bool operator<=(const Metric& a, const Metric& b) {return a.Metric <= b.Metric;}
+    bool operator>=(const Metric& a, const Metric& b) {return a.Metric >= b.Metric;}
+};
 
 /** The controller class will be in charge of creating the population, gathering the metrics.
  breeding and mutations.*/

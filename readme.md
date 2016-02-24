@@ -1,30 +1,27 @@
--------------------------------------------------------------------------------
---- About Simple Genetics -----------------------------------------------------
--------------------------------------------------------------------------------
+# About Simple Genetics
+
 Simple Genetics is an Evolutionary Algorithm designed to make interesting
-timbres and micro rythms that slowly evolve over time. It work with target
+timbres and micro rhythms that slowly evolve over time. It work with target
 audio files that can be changed as the algorithm is running. The algorithm will
 use these files as a reference but will not create copies so play around and
 have fun!
 
-A more detailed description of the process will be given a the bottom of the
+A more detailed description of the process will be given at the bottom of the
 readme.
 
--------------------------------------------------------------------------------
---- Building Simple Genetics --------------------------------------------------
--------------------------------------------------------------------------------
-This program requires FFTW to build. The default location is; 
+# Building Simple Genetics
 
-/usr/local/include --Header--
-/usr/local/lib --Library--
+This program requires FFTW to build. The default location is:
 
-Other than that it should build happily on Mac OS. It has been tested on Mac Os
+header:  /usr/local/include
+library: /usr/local/lib
+
+Other than that it should build happily on Mac OS. It has been tested on Mac OS
 El Capitan.
 
 
--------------------------------------------------------------------------------
---- Getting something out of Simple Genetics ----------------------------------
--------------------------------------------------------------------------------
+# Getting something out of Simple Genetics
+
 The program runs a Evolutionary Algorithm, THIS WILL TAKE A LONG TIME TO
 PROCESS. As it calculates it will play back a demo of what is currently being
 calculated however it is mono and rough so it isn't exactly what you will get.
@@ -35,15 +32,14 @@ on the menu bar you can just run it although a fresh save won't do much. I have
 included a sample save for you to try out.
 
 
--------------------------------------------------------------------------------
---- Using the options ---------------------------------------------------------
--------------------------------------------------------------------------------
-As this is a Evolutionary Alrithm there are many settings that a standard user
+# Using the options
+
+As this is a Evolutionary Algorithm there are many settings that a standard user
 will be unfamiliar with. I will go over each one (including the obvious) here
 so that you can be confident with what you are doing.
 
 FFT Frame Size:
-	The number of frequency bands in a frame of fft data. There will be 
+	The number of frequency bands in a frame of fft data. There will be
 	multiple frames per Gene/Chromosome.
 
 Frames Per Gene:
@@ -94,17 +90,16 @@ Capture Interval:
 	take a snapshot (this is not adviced as the result would be notably boring)
 
 
--------------------------------------------------------------------------------
---- Detailed Algorithm Description --------------------------------------------
--------------------------------------------------------------------------------
+# Detailed Algorithm Description
+
 Here is the introduction to Evolutionary Algorithms from my Thesis for this
 project:
 
-In this project I am going to use the term Evolutionary Algorithms (EAs) to 
-refer to algorithms that simulate survival of the fittest using computers. 
-Survival of the fittest is based on the idea of a population of organisms that 
+In this project I am going to use the term Evolutionary Algorithms (EAs) to
+refer to algorithms that simulate survival of the fittest using computers.
+Survival of the fittest is based on the idea of a population of organisms that
 will try to survive as long as they can. Their success on this will be based on
-how well suited they are for the environment. The longer they stay alive the 
+how well suited they are for the environment. The longer they stay alive the
 more likely they are to breed. Breeding will create a new population which is a
 mixture of the most successful population members therefore making it better
 suited for the environment than the previous population, as it is more focused.
@@ -117,7 +112,7 @@ the population member will die before it can breed.
 
 EAs simulate this with a collections of numbers representing the population.
 Each collection of numbers is sometimes referred to as a Gene and this is the
-term that I will using in this document. The environment will generaly be
+term that I will using in this document. The environment will generally be
 another algorithm that defines what to do with each Gene. This can be anything
 the programmer wants and is the most open part of this algorithm. Some examples
 of what has been done are musical staves where each number in the Gene
@@ -136,7 +131,7 @@ applying mutations. This should hopefully produce an algorithm that
 successfully simulates survival of the fittest.
 
 The Metric for this algorithm works on the basis of FFT Data from target audio
-files. For each Target an average amplitude will be taken for each frequency 
+files. For each Target an average amplitude will be taken for each frequency
 band. Then the same will be done to each Gene and the two will be compared. For
 the panning a location on a 2d plane is worked out by taking each channel of
 target and placing it in the space. The average amplitude is taken for each
