@@ -48,14 +48,14 @@ double Biology::Gene::GetMetric(const Array<double>& Target) const
     return metric;
 }
 
-double Biology::Gene::GetMetric(const ComplexDouble& Target) const
+double Biology::Gene::GetMetric(const std::complex<double>& Target) const
 {
     if (timbreMode)
         return 0;
     double metric = 0;
 
-    metric += std::abs(location.r - Target.r);
-    metric += std::abs(location.i - Target.i);
+    metric += std::abs(location.real() - Target.real());
+    metric += std::abs(location.imag() - Target.imag());
     return metric;
 }
 
@@ -73,7 +73,7 @@ void Biology::Gene::Mutate(double Amount)
 
 int Biology::Gene::GetNumFrames() const { return data.size(); }
 const Array<double>& Biology::Gene::GetSpectrum() const { return spectrum; }
-const Biology::ComplexDouble& Biology::Gene::GetLocation() const { return location; }
+const std::complex<double>& Biology::Gene::GetLocation() const { return location; }
 const Biology::ComplexFrame& Biology::Gene::GetFrame(int i) const { return data.getReference(i); }
 
 void Biology::Gene::CalculateSpectrumOrLocation()
@@ -85,18 +85,17 @@ void Biology::Gene::CalculateSpectrumOrLocation()
             spectrum.getReference(i) = 0;
 
         for (int d = 0; d < data.size(); d++) {
-            const Array<ComplexDouble>& frame = data.getReference(d).GetData();
+            const Array<std::complex<double>>& frame = data.getReference(d).GetData();
             for (int i = 0; i < frame.size(); i++) {
-                spectrum.getReference(i) += std::sqrt(std::pow(frame[i].r, 2) + std::pow(frame[i].i, 2)) / data.size();
+                spectrum.getReference(i) += std::sqrt(std::pow(frame[i].real(), 2) + std::pow(frame[i].imag(), 2)) / data.size();
             }
         }
     }
     else {
 
-        location = ComplexDouble{ 0, 0 };
+        location = std::complex<double>{ 0, 0 };
         for (int d = 0; d < data.size(); d++) {
-            location.r += data.getReference(d).GetAveragePanning().r / data.size();
-            location.i += data.getReference(d).GetAveragePanning().i / data.size();
+            location += data.getReference(d).GetAveragePanning() / static_cast<double>(data.size());
         }
     }
 }

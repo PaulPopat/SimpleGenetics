@@ -23,7 +23,7 @@ struct AudioAnalysis {
     AudioAnalysis() = default;
     AudioAnalysis(int bandSize) { Amplitude.insertMultiple(0, 0, bandSize); }
     Array<double> Amplitude;
-    Biology::ComplexDouble Position;
+    std::complex<double> Position;
 };
 
 class AudioLoader {

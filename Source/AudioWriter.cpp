@@ -78,7 +78,7 @@ void FFTW::AudioWriter::run()
 void FFTW::AudioWriter::AddFrameToComplexVector(ComplexVector& input, InputStream* stream, int streamSize)
 {
     for (int i = 0; i < streamSize; i++) {
-        input.add(Biology::ComplexDouble{ stream->readDouble(), stream->readDouble() });
+        input.add(std::complex<double>{ stream->readDouble(), stream->readDouble() });
     }
 }
 
@@ -87,7 +87,7 @@ ComplexVector FFTW::AudioWriter::GetPannedVector(ComplexVector frame, ComplexVec
     ComplexVector output;
     for (int i = 0; i < frame.size(); i++) {
         float camp = Utilities::GetChannelAmp(panning[i], channels, Channel);
-        Biology::ComplexDouble input{ frame[i].r * camp, frame[i].i * camp };
+        std::complex<double> input{ frame[i].real() * camp, frame[i].imag() * camp };
         output.add(input);
     }
     return output;
@@ -98,8 +98,8 @@ void FFTW::AudioWriter::PopulateBufferFromComplex(ComplexVector frame)
     input[fftSize][0] = 0;
     input[fftSize][1] = 0;
     for (int i = 0; i < fftSize; i++) {
-        input[i][0] = frame[i].r;
-        input[i][1] = frame[i].i;
+        input[i][0] = frame[i].real();
+        input[i][1] = frame[i].imag();
     }
     fftw_execute(ifft);
     for (int i = 0; i < fftSize * 2; i++) {

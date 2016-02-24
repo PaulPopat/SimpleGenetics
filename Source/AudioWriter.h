@@ -15,7 +15,7 @@
 #include "ComplexFrame.h"
 #include "fftw3.h"
 
-using ComplexVector = Array<Biology::ComplexDouble>;
+using ComplexVector = Array<std::complex<double>>;
 
 namespace FFTW {
 

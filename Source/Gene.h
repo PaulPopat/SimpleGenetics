@@ -30,7 +30,7 @@ public:
     double GetMetric(const Array<double>& Target) const;
     /** if you are using this for panning call this for the metric. if it is in
      timbre mode rather than panning then this will return nothing */
-    double GetMetric(const ComplexDouble& Target) const;
+    double GetMetric(const std::complex<double>& Target) const;
     /** mutates with a weighting for how much each band should be affected.
      weighting must be at least the size of a frame */
     void Mutate(double Amount, const Array<double> Weighting);
@@ -41,7 +41,7 @@ public:
     /** returns the average band amplitude. will do nothing if not in timbre mode */
     const Array<double>& GetSpectrum() const;
     /** returns the average location. will do nothing if in timbre mode */
-    const ComplexDouble& GetLocation() const;
+    const std::complex<double>& GetLocation() const;
     /** returns a reference to the fft frame of given index */
     const ComplexFrame& GetFrame(int i) const;
 
@@ -49,7 +49,7 @@ private:
     void CalculateSpectrumOrLocation();
     Array<ComplexFrame> data;
     Array<double> spectrum;
-    ComplexDouble location;
+    std::complex<double> location;
     Utilities::Random* gen;
     bool timbreMode;
 };

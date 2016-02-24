@@ -10,25 +10,22 @@
 
 #include "ChannelCalculator.h"
 
-Biology::ComplexDouble Utilities::GetChannelLocation(int Channel, int NumChannels)
+std::complex<double> Utilities::GetChannelLocation(int Channel, int NumChannels)
 {
-    Biology::ComplexDouble output;
 
     double degrees = ((double)Channel / (double)NumChannels) * 360;
     double angle = (degrees * M_PI) / 180;
-    output.r = cos(angle);
-    output.i = sin(angle);
 
-    return output;
+    return std::complex<double>{cos(angle), sin(angle)};
 }
 
-double Utilities::GetChannelAmp(Biology::ComplexDouble Location, int NumChannels, int Channel)
+double Utilities::GetChannelAmp(std::complex<double> Location, int NumChannels, int Channel)
 {
     Array<double> output;
     double total = 0;
     for (int i = 0; i < NumChannels; i++) {
-        Biology::ComplexDouble channelLoc = GetChannelLocation(i, NumChannels);
-        output.add(1 - (std::sqrt(std::pow(channelLoc.r - Location.r, 2) + std::pow(channelLoc.i - Location.i, 2)) * 0.5));
+        std::complex<double> channelLoc = GetChannelLocation(i, NumChannels);
+        output.add(1 - (std::sqrt(std::pow(channelLoc.real() - Location.real(), 2) + std::pow(channelLoc.imag() - Location.imag(), 2)) * 0.5));
         output.getReference(i) = std::pow(output[i], 6);
         total += output[i];
     }
@@ -39,7 +36,7 @@ double Utilities::GetChannelAmp(Biology::ComplexDouble Location, int NumChannels
     return output[Channel];
 }
 
-Biology::ComplexDouble Utilities::GetPosition(Array<double> Channels)
+std::complex<double> Utilities::GetPosition(Array<double> Channels)
 {
     double total = 0;
     for (int i = 0; i < Channels.size(); i++) {
@@ -49,12 +46,11 @@ Biology::ComplexDouble Utilities::GetPosition(Array<double> Channels)
     for (int i = 0; i < Channels.size(); i++) {
         Channels.getReference(i) *= multiplier;
     }
-    Biology::ComplexDouble output{ 0, 0 };
+    std::complex<double> output{ 0, 0 };
 
     for (int i = 0; i < Channels.size(); i++) {
-        Biology::ComplexDouble channel = GetChannelLocation(i, Channels.size());
-        output.r += channel.r * Channels[i];
-        output.i += channel.i * Channels[i];
+        std::complex<double> channel = GetChannelLocation(i, Channels.size());
+        output += channel * Channels[i];
     }
 
     return output;

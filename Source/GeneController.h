@@ -46,8 +46,8 @@ public:
         struct BreedCompleteData {
             const Array<double>& amplitude;
             const Array<double>& target;
-            const Biology::ComplexDouble& position;
-            const Biology::ComplexDouble& targetPos;
+            const std::complex<double>& position;
+            const std::complex<double>& targetPos;
             const Biology::Gene& timbreData;
             const Biology::Gene& panningData;
             const double& timbreMetric;
@@ -70,7 +70,7 @@ private:
     /** returns a sorted metric for a timbre gene */
     SortedSet<Metric> GetSortedMetric(Array<Biology::Gene>& input, const Array<double>& arg);
     /** returns a sorted metric for a panning gene */
-    SortedSet<Metric> GetSortedMetric(Array<Biology::Gene>& input, const Biology::ComplexDouble& arg);
+    SortedSet<Metric> GetSortedMetric(Array<Biology::Gene>& input, const std::complex<double>& arg);
     /** writes the timbre and panning data to a bin to be read by the AudioWriter class later */
     void WriteData(const Biology::Gene& timbre, const Biology::Gene& paning);
     /** takes the population with the metrics attached and breeds them together for a shiney new one! */

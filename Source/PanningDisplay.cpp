@@ -16,9 +16,6 @@ PanningDisplay::PanningDisplay()
     setInterceptsMouseClicks(false, false);
 }
 
-PanningDisplay::~PanningDisplay()
-{
-}
 
 void PanningDisplay::paint(Graphics& g)
 {
@@ -37,8 +34,8 @@ void PanningDisplay::paint(Graphics& g)
 
     for (int i = 0; i < targets.size(); i++) {
         g.setColour(findColour(CustomLookAndFeel::ColourIDs::Foreground));
-        Point<int> pos((targets[i].r * 0.9 + 1) * (s * 0.5 + w),
-            (targets[i].i * 0.9 + 1) * (s * 0.5 + h));
+        Point<int> pos((targets[i].real() * 0.9 + 1) * (s * 0.5 + w),
+            (targets[i].imag() * 0.9 + 1) * (s * 0.5 + h));
         g.fillRect(pos.x, pos.y, 6, 6);
         g.setColour(InterpolateColour(findColour(CustomLookAndFeel::ColourIDs::TargetLow),
             findColour(CustomLookAndFeel::ColourIDs::TargetHigh), i / targets.size()));
@@ -47,8 +44,8 @@ void PanningDisplay::paint(Graphics& g)
 
     for (int i = 0; i < positions.size(); i++) {
         g.setColour(findColour(CustomLookAndFeel::ColourIDs::Foreground));
-        Point<int> pos((positions[i].r * 0.9 + 1) * (s * 0.5 + w),
-            (positions[i].i * 0.9 + 1) * (s * 0.5 + h));
+        Point<int> pos((positions[i].real() * 0.9 + 1) * (s * 0.5 + w),
+            (positions[i].imag() * 0.9 + 1) * (s * 0.5 + h));
         g.fillRect(pos.x, pos.y, 6, 6);
         g.setColour(InterpolateColour(findColour(CustomLookAndFeel::ColourIDs::DataLow),
             findColour(CustomLookAndFeel::ColourIDs::DataHigh), i / positions.size()));

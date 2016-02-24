@@ -19,7 +19,6 @@
 class PanningDisplay : public GeneControllerListenerComponent {
 public:
     PanningDisplay();
-    ~PanningDisplay();
 
     void paint(Graphics&) override;
     void resized() override;
@@ -27,8 +26,8 @@ public:
     void BreedComplete(const BreedCompleteData& data) override;
 
 private:
-    Array<Biology::ComplexDouble> positions;
-    Array<Biology::ComplexDouble> targets;
+    Array<std::complex<double>> positions;
+    Array<std::complex<double>> targets;
     Rectangle<int> bounds;
 
     Colour InterpolateColour(Colour c1, Colour c2, double progress);
