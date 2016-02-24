@@ -11,14 +11,15 @@
 #ifndef CHANNELCALCULATOR_H_INCLUDED
 #define CHANNELCALCULATOR_H_INCLUDED
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "ComplexFrame.h"
 
 namespace Utilities {
 
-FFT::Complex GetChannelLocation(int Channel, int NumChannels);
+Biology::ComplexDouble GetChannelLocation(int Channel, int NumChannels);
 
-double GetChannelAmp(FFT::Complex Location, int NumChannels, int Channel);
+double GetChannelAmp(Biology::ComplexDouble Location, int NumChannels, int Channel);
 
-FFT::Complex GetPosition(Array<double> Channels);
+Biology::ComplexDouble GetPosition(Array<double> Channels);
 }
 
 #endif // CHANNELCALCULATOR_H_INCLUDED

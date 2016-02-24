@@ -71,7 +71,7 @@ private:
     ScopedPointer<AudioDeviceSelectorComponent> devices;
     ScopedPointer<FFTW::LiveAudioDecoder> decoder;
     ScopedPointer<ApplicationCommandManager> commands;
-    bool isRunning;
+    bool isRunning = false; // declaring value here so the audio can't be called before it is set
 
     CustomLookAndFeel laf;
 

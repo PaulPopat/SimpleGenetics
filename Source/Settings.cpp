@@ -23,11 +23,11 @@ Settings::Settings()
 
 void Settings::LoadSettings()
 {
-    FileChooser chooser("Load Settings", File::nonexistent, "*.xml");
+    FileChooser chooser("Load Settings", File::nonexistent, "*.gene");
     if (chooser.browseForFileToOpen()) {
-        mainElement = XmlDocument::parse(chooser.getResult());
-        workingDir = chooser.getResult().getParentDirectory();
-        save = chooser.getResult();
+        mainElement = XmlDocument::parse(File(chooser.getResult().getFullPathName() + "/Settings.xml"));
+        workingDir = chooser.getResult();
+        save = File(chooser.getResult().getFullPathName() + "/Settings.xml");
         isLoaded = true;
         listeners.call(&Listener::SettingsChanged, this);
     }
@@ -48,43 +48,45 @@ void Settings::SaveSettingsAs()
 {
     if (!isLoaded)
         return;
-    FileChooser chooser("Save Settings", File::nonexistent, "*.xml");
+    FileChooser chooser("Save Settings", File::nonexistent, "*.gene");
     if (!chooser.browseForFileToSave(true))
         return;
-    save = chooser.getResult();
+    File path = chooser.getResult();
+    if (path == workingDir) {
+        SaveSettings();
+        return;
+    }
+    if (path.exists())
+        path.deleteRecursively();
+    path.createDirectory();
 
     UpdateFromUI();
-    mainElement->writeToFile(save, String::empty);
-    File(save.getParentDirectory().getFullPathName() + "/Audio").createDirectory();
-    File(save.getParentDirectory().getFullPathName() + "/Data").createDirectory();
-    File(save.getParentDirectory().getFullPathName() + "/Output").createDirectory();
+    mainElement->writeToFile(File(path.getFullPathName() + "/Settings.xml"), String::empty);
+    File audiodir(path.getFullPathName() + "/Audio");
+    audiodir.createDirectory();
+    File(path.getFullPathName() + "/Data").createDirectory();
 
-    DirectoryIterator iter(File(workingDir.getFullPathName() + "/Audio"), true, "*.aif");
-    while (iter.next()) {
-        File res(iter.getFile());
-        String destination = save.getParentDirectory().getFullPathName() + "/Audio/" + res.getFileName();
-        if (!File(destination).exists()) {
-            std::ifstream src(res.getFullPathName().toRawUTF8(), std::ios::binary);
-            std::ofstream dst(destination.toRawUTF8(), std::ios::binary);
-            dst << src.rdbuf();
-        }
-    }
-    workingDir = save.getParentDirectory();
+    File(workingDir.getFullPathName() + "/Audio").copyDirectoryTo(audiodir);
+
+    save = File(path.getFullPathName() + "/Settings.xml");
+    workingDir = path;
 }
 
 void Settings::CreateNew()
 {
-    FileChooser chooser("Create Settings", File::nonexistent, "*.xml");
+    FileChooser chooser("Create Settings", File::nonexistent, "*.gene");
     if (!chooser.browseForFileToSave(true))
         return;
     File path = chooser.getResult();
+    if (path.exists())
+        path.deleteRecursively();
+    path.createDirectory();
 
     mainElement = XmlDocument::parse(BinaryData::GenericSave_xml);
-    mainElement->writeToFile(path, String::empty);
-    File(path.getParentDirectory().getFullPathName() + "/Audio").createDirectory();
-    File(path.getParentDirectory().getFullPathName() + "/Data").createDirectory();
-    File(path.getParentDirectory().getFullPathName() + "/Output").createDirectory();
-    workingDir = path.getParentDirectory();
+    mainElement->writeToFile(File(path.getFullPathName() + "/Settings.xml"), String::empty);
+    File(path.getFullPathName() + "/Audio").createDirectory();
+    File(path.getFullPathName() + "/Data").createDirectory();
+    workingDir = path;
     save = path;
     isLoaded = true;
     listeners.call(&Listener::SettingsChanged, this);
@@ -107,11 +109,9 @@ void Settings::LoadAudio()
         return;
     File path = chooser.getResult();
 
-    String destination = workingDir.getFullPathName() + "/Audio/" + path.getFileNameWithoutExtension() + ".aif";
-    if (!File(destination).exists()) {
-        std::ifstream src(path.getFullPathName().toRawUTF8(), std::ios::binary);
-        std::ofstream dst(destination.toRawUTF8(), std::ios::binary);
-        dst << src.rdbuf();
+    File destination(workingDir.getFullPathName() + "/Audio/" + path.getFileNameWithoutExtension() + ".aif");
+    if (!destination.exists()) {
+        path.copyFileTo(destination);
     }
     listeners.call(&Listener::SettingsChanged, this);
 }

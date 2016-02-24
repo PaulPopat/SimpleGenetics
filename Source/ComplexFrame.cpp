@@ -14,13 +14,13 @@ Biology::ComplexFrame::ComplexFrame(int Size, Utilities::Random* Gen)
 {
     gen = Gen;
     for (int i = 0; i < Size; i++) {
-        data.add(FFT::Complex{ gen->GetFloat(-1, 1) });
+        data.add(ComplexDouble{ gen->GetDouble(-1, 1), gen->GetDouble(-1, 1) });
     }
 }
 
-FFT::Complex Biology::ComplexFrame::GetAveragePanning() const
+Biology::ComplexDouble Biology::ComplexFrame::GetAveragePanning() const
 {
-    FFT::Complex output{ 0, 0 };
+    ComplexDouble output{ 0, 0 };
     for (int d = 0; d < data.size(); d++) {
         output.r += data.getReference(d).r / data.size();
         output.i += data.getReference(d).i / data.size();
@@ -32,37 +32,37 @@ void Biology::ComplexFrame::Mutate(double Amount,
     const Array<double>& Weighting)
 {
     int t = gen->GetInt(0, data.size());
-    FFT::Complex& r = data.getReference(t);
+    ComplexDouble& r = data.getReference(t);
 
     if (gen->GetBool()) {
-        r.r += gen->GetFloat(-1, 0) * Amount * Weighting[t];
-        r.i += gen->GetFloat(0, 1) * Amount * Weighting[t];
+        r.r += gen->GetDouble(-1, 0) * Amount * Weighting[t];
+        r.i += gen->GetDouble(0, 1) * Amount * Weighting[t];
     }
     else {
-        r.r += gen->GetFloat(0, 1) * Amount * Weighting[t];
-        r.i += gen->GetFloat(-1, 0) * Amount * Weighting[t];
+        r.r += gen->GetDouble(0, 1) * Amount * Weighting[t];
+        r.i += gen->GetDouble(-1, 0) * Amount * Weighting[t];
     }
 }
 
 void Biology::ComplexFrame::Mutate(double Amount)
 {
     int t = gen->GetInt(0, data.size());
-    FFT::Complex& r = data.getReference(t);
+    ComplexDouble& r = data.getReference(t);
 
-    r.r += gen->GetFloat(-1, 1) * Amount;
+    r.r += gen->GetDouble(-1, 1) * Amount;
     if (r.r > 1)
         r.r = 1;
     else if (r.r < -1)
         r.r = -1;
 
-    r.i += gen->GetFloat(-1, 1) * Amount;
+    r.i += gen->GetDouble(-1, 1) * Amount;
     if (r.i > 1)
         r.i = 1;
     else if (r.i < -1)
         r.i = -1;
 }
 
-const Array<FFT::Complex>& Biology::ComplexFrame::GetData() const
+const Array<Biology::ComplexDouble>& Biology::ComplexFrame::GetData() const
 {
     return data;
 }

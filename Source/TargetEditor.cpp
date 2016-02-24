@@ -90,6 +90,10 @@ void TargetEditor::mouseDrag(const MouseEvent& event)
         return;
     if (selected != nullptr) {
         *selected = screenToData(event.getPosition(), *selected);
+        if (selected->Position > 1)
+            selected->Position = 1;
+        else if (selected->Position < 0)
+            selected->Position = 0;
         repaint();
     }
 }

@@ -9,6 +9,7 @@ have fun!
 A more detailed description of the process will be given at the bottom of the
 readme.
 
+
 # Building Simple Genetics
 
 This program requires FFTW to build. The default location is:
@@ -17,10 +18,16 @@ header:  /usr/local/include
 library: /usr/local/lib
 
 Other than that it should build happily on Mac OS. It has been tested on Mac OS
-El Capitan.
+El Capitan. Please note that the live build is currently not working because it
+cannot work with fftw. I made this before live build was a thing and haven’t
+really looked into it. The Xcode project should build fine.
 
 
 # Getting something out of Simple Genetics
+
+Simple instructions: Open the program. In the settings menu open a .gene save
+file. In the algorithm menu click run. Wait. In the audio menu click save
+output. Music! It will give you a preview audio as it calculates.
 
 The program runs a Evolutionary Algorithm, THIS WILL TAKE A LONG TIME TO
 PROCESS. As it calculates it will play back a demo of what is currently being
@@ -58,7 +65,7 @@ Breeding Random Factor:
 Frequency Bands:
 	How many sections the algorithm will process in. This means that the
 	algorithm will split the data into a given number of frequency bands and
-	process them complete seperately. It will also run them on seperate threads
+	process them complete separately. It will also run them on separate threads
 	for better performance.
 
 Targets:
@@ -67,7 +74,7 @@ Targets:
 
 Frequency Mutation Weighting:
 	Allows you to set how much each frequency will be affected by mutations.
-	Most runs will want the high frequencues mutating a lot less. This is for
+	Most runs will want the high frequencies mutating a lot less. This is for
 	that!
 
 Population:

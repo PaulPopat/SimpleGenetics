@@ -47,20 +47,12 @@ void FrequencyGraph::BreedComplete(const BreedCompleteData& data)
     if (data.ident >= amplitudes.size())
         amplitudes.resize(data.ident + 1);
     Array<double>& r = amplitudes.getReference(data.ident);
-    if (r.size() > 0)
-        r.clear();
-
-    for (int i = 0; i < data.amplitude.size(); i++)
-        r.add(data.amplitude[i]);
+    r = data.amplitude;
 
     if (data.ident >= targets.size())
         targets.resize(data.ident + 1);
     Array<double>& t = targets.getReference(data.ident);
-    if (t.size() > 0)
-        t.clear();
-
-    for (int i = 0; i < data.target.size(); i++)
-        t.add(data.target[i]);
+    t = data.target;
 
     triggerAsyncUpdate();
 }
