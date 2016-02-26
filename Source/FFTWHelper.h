@@ -16,9 +16,9 @@
 namespace FFTW {
 struct SelfDestructPlan {
     SelfDestructPlan() = default;
-    SelfDestructPlan(const fftw_plan &plan);
+    SelfDestructPlan(const fftw_plan& plan);
     virtual ~SelfDestructPlan() noexcept;
-    operator const fftw_plan &() const;
+    operator const fftw_plan&() const;
 
 private:
     fftw_plan plan;
@@ -26,7 +26,8 @@ private:
 
 struct fftw_ptr_destructor {
     template <typename T>
-    void operator()(T t) const noexcept {
+    void operator()(T t) const noexcept
+    {
         fftw_free(t);
     }
 };

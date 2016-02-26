@@ -10,7 +10,7 @@
 #include "MainComponent.h"
 
 MainContentComponent::MainContentComponent()
-: laf(new CustomLookAndFeel)
+    : laf(new CustomLookAndFeel)
 {
     setAudioChannels(0, 2);
     MenuBarModel::setMacMainMenu(this);
@@ -294,7 +294,7 @@ void MainContentComponent::RunAlgorithm()
     isRunning = true;
 }
 
-void MainContentComponent::CancelAlgorithm() 
+void MainContentComponent::CancelAlgorithm()
 {
     if (isRunning)
         if (decoder->isThreadRunning())

@@ -19,7 +19,6 @@ TargetEditor::TargetEditor(String Title, String Name)
     setRepaintsOnMouseActivity(true);
 }
 
-
 void TargetEditor::paint(Graphics& g)
 {
     if (!loaded) {

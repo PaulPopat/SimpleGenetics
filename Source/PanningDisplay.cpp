@@ -16,7 +16,6 @@ PanningDisplay::PanningDisplay()
     setInterceptsMouseClicks(false, false);
 }
 
-
 void PanningDisplay::paint(Graphics& g)
 {
     g.setColour(findColour(CustomLookAndFeel::ColourIDs::Outline));

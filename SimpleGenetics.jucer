@@ -41,6 +41,8 @@
               file="Source/ProgressWatcher.h"/>
       </GROUP>
       <GROUP id="{9F89F9DB-2ACF-07B6-CE61-831191A7F350}" name="Utilities">
+        <FILE id="wfqfFK" name="FFTWHelper.cpp" compile="1" resource="0" file="Source/FFTWHelper.cpp"/>
+        <FILE id="fTmwxm" name="FFTWHelper.h" compile="0" resource="0" file="Source/FFTWHelper.h"/>
         <FILE id="MnKCFG" name="ListenerComponents.h" compile="0" resource="0"
               file="Source/ListenerComponents.h"/>
         <FILE id="CO0GMP" name="LiveAudioDecoder.cpp" compile="1" resource="0"

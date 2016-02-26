@@ -11,10 +11,10 @@
 #ifndef LIVEAUDIODECODER_H_INCLUDED
 #define LIVEAUDIODECODER_H_INCLUDED
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "FFTWHelper.h"
 #include "Gene.h"
 #include "GeneController.h"
 #include "Settings.h"
-#include "FFTWHelper.h"
 
 namespace FFTW {
 
@@ -38,7 +38,7 @@ private:
 
     int playhead;
 
-    Array<double> audioFromFrame(const Array<std::complex<double>>& bands);
+    Array<double> audioFromFrame(const Array<std::complex<double> >& bands);
     bool vectorFull(const Array<Biology::Gene>& input);
 
     fftw_c input;

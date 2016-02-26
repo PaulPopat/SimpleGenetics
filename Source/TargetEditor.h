@@ -21,12 +21,11 @@ struct TargetLocation {
     double Position;
 
     bool operator==(const TargetLocation& rhs) const { return Position == rhs.Position; }
-    bool operator< (const TargetLocation& rhs) const { return Position <  rhs.Position; }
-    bool operator> (const TargetLocation& rhs) const { return Position >  rhs.Position; }
+    bool operator<(const TargetLocation& rhs) const { return Position < rhs.Position; }
+    bool operator>(const TargetLocation& rhs) const { return Position > rhs.Position; }
     bool operator<=(const TargetLocation& rhs) const { return Position <= rhs.Position; }
     bool operator>=(const TargetLocation& rhs) const { return Position >= rhs.Position; }
 };
-
 
 using TargetArray = SortedSet<TargetLocation>;
 

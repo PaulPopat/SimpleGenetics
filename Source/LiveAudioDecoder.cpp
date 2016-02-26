@@ -16,7 +16,7 @@ FFTW::LiveAudioDecoder::LiveAudioDecoder(int Bands, int FFTSize, int FramesPerGe
     , fftSize(FFTSize)
     , framesPerGene(FramesPerGene)
     , playhead(0)
-    , input (fftw_alloc_complex(fftSize + 1))
+    , input(fftw_alloc_complex(fftSize + 1))
     , output(fftw_alloc_real(fftSize * 2))
     , ifft(fftw_plan_dft_c2r_1d(fftSize * 2, input.get(), output.get(), FFTW_ESTIMATE))
 {
@@ -35,7 +35,7 @@ void FFTW::LiveAudioDecoder::run()
             Array<double> audioTemp;
 
             for (int i = 0; i < framesPerGene; i++) {
-                Array<std::complex<double>> frame;
+                Array<std::complex<double> > frame;
                 for (int j = 0; j < temp.size(); j++) {
                     int s = temp[j].GetFrame(i).GetData().size();
                     for (int b = 0; b < s; b++)
@@ -74,7 +74,7 @@ Array<double> FFTW::LiveAudioDecoder::GetCurrentAudio(int numSamples)
     return returndata;
 }
 
-Array<double> FFTW::LiveAudioDecoder::audioFromFrame(const Array<std::complex<double>>& frame)
+Array<double> FFTW::LiveAudioDecoder::audioFromFrame(const Array<std::complex<double> >& frame)
 {
     input.get()[fftSize][0] = 0;
     input.get()[fftSize][1] = 0;

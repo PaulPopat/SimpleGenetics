@@ -11,10 +11,10 @@
 #include "AudioLoader.h"
 
 FFTW::AudioLoader::AudioLoader(int FFTSize)
-: fftSize(FFTSize)
-, output(fftw_alloc_complex(fftSize + 1))
-, input(fftw_alloc_real(fftSize * 2))
-, fft(fftw_plan_dft_r2c_1d(fftSize * 2, input.get(), output.get(), FFTW_ESTIMATE))
+    : fftSize(FFTSize)
+    , output(fftw_alloc_complex(fftSize + 1))
+    , input(fftw_alloc_real(fftSize * 2))
+    , fft(fftw_plan_dft_r2c_1d(fftSize * 2, input.get(), output.get(), FFTW_ESTIMATE))
 {
 }
 

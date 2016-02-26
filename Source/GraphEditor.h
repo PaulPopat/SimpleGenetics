@@ -23,12 +23,11 @@ struct GraphPoint {
     double Position;
 
     bool operator==(const GraphPoint& rhs) const { return Position == rhs.Position; }
-    bool operator< (const GraphPoint& rhs) const { return Position <  rhs.Position; }
-    bool operator> (const GraphPoint& rhs) const { return Position >  rhs.Position; }
+    bool operator<(const GraphPoint& rhs) const { return Position < rhs.Position; }
+    bool operator>(const GraphPoint& rhs) const { return Position > rhs.Position; }
     bool operator<=(const GraphPoint& rhs) const { return Position <= rhs.Position; }
     bool operator>=(const GraphPoint& rhs) const { return Position >= rhs.Position; }
 };
-
 
 class GraphEditor : public SettingsListenerComponent {
 public:

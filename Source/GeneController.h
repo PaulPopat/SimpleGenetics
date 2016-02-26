@@ -24,11 +24,11 @@ struct Metric {
     double Metric;
     Biology::Gene Gene;
 
-    bool operator==(const struct Metric& rhs) const {return Metric == rhs.Metric;}
-    bool operator< (const struct Metric& rhs) const {return Metric <  rhs.Metric;}
-    bool operator> (const struct Metric& rhs) const {return Metric >  rhs.Metric;}
-    bool operator<=(const struct Metric& rhs) const {return Metric <= rhs.Metric;}
-    bool operator>=(const struct Metric& rhs) const {return Metric >= rhs.Metric;}
+    bool operator==(const struct Metric& rhs) const { return Metric == rhs.Metric; }
+    bool operator<(const struct Metric& rhs) const { return Metric < rhs.Metric; }
+    bool operator>(const struct Metric& rhs) const { return Metric > rhs.Metric; }
+    bool operator<=(const struct Metric& rhs) const { return Metric <= rhs.Metric; }
+    bool operator>=(const struct Metric& rhs) const { return Metric >= rhs.Metric; }
 };
 
 /** The controller class will be in charge of creating the population, gathering the metrics.

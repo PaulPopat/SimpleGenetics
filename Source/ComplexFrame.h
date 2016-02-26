@@ -33,12 +33,12 @@ public:
     /** mutates one band randomly */
     void Mutate(double Amount);
     /** returns the basic data for other uses */
-    const Array<std::complex<double>>& GetData() const;
+    const Array<std::complex<double> >& GetData() const;
     /** returns the number of complex numbers stored */
     int GetFrameSize() const;
 
 private:
-    Array<std::complex<double>> data;
+    Array<std::complex<double> > data;
     Utilities::Random* gen;
 };
 };

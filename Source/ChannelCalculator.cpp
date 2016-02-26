@@ -16,7 +16,7 @@ std::complex<double> Utilities::GetChannelLocation(int Channel, int NumChannels)
     double degrees = ((double)Channel / (double)NumChannels) * 360;
     double angle = (degrees * M_PI) / 180;
 
-    return std::complex<double>{cos(angle), sin(angle)};
+    return std::complex<double>{ cos(angle), sin(angle) };
 }
 
 double Utilities::GetChannelAmp(std::complex<double> Location, int NumChannels, int Channel)

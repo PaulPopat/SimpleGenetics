@@ -23,7 +23,6 @@ std::complex<double> Biology::ComplexFrame::GetAveragePanning() const
     std::complex<double> output{ 0, 0 };
     for (int d = 0; d < data.size(); d++) {
         output += data.getReference(d) / static_cast<double>(data.size());
-
     }
     return output;
 }
@@ -35,12 +34,12 @@ void Biology::ComplexFrame::Mutate(double Amount,
     std::complex<double>& r = data.getReference(t);
 
     if (gen->GetBool()) {
-        r += std::complex<double>{gen->GetDouble(-1, 0) * Amount * Weighting[t],
-                                  gen->GetDouble(0, 1) * Amount * Weighting[t]};
+        r += std::complex<double>{ gen->GetDouble(-1, 0) * Amount * Weighting[t],
+            gen->GetDouble(0, 1) * Amount * Weighting[t] };
     }
     else {
-        r += std::complex<double>{gen->GetDouble(0, 1) * Amount * Weighting[t],
-                                  gen->GetDouble(-1, 0) * Amount * Weighting[t]};
+        r += std::complex<double>{ gen->GetDouble(0, 1) * Amount * Weighting[t],
+            gen->GetDouble(-1, 0) * Amount * Weighting[t] };
     }
 }
 
@@ -59,7 +58,7 @@ void Biology::ComplexFrame::Mutate(double Amount)
     };
 }
 
-const Array<std::complex<double>>& Biology::ComplexFrame::GetData() const
+const Array<std::complex<double> >& Biology::ComplexFrame::GetData() const
 {
     return data;
 }

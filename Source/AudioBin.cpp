@@ -24,7 +24,6 @@ AudioBin::AudioBin(String Title, String Name)
     addAndMakeVisible(loadAudio);
 }
 
-
 void AudioBin::paint(Graphics& g)
 {
     g.setColour(findColour(CustomLookAndFeel::ColourIDs::Outline));

@@ -85,7 +85,7 @@ void Biology::Gene::CalculateSpectrumOrLocation()
             spectrum.getReference(i) = 0;
 
         for (int d = 0; d < data.size(); d++) {
-            const Array<std::complex<double>>& frame = data.getReference(d).GetData();
+            const Array<std::complex<double> >& frame = data.getReference(d).GetData();
             for (int i = 0; i < frame.size(); i++) {
                 spectrum.getReference(i) += std::sqrt(std::pow(frame[i].real(), 2) + std::pow(frame[i].imag(), 2)) / data.size();
             }
