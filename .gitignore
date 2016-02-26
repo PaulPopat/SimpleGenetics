@@ -1,6 +1,8 @@
-Builds/MacOSX/build/Debug/
+.DS_Store
 
-Builds/MacOSX/build/Release/
+Builds/MacOSX/build
+
+ElCapitanBuildx64.app
 
 ElCapitanBuildx64.app/
 

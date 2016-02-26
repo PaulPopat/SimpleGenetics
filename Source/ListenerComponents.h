@@ -19,7 +19,6 @@ class GeneControllerListenerComponent : public GeneController::Listener,
                                         public Component,
                                         protected AsyncUpdater {
 public:
-    ~GeneControllerListenerComponent() = default;
     void handleAsyncUpdate() override { repaint(); }
 };
 
@@ -30,7 +29,6 @@ public:
         : Settings::Listener(Name)
     {
     }
-    ~SettingsListenerComponent() = default;
 };
 
 #endif // LISTENERCOMPONENTS_H_INCLUDED

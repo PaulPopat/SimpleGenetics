@@ -100,7 +100,7 @@ void Settings::Reset()
     listeners.call(&Listener::SettingsChanged, this);
 }
 
-bool Settings::IsLoaded() { return isLoaded; }
+bool Settings::IsLoaded() const { return isLoaded; }
 
 void Settings::LoadAudio()
 {
@@ -116,14 +116,14 @@ void Settings::LoadAudio()
     listeners.call(&Listener::SettingsChanged, this);
 }
 
-void Settings::DeleteAudio(String Name)
+void Settings::DeleteAudio(String Name) const
 {
     File path = workingDir.getFullPathName() + "/Audio/" + Name + ".aif";
     if (path.existsAsFile())
         path.deleteFile();
 }
 
-StringArray Settings::GetAudioBin()
+StringArray Settings::GetAudioBin() const
 {
     StringArray output;
     DirectoryIterator iter(File(workingDir.getFullPathName() + "/Audio"), true, "*.aif");

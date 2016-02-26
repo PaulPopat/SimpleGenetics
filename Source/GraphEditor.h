@@ -21,18 +21,18 @@
 struct GraphPoint {
     double Value;
     double Position;
+
+    bool operator==(const GraphPoint& rhs) const { return Position == rhs.Position; }
+    bool operator< (const GraphPoint& rhs) const { return Position <  rhs.Position; }
+    bool operator> (const GraphPoint& rhs) const { return Position >  rhs.Position; }
+    bool operator<=(const GraphPoint& rhs) const { return Position <= rhs.Position; }
+    bool operator>=(const GraphPoint& rhs) const { return Position >= rhs.Position; }
 };
 
-inline bool operator==(const GraphPoint& l, const GraphPoint& r) { return l.Position == r.Position; }
-inline bool operator<(const GraphPoint& l, const GraphPoint& r) { return l.Position < r.Position; }
-inline bool operator>(const GraphPoint& l, const GraphPoint& r) { return l.Position > r.Position; }
-inline bool operator<=(const GraphPoint& l, const GraphPoint& r) { return l.Position <= r.Position; }
-inline bool operator>=(const GraphPoint& l, const GraphPoint& r) { return l.Position >= r.Position; }
 
 class GraphEditor : public SettingsListenerComponent {
 public:
     GraphEditor(String Title, String Name);
-    ~GraphEditor() = default;
 
     void paint(Graphics&) override;
     void resized() override;
@@ -57,12 +57,12 @@ private:
     GraphPoint* selected;
     Settings* settings;
 
-    double RangeValue(double val, double min, double max);
+    static double RangeValue(double val, double min, double max);
 
-    bool isInPoint(const Point<int>& input, const GraphPoint& point);
+    bool isInPoint(const Point<int>& input, const GraphPoint& point) const;
 
-    GraphPoint screenToData(const Point<int>& input);
-    const Point<float> dataToScreen(const GraphPoint& data);
+    GraphPoint screenToData(const Point<int>& input) const;
+    Point<float> dataToScreen(const GraphPoint& data) const;
     void setMinMax();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GraphEditor)

@@ -24,9 +24,6 @@ AudioBin::AudioBin(String Title, String Name)
     addAndMakeVisible(loadAudio);
 }
 
-AudioBin::~AudioBin()
-{
-}
 
 void AudioBin::paint(Graphics& g)
 {

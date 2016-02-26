@@ -44,10 +44,6 @@ UserInterface::UserInterface(XmlElement* e, Settings* s)
     LinkInternals();
 }
 
-UserInterface::~UserInterface()
-{
-}
-
 void UserInterface::paint(Graphics& g)
 {
     g.fillAll(findColour(CustomLookAndFeel::ColourIDs::Background));

@@ -53,15 +53,15 @@ public:
     void Reset();
     /** returns if settings are currently loaded. useful for locking down
      the ui if settings aren't loaded */
-    bool IsLoaded();
+    bool IsLoaded() const;
 
     /** will load audio into the audio directory to be referenced by the audio bin and
      to be used as targets in the target editor */
     void LoadAudio();
     /** will remove an audio file from the audio directory */
-    void DeleteAudio(String Name);
+    void DeleteAudio(String Name) const;
     /** returns a list of all the audio files in the audio director */
-    StringArray GetAudioBin();
+    StringArray GetAudioBin() const;
 
     /** returns the settings with given name as a double value */
     double GetDoubleValue(String Name) const;

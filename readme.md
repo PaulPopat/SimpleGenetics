@@ -1,33 +1,31 @@
--------------------------------------------------------------------------------
---- About Simple Genetics -----------------------------------------------------
--------------------------------------------------------------------------------
+# About Simple Genetics
+
 Simple Genetics is an Evolutionary Algorithm designed to make interesting
 timbres and micro rhythms that slowly evolve over time. It work with target
 audio files that can be changed as the algorithm is running. The algorithm will
 use these files as a reference but will not create copies so play around and
 have fun!
 
-A more detailed description of the process will be given a the bottom of the
-read me.
+A more detailed description of the process will be given at the bottom of the
+readme.
 
--------------------------------------------------------------------------------
---- Building Simple Genetics --------------------------------------------------
--------------------------------------------------------------------------------
-This program requires FFTW to build. The default location is; 
 
-/usr/local/include --Header--
-/usr/local/lib --Library--
+# Building Simple Genetics
 
-Other than that it should build happily on Mac OS. It has been tested on Mac Os
+This program requires FFTW to build. The default location is:
+
+header:  /usr/local/include
+library: /usr/local/lib
+
+Other than that it should build happily on Mac OS. It has been tested on Mac OS
 El Capitan. Please note that the live build is currently not working because it
 cannot work with fftw. I made this before live build was a thing and haven’t
 really looked into it. The Xcode project should build fine.
 
 
--------------------------------------------------------------------------------
---- Getting something out of Simple Genetics ----------------------------------
--------------------------------------------------------------------------------
-Simple instructions: Open the program. In the settings menu open a .gene save 
+# Getting something out of Simple Genetics
+
+Simple instructions: Open the program. In the settings menu open a .gene save
 file. In the algorithm menu click run. Wait. In the audio menu click save
 output. Music! It will give you a preview audio as it calculates.
 
@@ -41,76 +39,74 @@ on the menu bar you can just run it although a fresh save won't do much. I have
 included a sample save for you to try out.
 
 
--------------------------------------------------------------------------------
---- Using the options ---------------------------------------------------------
--------------------------------------------------------------------------------
+# Using the options
+
 As this is a Evolutionary Algorithm there are many settings that a standard user
 will be unfamiliar with. I will go over each one (including the obvious) here
 so that you can be confident with what you are doing.
 
-FFT Frame Size:
-	The number of frequency bands in a frame of fft data. There will be 
+* *FFT Frame Size:*
+	The number of frequency bands in a frame of fft data. There will be
 	multiple frames per Gene/Chromosome.
 
-Frames Per Gene:
+* *Frames Per Gene:*
 	The number of frames of fft data that will be stored in one Gene/Chromosome
 
-Breeding Phases:
+* *Breeding Phases:*
 	The number of times the algorithm will loop in one run.
 
-Calculation Loops:
+* *Calculation Loops:*
 	The number of times the algorithm will run with the same population.
 
-Breeding Random Factor:
+* *Breeding Random Factor:*
 	The chance of more successful Genes to breed compared to less. Higher
 	numbers mean the successful ones have a higher chance.
 
-Frequency Bands:
+* *Frequency Bands:*
 	How many sections the algorithm will process in. This means that the
 	algorithm will split the data into a given number of frequency bands and
 	process them complete separately. It will also run them on separate threads
 	for better performance.
 
-Targets:
+* *Targets:*
 	The target audio files. ctrl click on a target to remove it and drag them
 	to move. To add another target double click on it in the audio bin.
 
-Frequency Mutation Weighting:
+* *Frequency Mutation Weighting:*
 	Allows you to set how much each frequency will be affected by mutations.
 	Most runs will want the high frequencies mutating a lot less. This is for
 	that!
 
-Population:
+* *Population:*
 	The population size at any given time.
 
-Mutation Number:
+* *Mutation Number:*
 	The number of mutations applied in each breeding phase. These will be added
 	randomly across the new population.
 
-Timbre Mutation Amount:
+* *Timbre Mutation Amount:*
 	How much one mutation will affect a timbre Gene. This is will be applied
 	before the weighting.
 
-Panning Mutation Amount:
+* *Panning Mutation Amount:*
 	How much one mutation will affect a panning Gene.
 
-Capture Interval:
+* *Capture Interval:*
 	This will affect how often a snap shot will be taken of the best of the
 	population. Setting this at one or below will cause each breeding phase to
 	take a snapshot (this is not adviced as the result would be notably boring)
 
 
--------------------------------------------------------------------------------
---- Detailed Algorithm Description --------------------------------------------
--------------------------------------------------------------------------------
+# Detailed Algorithm Description
+
 Here is the introduction to Evolutionary Algorithms from my Thesis for this
 project:
 
-In this project I am going to use the term Evolutionary Algorithms (EAs) to 
-refer to algorithms that simulate survival of the fittest using computers. 
-Survival of the fittest is based on the idea of a population of organisms that 
+In this project I am going to use the term Evolutionary Algorithms (EAs) to
+refer to algorithms that simulate survival of the fittest using computers.
+Survival of the fittest is based on the idea of a population of organisms that
 will try to survive as long as they can. Their success on this will be based on
-how well suited they are for the environment. The longer they stay alive the 
+how well suited they are for the environment. The longer they stay alive the
 more likely they are to breed. Breeding will create a new population which is a
 mixture of the most successful population members therefore making it better
 suited for the environment than the previous population, as it is more focused.
@@ -142,7 +138,7 @@ applying mutations. This should hopefully produce an algorithm that
 successfully simulates survival of the fittest.
 
 The Metric for this algorithm works on the basis of FFT Data from target audio
-files. For each Target an average amplitude will be taken for each frequency 
+files. For each Target an average amplitude will be taken for each frequency
 band. Then the same will be done to each Gene and the two will be compared. For
 the panning a location on a 2d plane is worked out by taking each channel of
 target and placing it in the space. The average amplitude is taken for each

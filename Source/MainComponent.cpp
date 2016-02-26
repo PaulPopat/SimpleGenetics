@@ -10,6 +10,7 @@
 #include "MainComponent.h"
 
 MainContentComponent::MainContentComponent()
+: laf(new CustomLookAndFeel)
 {
     setAudioChannels(0, 2);
     MenuBarModel::setMacMainMenu(this);
@@ -17,7 +18,7 @@ MainContentComponent::MainContentComponent()
     settings = new Settings();
     devices = new AudioDeviceSelectorComponent(deviceManager, 0, 0, 0, 256, false, false, false, false);
 
-    setLookAndFeel(&laf);
+    setLookAndFeel(laf);
 
     ScopedPointer<XmlElement> e = XmlDocument::parse(BinaryData::UILayout_xml);
     interface = new UserInterface(e, settings);
@@ -40,7 +41,6 @@ MainContentComponent::~MainContentComponent()
     CancelAlgorithm();
     MenuBarModel::setMacMainMenu(nullptr);
     PopupMenu::dismissAllActiveMenus();
-    writeAudio.deleteAndZero();
     audioSettings.deleteAndZero();
 }
 
@@ -222,7 +222,7 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 // utilities
 //************************************************************
 
-void MainContentComponent::SaveAudio()
+void MainContentComponent::SaveAudio() const
 {
     if (!settings->IsLoaded())
         return;
@@ -233,11 +233,11 @@ void MainContentComponent::SaveAudio()
     if (path.exists())
         path.deleteRecursively();
 
-    writeAudio = new SimpleDocumentWindow("Audio Output Settings",
+    Component::SafePointer<SimpleDocumentWindow> writeAudio = new SimpleDocumentWindow("Audio Output Settings",
         findColour(CustomLookAndFeel::ColourIDs::Background),
         DocumentWindow::TitleBarButtons::closeButton,
         true);
-    writeAudio->setLookAndFeel(&laf);
+    writeAudio->setLookAndFeel(laf);
     writeAudio->setResizable(true, true);
     writeAudio->setVisible(true);
     writeAudio->setUsingNativeTitleBar(true);
@@ -255,7 +255,7 @@ void MainContentComponent::AudioSettings()
         findColour(CustomLookAndFeel::ColourIDs::Background),
         DocumentWindow::TitleBarButtons::closeButton,
         true);
-    audioSettings->setLookAndFeel(&laf);
+    audioSettings->setLookAndFeel(laf);
     audioSettings->setResizable(true, true);
     audioSettings->setVisible(true);
     audioSettings->setUsingNativeTitleBar(true);
@@ -294,7 +294,7 @@ void MainContentComponent::RunAlgorithm()
     isRunning = true;
 }
 
-void MainContentComponent::CancelAlgorithm()
+void MainContentComponent::CancelAlgorithm() 
 {
     if (isRunning)
         if (decoder->isThreadRunning())

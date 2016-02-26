@@ -19,9 +19,6 @@ TargetEditor::TargetEditor(String Title, String Name)
     setRepaintsOnMouseActivity(true);
 }
 
-TargetEditor::~TargetEditor()
-{
-}
 
 void TargetEditor::paint(Graphics& g)
 {
@@ -138,18 +135,18 @@ double TargetEditor::RangeValue(double val, double min, double max)
     return (val - min) / (max - min);
 }
 
-bool TargetEditor::isInPoint(const Point<int>& input, const TargetLocation& point)
+bool TargetEditor::isInPoint(const Point<int>& input, const TargetLocation& point) const
 {
     const Point<float> i = dataToScreen(point);
     return input.x - i.x >= -3 && input.x - i.x <= 3;
 }
 
-TargetLocation TargetEditor::screenToData(const Point<int>& input, const TargetLocation& reference)
+TargetLocation TargetEditor::screenToData(const Point<int>& input, const TargetLocation& reference) const
 {
     return TargetLocation{ reference.Name, RangeValue(input.x, bounds.getX(), bounds.getRight()) };
 }
 
-const Point<float> TargetEditor::dataToScreen(const TargetLocation& data)
+Point<float> TargetEditor::dataToScreen(const TargetLocation& data) const
 {
     return Point<float>(bounds.getX() + (data.Position * bounds.getWidth()), 0);
 }

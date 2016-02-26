@@ -15,11 +15,11 @@
 
 namespace Utilities {
 
-Biology::ComplexDouble GetChannelLocation(int Channel, int NumChannels);
+std::complex<double> GetChannelLocation(int Channel, int NumChannels);
 
-double GetChannelAmp(Biology::ComplexDouble Location, int NumChannels, int Channel);
+double GetChannelAmp(std::complex<double> Location, int NumChannels, int Channel);
 
-Biology::ComplexDouble GetPosition(Array<double> Channels);
+std::complex<double> GetPosition(Array<double> Channels);
 }
 
 #endif // CHANNELCALCULATOR_H_INCLUDED

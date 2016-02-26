@@ -20,7 +20,6 @@
 class EQCurveEditor : public GraphEditor {
 public:
     EQCurveEditor(String Title, String Name);
-    ~EQCurveEditor();
 
 private:
     void floorData() override;

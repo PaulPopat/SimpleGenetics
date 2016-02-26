@@ -25,9 +25,9 @@ public:
     void BreedComplete(const BreedCompleteData& data) override;
 
 private:
-    Path BuildPath(const Array<Array<double> >&& data, int xmod, int ymod, int width, int height);
-    double GetRange(const Array<double>& data, int start, int gap);
-    bool DataIsPopulated(const Array<Array<double> >& data);
+    Path BuildPath(const Array<Array<double> >& data, int xmod, int ymod, int width, int height) const;
+    double GetRange(const Array<double>& data, int start, int gap) const;
+    bool DataIsPopulated(const Array<Array<double> >& data) const;
     Array<Array<double> > amplitudes;
     Array<Array<double> > targets;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FrequencyGraph)

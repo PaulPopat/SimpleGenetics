@@ -15,21 +15,14 @@ FFTW::LiveAudioDecoder::LiveAudioDecoder(int Bands, int FFTSize, int FramesPerGe
     , bands(Bands)
     , fftSize(FFTSize)
     , framesPerGene(FramesPerGene)
+    , playhead(0)
+    , input (fftw_alloc_complex(fftSize + 1))
+    , output(fftw_alloc_real(fftSize * 2))
+    , ifft(fftw_plan_dft_c2r_1d(fftSize * 2, input.get(), output.get(), FFTW_ESTIMATE))
 {
-    input = fftw_alloc_complex(fftSize + 1);
-    output = fftw_alloc_real(fftSize * 2);
-    ifft = fftw_plan_dft_c2r_1d(fftSize * 2, input, output, FFTW_ESTIMATE);
-    playhead = 0;
     for (int i = 0; i < Bands; i++) {
         timbre.add(Biology::Gene());
     }
-}
-
-FFTW::LiveAudioDecoder::~LiveAudioDecoder()
-{
-    fftw_destroy_plan(ifft);
-    fftw_free(input);
-    fftw_free(output);
 }
 
 void FFTW::LiveAudioDecoder::run()
@@ -42,7 +35,7 @@ void FFTW::LiveAudioDecoder::run()
             Array<double> audioTemp;
 
             for (int i = 0; i < framesPerGene; i++) {
-                Array<Biology::ComplexDouble> frame;
+                Array<std::complex<double>> frame;
                 for (int j = 0; j < temp.size(); j++) {
                     int s = temp[j].GetFrame(i).GetData().size();
                     for (int b = 0; b < s; b++)
@@ -66,7 +59,7 @@ void FFTW::LiveAudioDecoder::BreedComplete(const BreedCompleteData& data)
     timbre.getReference(data.ident) = data.timbreData;
 }
 
-const Array<double> FFTW::LiveAudioDecoder::GetCurrentAudio(int numSamples)
+Array<double> FFTW::LiveAudioDecoder::GetCurrentAudio(int numSamples)
 {
     Array<double> returndata;
 
@@ -81,18 +74,18 @@ const Array<double> FFTW::LiveAudioDecoder::GetCurrentAudio(int numSamples)
     return returndata;
 }
 
-Array<double> FFTW::LiveAudioDecoder::audioFromFrame(const Array<Biology::ComplexDouble>& frame)
+Array<double> FFTW::LiveAudioDecoder::audioFromFrame(const Array<std::complex<double>>& frame)
 {
-    input[fftSize][0] = 0;
-    input[fftSize][1] = 0;
+    input.get()[fftSize][0] = 0;
+    input.get()[fftSize][1] = 0;
     for (int i = 0; i < fftSize; i++) {
-        input[i][0] = frame[i].r;
-        input[i][1] = frame[i].i;
+        input.get()[i][0] = frame[i].real();
+        input.get()[i][1] = frame[i].imag();
     }
     fftw_execute(ifft);
     Array<double> final;
     for (int i = 0; i < fftSize * 2; i++) {
-        final.add(output[i] / (fftSize / 2 + 1));
+        final.add(output.get()[i] / (fftSize / 2 + 1));
     }
     return final;
 }

@@ -144,19 +144,19 @@ double GraphEditor::RangeValue(double val, double min, double max)
     return (val - min) / (max - min);
 }
 
-bool GraphEditor::isInPoint(const Point<int>& input, const GraphPoint& point)
+bool GraphEditor::isInPoint(const Point<int>& input, const GraphPoint& point) const
 {
     const Point<float> i = dataToScreen(point);
     return input.x - i.x >= -3 && input.x - i.x <= 3 && input.y - i.y >= -3 && input.y - i.y <= 3;
 }
 
-GraphPoint GraphEditor::screenToData(const Point<int>& input)
+GraphPoint GraphEditor::screenToData(const Point<int>& input) const
 {
     return GraphPoint{ (float)((1 - RangeValue(input.y, bounds.getY(), bounds.getBottom())) * (max - min) + min),
         (float)RangeValue(input.x, bounds.getX(), bounds.getRight()) };
 }
 
-const Point<float> GraphEditor::dataToScreen(const GraphPoint& data)
+Point<float> GraphEditor::dataToScreen(const GraphPoint& data) const
 {
     return Point<float>(bounds.getX() + (data.Position * bounds.getWidth()),
         bounds.getY() + (bounds.getHeight() - RangeValue(data.Value, min, max) * bounds.getHeight()));

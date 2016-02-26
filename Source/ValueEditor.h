@@ -19,7 +19,6 @@
 class ValueEditor : public SettingsListenerComponent, public TextEditor::Listener {
 public:
     ValueEditor(String Title, String Name);
-    ~ValueEditor();
 
     void paint(Graphics&) override;
     void resized() override;
