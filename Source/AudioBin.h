@@ -20,7 +20,6 @@
 class AudioBin : public SettingsListenerComponent, public TableListBoxModel, public Button::Listener {
 public:
     AudioBin(String Title, String Name);
-    ~AudioBin();
 
     void paint(Graphics&) override;
     void resized() override;

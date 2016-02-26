@@ -19,20 +19,20 @@
 struct TargetLocation {
     String Name;
     double Position;
+
+    bool operator==(const TargetLocation& rhs) const { return Position == rhs.Position; }
+    bool operator< (const TargetLocation& rhs) const { return Position <  rhs.Position; }
+    bool operator> (const TargetLocation& rhs) const { return Position >  rhs.Position; }
+    bool operator<=(const TargetLocation& rhs) const { return Position <= rhs.Position; }
+    bool operator>=(const TargetLocation& rhs) const { return Position >= rhs.Position; }
 };
 
-inline bool operator==(const TargetLocation& l, const TargetLocation& r) { return l.Position == r.Position; }
-inline bool operator<(const TargetLocation& l, const TargetLocation& r) { return l.Position < r.Position; }
-inline bool operator>(const TargetLocation& l, const TargetLocation& r) { return l.Position > r.Position; }
-inline bool operator<=(const TargetLocation& l, const TargetLocation& r) { return l.Position <= r.Position; }
-inline bool operator>=(const TargetLocation& l, const TargetLocation& r) { return l.Position >= r.Position; }
 
 using TargetArray = SortedSet<TargetLocation>;
 
 class TargetEditor : public SettingsListenerComponent {
 public:
     TargetEditor(String Title, String Name);
-    ~TargetEditor();
 
     void paint(Graphics&) override;
     void resized() override;
@@ -52,12 +52,12 @@ private:
     bool loaded = false;
     TargetLocation* selected;
 
-    double RangeValue(double val, double min, double max);
+    static double RangeValue(double val, double min, double max);
 
-    bool isInPoint(const Point<int>& input, const TargetLocation& point);
+    bool isInPoint(const Point<int>& input, const TargetLocation& point) const;
 
-    TargetLocation screenToData(const Point<int>& input, const TargetLocation& reference);
-    const Point<float> dataToScreen(const TargetLocation& data);
+    TargetLocation screenToData(const Point<int>& input, const TargetLocation& reference) const;
+    Point<float> dataToScreen(const TargetLocation& data) const;
 
     TargetArray data;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TargetEditor)

@@ -11,18 +11,11 @@
 #include "AudioLoader.h"
 
 FFTW::AudioLoader::AudioLoader(int FFTSize)
+: fftSize(FFTSize)
+, output(fftw_alloc_complex(fftSize + 1))
+, input(fftw_alloc_real(fftSize * 2))
+, fft(fftw_plan_dft_r2c_1d(fftSize * 2, input.get(), output.get(), FFTW_ESTIMATE))
 {
-    fftSize = FFTSize;
-    output = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * fftSize + 1);
-    input = (double*)fftw_malloc(sizeof(double) * (fftSize * 2));
-    fft = fftw_plan_dft_r2c_1d(fftSize * 2, input, output, FFTW_ESTIMATE);
-}
-
-FFTW::AudioLoader::~AudioLoader()
-{
-    fftw_destroy_plan(fft);
-    fftw_free(output);
-    fftw_free(input);
 }
 
 FFTW::AudioAnalysis FFTW::AudioLoader::AnalyzeAudio(File Path, int NumBands, int Band)
@@ -80,13 +73,13 @@ Array<Array<double> > FFTW::AudioLoader::GetAmplitudes(const AudioSampleBuffer& 
         for (int f = 0; f < framesInFile; f++) {
 
             for (int s = 0; s < fftSize * 2; s++) {
-                input[s] = Buf.getSample(c, f * (fftSize * 2) + s);
+                input.get()[s] = Buf.getSample(c, f * (fftSize * 2) + s);
             }
 
             fftw_execute(fft);
 
             for (int s = 0; s < fftSize; s++) {
-                r.getReference(s) += std::sqrt(std::pow(output[s][0], 2) + std::pow(output[s][1], 2));
+                r.getReference(s) += std::sqrt(std::pow(output.get()[s][0], 2) + std::pow(output.get()[s][1], 2));
             }
         }
         for (int s = 0; s < fftSize; s++) {

@@ -13,16 +13,15 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ChannelCalculator.h"
 #include "ComplexFrame.h"
-#include "fftw3.h"
+#include "FFTWHelper.h"
 
-using ComplexVector = Array<Biology::ComplexDouble>;
+using ComplexVector = Array<std::complex<double>>;
 
 namespace FFTW {
 
 class AudioWriter : public Thread {
 public:
     AudioWriter(File DataPath, File OutputPath, int SampleRate, int Channels, int BitDepth);
-    ~AudioWriter();
     double& Progress;
 
 private:
@@ -31,9 +30,9 @@ private:
     ComplexVector GetPannedVector(ComplexVector frame, ComplexVector panning, int Channel);
     void PopulateBufferFromComplex(ComplexVector frame);
 
-    fftw_complex* input;
-    double* output;
-    fftw_plan ifft;
+    fftw_c input;
+    fftw_r output;
+    SelfDestructPlan ifft;
     double progress;
 
     Array<ScopedPointer<AudioFormatWriter> > writer;

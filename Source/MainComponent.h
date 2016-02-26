@@ -66,16 +66,15 @@ private:
     Array<ScopedPointer<GeneController> > bands;
     Utilities::Random gen;
     ScopedPointer<UserInterface> interface;
-    Component::SafePointer<SimpleDocumentWindow> writeAudio;
     Component::SafePointer<SimpleDocumentWindow> audioSettings;
     ScopedPointer<AudioDeviceSelectorComponent> devices;
     ScopedPointer<FFTW::LiveAudioDecoder> decoder;
     ScopedPointer<ApplicationCommandManager> commands;
     bool isRunning = false; // declaring value here so the audio can't be called before it is set
 
-    CustomLookAndFeel laf;
+    ScopedPointer<CustomLookAndFeel> laf;
 
-    void SaveAudio();
+    void SaveAudio() const;
     void AudioSettings();
     void RunAlgorithm();
     void CancelAlgorithm();

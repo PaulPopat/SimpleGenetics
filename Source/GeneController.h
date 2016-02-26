@@ -19,18 +19,17 @@
 
 /** A simple contain for holding a metric and an index so that the Gene with that
  metric can be accessed later*/
-class Metric {
-public:
+struct Metric {
     int Index;
     double Metric;
     Biology::Gene Gene;
-};
 
-inline bool operator==(const Metric& l, const Metric& r) { return l.Metric == r.Metric; }
-inline bool operator<(const Metric& l, const Metric& r) { return l.Metric < r.Metric; }
-inline bool operator>(const Metric& l, const Metric& r) { return l.Metric > r.Metric; }
-inline bool operator<=(const Metric& l, const Metric& r) { return l.Metric <= r.Metric; }
-inline bool operator>=(const Metric& l, const Metric& r) { return l.Metric >= r.Metric; }
+    bool operator==(const struct Metric& rhs) const {return Metric == rhs.Metric;}
+    bool operator< (const struct Metric& rhs) const {return Metric <  rhs.Metric;}
+    bool operator> (const struct Metric& rhs) const {return Metric >  rhs.Metric;}
+    bool operator<=(const struct Metric& rhs) const {return Metric <= rhs.Metric;}
+    bool operator>=(const struct Metric& rhs) const {return Metric >= rhs.Metric;}
+};
 
 /** The controller class will be in charge of creating the population, gathering the metrics.
  breeding and mutations.*/
@@ -47,8 +46,8 @@ public:
         struct BreedCompleteData {
             const Array<double>& amplitude;
             const Array<double>& target;
-            const Biology::ComplexDouble& position;
-            const Biology::ComplexDouble& targetPos;
+            const std::complex<double>& position;
+            const std::complex<double>& targetPos;
             const Biology::Gene& timbreData;
             const Biology::Gene& panningData;
             const double& timbreMetric;
@@ -69,13 +68,13 @@ private:
     /** creates a brand new population of a given size */
     Array<Biology::Gene> InitializePopulation(int size, bool timbreMode);
     /** returns a sorted metric for a timbre gene */
-    SortedSet<Metric> GetSortedMetric(Array<Biology::Gene>& input, const Array<double>& arg);
+    SortedSet<Metric> GetSortedMetric(Array<Biology::Gene>& input, const Array<double>& arg) const;
     /** returns a sorted metric for a panning gene */
-    SortedSet<Metric> GetSortedMetric(Array<Biology::Gene>& input, const Biology::ComplexDouble& arg);
+    SortedSet<Metric> GetSortedMetric(Array<Biology::Gene>& input, const std::complex<double>& arg) const;
     /** writes the timbre and panning data to a bin to be read by the AudioWriter class later */
     void WriteData(const Biology::Gene& timbre, const Biology::Gene& paning);
     /** takes the population with the metrics attached and breeds them together for a shiney new one! */
-    Array<Biology::Gene> BreedPopulation(const SortedSet<Metric>& metric, int targetPopulation, int factor);
+    Array<Biology::Gene> BreedPopulation(const SortedSet<Metric>& metric, int targetPopulation, int factor) const;
 
     /** the bin file for writing to */
     ScopedPointer<FileOutputStream> data;

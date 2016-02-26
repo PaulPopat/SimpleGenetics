@@ -16,10 +16,6 @@ EQCurveEditor::EQCurveEditor(String Title, String Name)
 {
 }
 
-EQCurveEditor::~EQCurveEditor()
-{
-}
-
 void EQCurveEditor::floorData()
 {
     for (auto& d : data) {

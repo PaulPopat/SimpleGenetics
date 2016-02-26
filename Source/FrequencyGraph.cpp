@@ -57,7 +57,7 @@ void FrequencyGraph::BreedComplete(const BreedCompleteData& data)
     triggerAsyncUpdate();
 }
 
-Path FrequencyGraph::BuildPath(const Array<Array<double> >&& data, int xmod, int ymod, int width, int height)
+Path FrequencyGraph::BuildPath(const Array<Array<double> >& data, int xmod, int ymod, int width, int height) const
 {
     Array<double> f;
     for (const auto& da : data)
@@ -77,7 +77,7 @@ Path FrequencyGraph::BuildPath(const Array<Array<double> >&& data, int xmod, int
     return output;
 }
 
-double FrequencyGraph::GetRange(const Array<double>& data, int start, int gap)
+double FrequencyGraph::GetRange(const Array<double>& data, int start, int gap) const
 {
     double a = 0;
     for (int p = start; p < start + gap; p++) {
@@ -91,13 +91,12 @@ double FrequencyGraph::GetRange(const Array<double>& data, int start, int gap)
     return a;
 }
 
-bool FrequencyGraph::DataIsPopulated(const Array<Array<double> >& data)
+bool FrequencyGraph::DataIsPopulated(const Array<Array<double> >& data) const
 {
-    if (data.size() == 0)
+    if (data.empty())
         return false;
-    else
-        for (auto& a : data)
-            if (a.size() == 0)
-                return false;
+    for (auto& a : data)
+        if (a.empty())
+            return false;
     return true;
 }
