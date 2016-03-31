@@ -66,10 +66,10 @@ private:
         Rectangle<double> Bounds;
     };
 
-    Array<ScopedPointer<DisplayWithBounds> > displays;
-    Array<ScopedPointer<InterfaceWithBounds> > interfaces;
-    Array<ScopedPointer<AudioBinWithBounds> > audioBins;
-    Array<ScopedPointer<TargetEditorWithBounds> > targetEditors;
+    std::vector<ScopedPointer<DisplayWithBounds> > displays;
+    std::vector<ScopedPointer<InterfaceWithBounds> > interfaces;
+    std::vector<ScopedPointer<AudioBinWithBounds> > audioBins;
+    std::vector<ScopedPointer<TargetEditorWithBounds> > targetEditors;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(UserInterface)
 };
 

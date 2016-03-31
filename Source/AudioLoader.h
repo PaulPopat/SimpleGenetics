@@ -21,8 +21,8 @@ namespace FFTW {
 
 struct AudioAnalysis {
     AudioAnalysis() = default;
-    AudioAnalysis(int bandSize) { Amplitude.insertMultiple(0, 0, bandSize); }
-    Array<double> Amplitude;
+    AudioAnalysis(int bandSize) { Amplitude.resize(bandSize, 0); }
+    std::vector<double> Amplitude;
     std::complex<double> Position;
 };
 
@@ -33,7 +33,7 @@ public:
 
 private:
     AudioSampleBuffer LoadAudio(File Path);
-    Array<Array<double> > GetAmplitudes(const AudioSampleBuffer& Buf);
+    std::vector<std::vector<double> > GetAmplitudes(const AudioSampleBuffer& Buf);
     int fftSize;
     fftw_c output;
     fftw_r input;

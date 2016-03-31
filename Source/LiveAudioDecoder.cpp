@@ -21,30 +21,30 @@ FFTW::LiveAudioDecoder::LiveAudioDecoder(int Bands, int FFTSize, int FramesPerGe
     , ifft(fftw_plan_dft_c2r_1d(fftSize * 2, input.get(), output.get(), FFTW_ESTIMATE))
 {
     for (int i = 0; i < Bands; i++) {
-        timbre.add(Biology::Gene());
+        timbre.emplace_back(Biology::Gene());
     }
 }
 
 void FFTW::LiveAudioDecoder::run()
 {
     while (true) {
-        Array<Biology::Gene> temp = timbre;
+        std::vector<Biology::Gene> temp = timbre;
 
         if (vectorFull(temp)) {
 
-            Array<double> audioTemp;
+            std::vector<double> audioTemp;
 
             for (int i = 0; i < framesPerGene; i++) {
-                Array<std::complex<double> > frame;
+                std::vector<std::complex<double> > frame;
                 for (int j = 0; j < temp.size(); j++) {
                     int s = temp[j].GetFrame(i).GetData().size();
                     for (int b = 0; b < s; b++)
-                        frame.add(temp[j].GetFrame(i).GetData().getUnchecked(b));
+                        frame.emplace_back(temp[j].GetFrame(i).GetData()[b]);
                 }
 
-                Array<double> frameaudio = audioFromFrame(frame);
+                std::vector<double> frameaudio = audioFromFrame(frame);
                 for (int f = 0; f < frameaudio.size(); f++)
-                    audioTemp.add(frameaudio[f]);
+                    audioTemp.emplace_back(frameaudio[f]);
             }
 
             currentAudio = audioTemp;
@@ -56,16 +56,16 @@ void FFTW::LiveAudioDecoder::run()
 
 void FFTW::LiveAudioDecoder::BreedComplete(const BreedCompleteData& data)
 {
-    timbre.getReference(data.ident) = data.timbreData;
+    timbre[data.ident] = data.timbreData;
 }
 
-Array<double> FFTW::LiveAudioDecoder::GetCurrentAudio(int numSamples)
+std::vector<double> FFTW::LiveAudioDecoder::GetCurrentAudio(int numSamples)
 {
-    Array<double> returndata;
+    std::vector<double> returndata;
 
     if (currentAudio.size() > 0) {
         for (int i = 0; i < numSamples; i++) {
-            returndata.add(currentAudio[(i + playhead) % currentAudio.size()]);
+            returndata.emplace_back(currentAudio[(i + playhead) % currentAudio.size()]);
         }
         playhead += numSamples;
         playhead %= currentAudio.size();
@@ -74,7 +74,7 @@ Array<double> FFTW::LiveAudioDecoder::GetCurrentAudio(int numSamples)
     return returndata;
 }
 
-Array<double> FFTW::LiveAudioDecoder::audioFromFrame(const Array<std::complex<double> >& frame)
+std::vector<double> FFTW::LiveAudioDecoder::audioFromFrame(const std::vector<std::complex<double> >& frame)
 {
     input.get()[fftSize][0] = 0;
     input.get()[fftSize][1] = 0;
@@ -83,19 +83,19 @@ Array<double> FFTW::LiveAudioDecoder::audioFromFrame(const Array<std::complex<do
         input.get()[i][1] = frame[i].imag();
     }
     fftw_execute(ifft);
-    Array<double> final;
+    std::vector<double> final;
     for (int i = 0; i < fftSize * 2; i++) {
-        final.add(output.get()[i] / (fftSize / 2 + 1));
+        final.emplace_back(output.get()[i] / (fftSize / 2 + 1));
     }
     return final;
 }
 
-bool FFTW::LiveAudioDecoder::vectorFull(const Array<Biology::Gene>& input)
+bool FFTW::LiveAudioDecoder::vectorFull(const std::vector<Biology::Gene>& input)
 {
     if (input.size() != bands)
         return false;
     for (int i = 0; i < input.size(); i++) {
-        if (input.getReference(i).GetNumFrames() != framesPerGene)
+        if (input[i].GetNumFrames() != framesPerGene)
             return false;
     }
     return true;

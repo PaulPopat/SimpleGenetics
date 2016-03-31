@@ -53,10 +53,12 @@ void MainContentComponent::getNextAudioBlock(const AudioSourceChannelInfo& buffe
     if (!isRunning)
         return;
     AudioSampleBuffer* buffer = bufferToFill.buffer;
-    Array<double> audio = decoder->GetCurrentAudio(buffer->getNumSamples());
+    std::vector<double> audio = decoder->GetCurrentAudio(buffer->getNumSamples());
+    if (audio.size() <= 0)
+        return;
     for (int c = 0; c < buffer->getNumChannels(); c++) {
         for (int s = 0; s < buffer->getNumSamples(); s++) {
-            buffer->setSample(c, s, audio[s]);
+            buffer->setSample(c, s, audio[s % audio.size()]);
         }
     }
 }

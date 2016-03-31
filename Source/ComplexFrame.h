@@ -29,16 +29,16 @@ public:
     std::complex<double> GetAveragePanning() const;
     /** mutates with a weighting for how much each band should be affected.
    weighting must be at least the size of a frame */
-    void Mutate(double Amount, const Array<double>& Weighting);
+    void Mutate(double Amount, const std::vector<double>& Weighting);
     /** mutates one band randomly */
     void Mutate(double Amount);
     /** returns the basic data for other uses */
-    const Array<std::complex<double> >& GetData() const;
+    const std::vector<std::complex<double> >& GetData() const;
     /** returns the number of complex numbers stored */
     int GetFrameSize() const;
 
 private:
-    Array<std::complex<double> > data;
+    std::vector<std::complex<double> > data;
     Utilities::Random* gen;
 };
 };

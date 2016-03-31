@@ -21,7 +21,7 @@ void FrequencyGraph::paint(Graphics& g)
     g.setColour(findColour(CustomLookAndFeel::ColourIDs::Outline));
     g.drawRect(2, 2, getWidth() - 4, getHeight() - 4, 2);
 
-    const Array<Array<double> >& amp = amplitudes;
+    const std::vector<std::vector<double> >& amp = amplitudes;
 
     if (DataIsPopulated(amp)) {
         Path graph = BuildPath(std::move(amp), 4, 4, getWidth() - 8, getHeight() - 8);
@@ -29,7 +29,7 @@ void FrequencyGraph::paint(Graphics& g)
         g.strokePath(graph, PathStrokeType(1));
     }
 
-    const Array<Array<double> >& tar = targets;
+    const std::vector<std::vector<double> >& tar = targets;
 
     if (DataIsPopulated(tar)) {
         Path graph = BuildPath(std::move(tar), 4, 4, getWidth() - 8, getHeight() - 8);
@@ -46,23 +46,24 @@ void FrequencyGraph::BreedComplete(const BreedCompleteData& data)
 {
     if (data.ident >= amplitudes.size())
         amplitudes.resize(data.ident + 1);
-    Array<double>& r = amplitudes.getReference(data.ident);
+    std::vector<double>& r = amplitudes[data.ident];
     r = data.amplitude;
 
     if (data.ident >= targets.size())
         targets.resize(data.ident + 1);
-    Array<double>& t = targets.getReference(data.ident);
+    std::vector<double>& t = targets[data.ident];
     t = data.target;
 
     triggerAsyncUpdate();
 }
 
-Path FrequencyGraph::BuildPath(const Array<Array<double> >& data, int xmod, int ymod, int width, int height) const
+Path FrequencyGraph::BuildPath(const std::vector<std::vector<double> >& data,
+                               int xmod, int ymod, int width, int height) const
 {
-    Array<double> f;
+    std::vector<double> f;
     for (const auto& da : data)
         for (const auto& d : da)
-            f.add(d);
+            f.emplace_back(d);
 
     int gap = f.size() / width;
     if (gap == 0)
@@ -77,7 +78,7 @@ Path FrequencyGraph::BuildPath(const Array<Array<double> >& data, int xmod, int 
     return output;
 }
 
-double FrequencyGraph::GetRange(const Array<double>& data, int start, int gap) const
+double FrequencyGraph::GetRange(const std::vector<double>& data, int start, int gap) const
 {
     double a = 0;
     for (int p = start; p < start + gap; p++) {
@@ -91,7 +92,7 @@ double FrequencyGraph::GetRange(const Array<double>& data, int start, int gap) c
     return a;
 }
 
-bool FrequencyGraph::DataIsPopulated(const Array<Array<double> >& data) const
+bool FrequencyGraph::DataIsPopulated(const std::vector<std::vector<double> >& data) const
 {
     if (data.empty())
         return false;

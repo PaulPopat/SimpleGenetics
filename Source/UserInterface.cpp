@@ -87,7 +87,7 @@ void UserInterface::LoadDisplay(XmlElement* e, GeneControllerListenerComponent* 
         e->getDoubleAttribute("top"),
         e->getDoubleAttribute("width"),
         e->getDoubleAttribute("height"));
-    displays.add(input);
+    displays.emplace_back(input);
 }
 
 void UserInterface::LoadInterface(XmlElement* e, SettingsListenerComponent* l)
@@ -99,7 +99,7 @@ void UserInterface::LoadInterface(XmlElement* e, SettingsListenerComponent* l)
         e->getDoubleAttribute("top"),
         e->getDoubleAttribute("width"),
         e->getDoubleAttribute("height"));
-    interfaces.add(input);
+    interfaces.emplace_back(input);
 }
 
 void UserInterface::LoadTargetEditor(XmlElement* e, TargetEditor* l)
@@ -111,7 +111,7 @@ void UserInterface::LoadTargetEditor(XmlElement* e, TargetEditor* l)
         e->getDoubleAttribute("top"),
         e->getDoubleAttribute("width"),
         e->getDoubleAttribute("height"));
-    targetEditors.add(input);
+    targetEditors.emplace_back(input);
 }
 
 void UserInterface::LoadAudioBin(XmlElement* e, AudioBin* l)
@@ -123,7 +123,7 @@ void UserInterface::LoadAudioBin(XmlElement* e, AudioBin* l)
         e->getDoubleAttribute("top"),
         e->getDoubleAttribute("width"),
         e->getDoubleAttribute("height"));
-    audioBins.add(input);
+    audioBins.emplace_back(input);
 }
 
 void UserInterface::AddControllerListeners(GeneController* controller)

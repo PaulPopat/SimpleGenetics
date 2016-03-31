@@ -26,8 +26,8 @@ public:
     void BreedComplete(const BreedCompleteData& data) override;
 
 private:
-    Array<double> progress;
-    Array<Rectangle<int> > bounds;
+    std::vector<double> progress;
+    std::vector<Rectangle<int> > bounds;
 
     String type;
 

@@ -44,8 +44,8 @@ public:
         /** a simple way to transfer the data. Allowing for expansion at a later data
          without breaking other classes */
         struct BreedCompleteData {
-            const Array<double>& amplitude;
-            const Array<double>& target;
+            const std::vector<double>& amplitude;
+            const std::vector<double>& target;
             const std::complex<double>& position;
             const std::complex<double>& targetPos;
             const Biology::Gene& timbreData;
@@ -66,15 +66,15 @@ public:
 
 private:
     /** creates a brand new population of a given size */
-    Array<Biology::Gene> InitializePopulation(int size, bool timbreMode);
+    std::vector<Biology::Gene> InitializePopulation(int size, bool timbreMode);
     /** returns a sorted metric for a timbre gene */
-    SortedSet<Metric> GetSortedMetric(Array<Biology::Gene>& input, const Array<double>& arg) const;
+    SortedSet<Metric> GetSortedMetric(std::vector<Biology::Gene>& input, const std::vector<double>& arg) const;
     /** returns a sorted metric for a panning gene */
-    SortedSet<Metric> GetSortedMetric(Array<Biology::Gene>& input, const std::complex<double>& arg) const;
+    SortedSet<Metric> GetSortedMetric(std::vector<Biology::Gene>& input, const std::complex<double>& arg) const;
     /** writes the timbre and panning data to a bin to be read by the AudioWriter class later */
     void WriteData(const Biology::Gene& timbre, const Biology::Gene& paning);
     /** takes the population with the metrics attached and breeds them together for a shiney new one! */
-    Array<Biology::Gene> BreedPopulation(const SortedSet<Metric>& metric, int targetPopulation, int factor) const;
+    std::vector<Biology::Gene> BreedPopulation(const SortedSet<Metric>& metric, int targetPopulation, int factor) const;
 
     /** the bin file for writing to */
     ScopedPointer<FileOutputStream> data;
@@ -94,14 +94,14 @@ private:
     int breedingFactor;
     int bandSize;
 
-    Array<double> captureInterval;
-    Array<double> mutationAmount;
-    Array<double> mutationNumber;
-    Array<double> population;
-    Array<double> frequencyWeighting;
-    Array<double> panningMutation;
-    Array<int> targetIdent;
-    Array<FFTW::AudioAnalysis> target;
+    std::vector<double> captureInterval;
+    std::vector<double> mutationAmount;
+    std::vector<double> mutationNumber;
+    std::vector<double> population;
+    std::vector<double> frequencyWeighting;
+    std::vector<double> panningMutation;
+    std::vector<int> targetIdent;
+    std::vector<FFTW::AudioAnalysis> target;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GeneController)
 };

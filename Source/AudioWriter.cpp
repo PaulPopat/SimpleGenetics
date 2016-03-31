@@ -17,7 +17,7 @@ FFTW::AudioWriter::AudioWriter(File DataPath, File OutputPath, int SampleRate, i
     DirectoryIterator dir(DataPath, true, "*.bin");
     while (dir.next()) {
         File f(dir.getFile());
-        data.add(f.createInputStream());
+        data.emplace_back(f.createInputStream());
     }
     String name = OutputPath.getFileNameWithoutExtension();
     OutputPath = OutputPath.getParentDirectory();
@@ -27,12 +27,12 @@ FFTW::AudioWriter::AudioWriter(File DataPath, File OutputPath, int SampleRate, i
             loc.deleteFile();
         AiffAudioFormat f;
         AudioFormatWriter* input = f.createWriterFor(loc.createOutputStream(), SampleRate, 1, BitDepth, 1, 0);
-        writer.add(input);
+        writer.emplace_back(input);
     }
 
     for (int d = 0; d < data.size(); d++) {
-        fftSize = data.getReference(d)->readInt();
-        dataSize.add(data.getReference(d)->readInt());
+        fftSize = data[d]->readInt();
+        dataSize.emplace_back(data[d]->readInt());
     }
 
     channels = Channels;
@@ -48,20 +48,20 @@ FFTW::AudioWriter::AudioWriter(File DataPath, File OutputPath, int SampleRate, i
 
 void FFTW::AudioWriter::run()
 {
-    while (data.getReference(0)->getPosition() < data.getReference(0)->getTotalLength()) {
+    while (data[0]->getPosition() < data[0]->getTotalLength()) {
         ComplexVector fftframe;
         ComplexVector panning;
         for (int d = 0; d < data.size(); d++) {
-            AddFrameToComplexVector(fftframe, data.getReference(d), dataSize.getReference(d));
-            AddFrameToComplexVector(panning, data.getReference(d), dataSize.getReference(d));
+            AddFrameToComplexVector(fftframe, data[d], dataSize[d]);
+            AddFrameToComplexVector(panning, data[d], dataSize[d]);
         }
 
         for (int c = 0; c < channels; c++) {
             ComplexVector cframe = GetPannedVector(fftframe, panning, c);
             PopulateBufferFromComplex(cframe);
-            writer.getReference(c)->writeFromAudioSampleBuffer(buffer, 0, fftSize * 2);
+            writer[c]->writeFromAudioSampleBuffer(buffer, 0, fftSize * 2);
         }
-        progress = (double)data.getReference(0)->getPosition() / (double)data.getReference(0)->getTotalLength();
+        progress = (double)data[0]->getPosition() / (double)data[0]->getTotalLength();
         if (threadShouldExit()) {
             progress = 0;
             return;
@@ -72,7 +72,7 @@ void FFTW::AudioWriter::run()
 void FFTW::AudioWriter::AddFrameToComplexVector(ComplexVector& input, InputStream* stream, int streamSize)
 {
     for (int i = 0; i < streamSize; i++) {
-        input.add(std::complex<double>{ stream->readDouble(), stream->readDouble() });
+        input.emplace_back(std::complex<double>{ stream->readDouble(), stream->readDouble() });
     }
 }
 
@@ -82,7 +82,7 @@ ComplexVector FFTW::AudioWriter::GetPannedVector(ComplexVector frame, ComplexVec
     for (int i = 0; i < frame.size(); i++) {
         float camp = Utilities::GetChannelAmp(panning[i], channels, Channel);
         std::complex<double> input{ frame[i].real() * camp, frame[i].imag() * camp };
-        output.add(input);
+        output.emplace_back(input);
     }
     return output;
 }

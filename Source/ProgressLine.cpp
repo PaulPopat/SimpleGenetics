@@ -40,8 +40,8 @@ void ProgressLine::BreedComplete(const BreedCompleteData& data)
     if (data.ident >= progress.size())
         progress.resize(data.ident + 1);
 
-    progress.getReference(data.ident) = std::fmod((double)data.framesComplete,
-                                            settings->GetDoubleValue("CalculationLoops"))
-        / settings->GetDoubleValue("BreedingLoops");
+    progress[data.ident] = std::fmod((double)data.framesComplete,
+                                     settings->GetDoubleValue("CalculationLoops"))
+                                    / settings->GetDoubleValue("BreedingLoops");
     triggerAsyncUpdate();
 }

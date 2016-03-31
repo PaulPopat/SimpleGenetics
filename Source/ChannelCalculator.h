@@ -19,7 +19,7 @@ std::complex<double> GetChannelLocation(int Channel, int NumChannels);
 
 double GetChannelAmp(std::complex<double> Location, int NumChannels, int Channel);
 
-std::complex<double> GetPosition(Array<double> Channels);
+std::complex<double> GetPosition(std::vector<double> Channels);
 }
 
 #endif // CHANNELCALCULATOR_H_INCLUDED

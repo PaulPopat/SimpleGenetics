@@ -27,19 +27,19 @@ public:
     /* called from one of the gene threads populating data to transform */
     void BreedComplete(const BreedCompleteData& data) override;
     /* called from the audio thread to get any complete data */
-    Array<double> GetCurrentAudio(int numSamples);
+    std::vector<double> GetCurrentAudio(int numSamples);
 
 private:
-    Array<double> currentAudio;
-    Array<Biology::Gene> timbre;
+    std::vector<double> currentAudio;
+    std::vector<Biology::Gene> timbre;
     const int bands;
     const int fftSize;
     const int framesPerGene;
 
     int playhead;
 
-    Array<double> audioFromFrame(const Array<std::complex<double> >& bands);
-    bool vectorFull(const Array<Biology::Gene>& input);
+    std::vector<double> audioFromFrame(const std::vector<std::complex<double> >& bands);
+    bool vectorFull(const std::vector<Biology::Gene>& input);
 
     fftw_c input;
     fftw_r output;

@@ -29,22 +29,22 @@ FFTW::AudioAnalysis FFTW::AudioLoader::AnalyzeAudio(File Path, int NumBands, int
     AudioAnalysis out;
 
     AudioSampleBuffer buf = LoadAudio(Path);
-    Array<Array<double> > amp = GetAmplitudes(buf);
+    std::vector<std::vector<double> > amp = GetAmplitudes(buf);
 
-    out.Amplitude.insertMultiple(0, 0, cur);
+    out.Amplitude.resize(cur, 0);
     for (int s = 0; s < cur; s++) {
         for (int c = 0; c < amp.size(); c++)
-            out.Amplitude.getReference(s) += amp[c][base + s] / amp.size();
+            out.Amplitude[s] += amp[c][base + s] / amp.size();
     }
 
-    Array<double> channels;
+    std::vector<double> channels;
     for (int c = 0; c < amp.size(); c++)
-        channels.add(0);
+        channels.emplace_back(0);
     for (int c = 0; c < amp.size(); c++) {
         for (int s = 0; s < cur; s++) {
-            channels.getReference(c) += amp[c][base + s];
+            channels[c] += amp[c][base + s];
         }
-        channels.getReference(c) /= amp[c].size();
+        channels[c] /= amp[c].size();
     }
     out.Position = Utilities::GetPosition(channels);
 
@@ -60,16 +60,16 @@ AudioSampleBuffer FFTW::AudioLoader::LoadAudio(File Path)
     return buffer;
 }
 
-Array<Array<double> > FFTW::AudioLoader::GetAmplitudes(const AudioSampleBuffer& Buf)
+std::vector<std::vector<double> > FFTW::AudioLoader::GetAmplitudes(const AudioSampleBuffer& Buf)
 {
-    Array<Array<double> > out;
+    std::vector<std::vector<double> > out;
     out.resize(Buf.getNumChannels());
 
     const int framesInFile = Buf.getNumSamples() / (fftSize * 2);
     for (int c = 0; c < Buf.getNumChannels(); c++) {
-        Array<double>& r = out.getReference(c);
+        std::vector<double>& r = out[c];
         for (int s = 0; s < fftSize; s++)
-            r.add(0);
+            r.emplace_back(0);
         for (int f = 0; f < framesInFile; f++) {
 
             for (int s = 0; s < fftSize * 2; s++) {
@@ -79,11 +79,11 @@ Array<Array<double> > FFTW::AudioLoader::GetAmplitudes(const AudioSampleBuffer& 
             fftw_execute(fft);
 
             for (int s = 0; s < fftSize; s++) {
-                r.getReference(s) += std::sqrt(std::pow(output.get()[s][0], 2) + std::pow(output.get()[s][1], 2));
+                r[s] += std::sqrt(std::pow(output.get()[s][0], 2) + std::pow(output.get()[s][1], 2));
             }
         }
         for (int s = 0; s < fftSize; s++) {
-            r.getReference(s) /= framesInFile;
+            r[s] /= framesInFile;
         }
     }
 

@@ -47,38 +47,38 @@ void GeneController::AddListener(Listener* l) { listeners.add(l); }
 
 void GeneController::run()
 {
-    Array<Biology::Gene> timbre = InitializePopulation(population[0], true);
-    Array<Biology::Gene> paning = InitializePopulation(population[0], false);
+    std::vector<Biology::Gene> timbre = InitializePopulation(population[0], true);
+    std::vector<Biology::Gene> paning = InitializePopulation(population[0], false);
 
     // setting up memory space for this loop
-    FFTW::AudioAnalysis& currenttarget = target.getReference(0); // for putting the current target in
+    FFTW::AudioAnalysis& currenttarget = target[0]; // for putting the current target in
     double cpos = 0; // capture interval is added to this and when it reaches 1 a snapshot is taken
 
     for (int loop = 0; loop < calculationLoops; loop++) {
         for (int breed = 0; breed < breedingLoops; breed++) {
 
             cpos += 1 / captureInterval[breed];
-            currenttarget = target.getReference(targetIdent[breed]);
+            currenttarget = target[targetIdent[breed]];
 
             SortedSet<Metric> timbreMetric = GetSortedMetric(timbre, currenttarget.Amplitude);
             SortedSet<Metric> paningMetric = GetSortedMetric(paning, currenttarget.Position);
 
             if (cpos >= 1) {
                 cpos = 0;
-                WriteData(timbre.getReference(timbreMetric[0].Index), paning.getReference(paningMetric[0].Index));
+                WriteData(timbre[timbreMetric[0].Index], paning[paningMetric[0].Index]);
             }
 
             // sending out a progress report for visual feedback
             listeners.call(&Listener::BreedComplete,
                 Listener::BreedCompleteData{
-                    timbre.getReference(timbreMetric[0].Index).GetSpectrum(),
+                    timbre[timbreMetric[0].Index].GetSpectrum(),
                     currenttarget.Amplitude,
-                    paning.getReference(paningMetric[0].Index).GetLocation(),
+                    paning[paningMetric[0].Index].GetLocation(),
                     currenttarget.Position,
-                    timbre.getReference(timbreMetric[0].Index),
-                    paning.getReference(paningMetric[0].Index),
-                    timbreMetric.getReference(0).Metric,
-                    paningMetric.getReference(0).Metric,
+                    timbre[timbreMetric[0].Index],
+                    paning[paningMetric[0].Index],
+                    timbreMetric[0].Metric,
+                    paningMetric[0].Metric,
                     breed + loop,
                     ident });
 
@@ -89,8 +89,8 @@ void GeneController::run()
             // definition would have been larger than the text
             for (int i = 0; i < mutationNumber[breed]; i++) {
                 int target = gen->GetDouble(0, timbre.size());
-                timbre.getReference(target).Mutate(mutationAmount[breed], frequencyWeighting);
-                paning.getReference(target).Mutate(panningMutation[breed]);
+                timbre[target].Mutate(mutationAmount[breed], frequencyWeighting);
+                paning[target].Mutate(panningMutation[breed]);
             }
 
             if (threadShouldExit()) {
@@ -100,30 +100,32 @@ void GeneController::run()
     }
 }
 
-Array<Biology::Gene> GeneController::InitializePopulation(int size, bool timbreMode)
+std::vector<Biology::Gene> GeneController::InitializePopulation(int size, bool timbreMode)
 {
-    Array<Biology::Gene> out;
+    std::vector<Biology::Gene> out;
     for (int i = 0; i < size; i++) {
         Biology::Gene input(bandSize, framesPerGene, timbreMode, gen);
-        out.add(input);
+        out.emplace_back(input);
     }
     return out;
 }
 
-SortedSet<Metric> GeneController::GetSortedMetric(Array<Biology::Gene>& input, const Array<double>& arg) const
+SortedSet<Metric> GeneController::GetSortedMetric(std::vector<Biology::Gene>& input,
+                                                  const std::vector<double>& arg) const
 {
     SortedSet<Metric> out;
     for (int i = 0; i < input.size(); i++) {
-        out.add(Metric{ i, input.getReference(i).GetMetric(arg), input[i] });
+        out.add(Metric{ i, input[i].GetMetric(arg), input[i] });
     }
     return out;
 }
 
-SortedSet<Metric> GeneController::GetSortedMetric(Array<Biology::Gene>& input, const std::complex<double>& arg) const
+SortedSet<Metric> GeneController::GetSortedMetric(std::vector<Biology::Gene>& input,
+                                                  const std::complex<double>& arg) const
 {
     SortedSet<Metric> out;
     for (int i = 0; i < input.size(); i++) {
-        out.add(Metric{ i, input.getReference(i).GetMetric(arg), input[i] });
+        out.add(Metric{ i, input[i].GetMetric(arg), input[i] });
     }
     return out;
 }
@@ -142,16 +144,16 @@ void GeneController::WriteData(const Biology::Gene& timbre, const Biology::Gene&
     }
 }
 
-Array<Biology::Gene> GeneController::BreedPopulation(const SortedSet<Metric>& metric,
+std::vector<Biology::Gene> GeneController::BreedPopulation(const SortedSet<Metric>& metric,
     int targetPopulation,
     int factor) const
 {
-    Array<Biology::Gene> output;
+    std::vector<Biology::Gene> output;
     for (int i = 0; i < targetPopulation; i++) {
         int motherID = gen->GetWeightedInt(0, metric.size(), factor);
         int fatherID = gen->GetWeightedInt(0, metric.size(), factor);
         Biology::Gene input(metric[motherID].Gene, metric[fatherID].Gene);
-        output.add(input);
+        output.emplace_back(input);
     }
     return output;
 }

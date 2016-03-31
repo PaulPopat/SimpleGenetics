@@ -71,16 +71,16 @@ public:
     String GetStringValue(String Name) const;
     /** returns the settings with given name as a graph with levels for each
      point in the given size*/
-    Array<double> GetGraph(String Name, int Size) const;
+    std::vector<double> GetGraph(String Name, int Size) const;
     /** returns the analysis of each audio file in the targets in order
      call get audio graph to find out when to look at each target */
-    Array<FFTW::AudioAnalysis> GetAudioData(String Name, int FFTSize, int NumBands, int Band) const;
+    std::vector<FFTW::AudioAnalysis> GetAudioData(String Name, int FFTSize, int NumBands, int Band) const;
     /** returns the index in the GetAudioData return that needs to be looked at
      at any point in time */
-    Array<int> GetAudioGraph(String Name, int Size) const;
+    std::vector<int> GetAudioGraph(String Name, int Size) const;
     /** returns the name of the file in the GetAudioData return that needs to be looked at
      at any point in time */
-    Array<String> GetAudioNameGraph(String Name) const;
+    std::vector<String> GetAudioNameGraph(String Name) const;
     /** returns a copy of the xml data for a settings of given name. usefull for the settings
      editors to make adjustments and then return a new version when asked */
     XmlElement GetRawData(String Name) const;
@@ -109,7 +109,7 @@ private:
     bool isLoaded;
     /** interpolates through a graph array. this is for the get graph method to work out
      what the value should be at any given time from a set of coordinates. */
-    double Interpolate(double Position, Array<FFT::Complex> Data) const;
+    double Interpolate(double Position, std::vector<FFT::Complex> Data) const;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Settings)
 };

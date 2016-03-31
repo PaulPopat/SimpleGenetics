@@ -149,46 +149,46 @@ String Settings::GetStringValue(String Name) const
     return mainElement->getChildByName(Name)->getStringAttribute("value");
 }
 
-Array<double> Settings::GetGraph(String Name, int Size) const
+std::vector<double> Settings::GetGraph(String Name, int Size) const
 {
-    Array<FFT::Complex> graph;
+    std::vector<FFT::Complex> graph;
     XmlElement* data = mainElement->getChildByName(Name);
     forEachXmlChildElement(*data, d)
     {
-        graph.add(FFT::Complex{ (float)d->getDoubleAttribute("value"), (float)d->getDoubleAttribute("loc") });
+        graph.emplace_back(FFT::Complex{ (float)d->getDoubleAttribute("value"), (float)d->getDoubleAttribute("loc") });
     }
-    Array<double> out;
+    std::vector<double> out;
     for (int i = 0; i < Size; i++) {
-        out.add(Interpolate((double)i / (double)Size, graph));
+        out.emplace_back(Interpolate((double)i / (double)Size, graph));
     }
     return out;
 }
 
-Array<FFTW::AudioAnalysis> Settings::GetAudioData(String Name, int FFTSize, int NumBands, int Band) const
+std::vector<FFTW::AudioAnalysis> Settings::GetAudioData(String Name, int FFTSize, int NumBands, int Band) const
 {
-    Array<File> files;
+    std::vector<File> files;
     XmlElement* data = mainElement->getChildByName(Name);
     forEachXmlChildElement(*data, d)
     {
-        files.add(File(workingDir.getFullPathName() + "/Audio/" + d->getStringAttribute("value") + ".aif"));
+        files.emplace_back(File(workingDir.getFullPathName() + "/Audio/" + d->getStringAttribute("value") + ".aif"));
     }
     FFTW::AudioLoader loader(FFTSize);
-    Array<FFTW::AudioAnalysis> out;
+    std::vector<FFTW::AudioAnalysis> out;
     for (int f = 0; f < files.size(); f++) {
-        out.add(loader.AnalyzeAudio(files[f], NumBands, Band));
+        out.emplace_back(loader.AnalyzeAudio(files[f], NumBands, Band));
     }
     return out;
 }
 
-Array<int> Settings::GetAudioGraph(String Name, int Size) const
+std::vector<int> Settings::GetAudioGraph(String Name, int Size) const
 {
-    Array<int> out;
-    Array<double> positions;
+    std::vector<int> out;
+    std::vector<double> positions;
 
     XmlElement* data = mainElement->getChildByName(Name);
     forEachXmlChildElement(*data, d)
     {
-        positions.add(d->getDoubleAttribute("loc"));
+        positions.emplace_back(d->getDoubleAttribute("loc"));
     }
 
     int pos = 0;
@@ -197,18 +197,18 @@ Array<int> Settings::GetAudioGraph(String Name, int Size) const
             if ((double)i / (double)Size >= positions[pos + 1])
                 pos++;
         }
-        out.add(pos);
+        out.emplace_back(pos);
     }
     return out;
 }
 
-Array<String> Settings::GetAudioNameGraph(String Name) const
+std::vector<String> Settings::GetAudioNameGraph(String Name) const
 {
-    Array<String> out;
+    std::vector<String> out;
     XmlElement* data = mainElement->getChildByName(Name);
     forEachXmlChildElement(*data, d)
     {
-        out.add(d->getStringAttribute("value").trimCharactersAtEnd(".aif"));
+        out.emplace_back(d->getStringAttribute("value").trimCharactersAtEnd(".aif"));
     }
     return out;
 }
@@ -252,7 +252,7 @@ bool Settings::WarningAccepted(String warning)
     return toContinue;
 }
 
-double Settings::Interpolate(double Position, Array<FFT::Complex> Data) const
+double Settings::Interpolate(double Position, std::vector<FFT::Complex> Data) const
 {
     double output = Data[Data.size() - 1].r;
     int i = 0;

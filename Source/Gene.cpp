@@ -16,10 +16,10 @@ Biology::Gene::Gene(const Gene& Mother, const Gene& Father)
     timbreMode = Mother.timbreMode;
     int XOver = gen->GetInt(0, Mother.GetNumFrames());
     for (int x = 0; x < XOver; x++) {
-        data.add(ComplexFrame(Mother.data[x]));
+        data.emplace_back(ComplexFrame(Mother.data[x]));
     }
     for (int x = XOver; x < Father.GetNumFrames(); x++) {
-        data.add(ComplexFrame(Father.data[x]));
+        data.emplace_back(ComplexFrame(Father.data[x]));
     }
     CalculateSpectrumOrLocation();
 }
@@ -29,13 +29,13 @@ Biology::Gene::Gene(int FrameLength, int NumFrames, bool TimbreMode, Utilities::
     gen = Gen;
     for (int i = 0; i < NumFrames; i++) {
         ComplexFrame f(FrameLength, gen);
-        data.add(f);
+        data.emplace_back(f);
     }
     timbreMode = TimbreMode;
     CalculateSpectrumOrLocation();
 }
 
-double Biology::Gene::GetMetric(const Array<double>& Target) const
+double Biology::Gene::GetMetric(const std::vector<double>& Target) const
 {
     if (!timbreMode)
         return 0;
@@ -59,35 +59,33 @@ double Biology::Gene::GetMetric(const std::complex<double>& Target) const
     return metric;
 }
 
-void Biology::Gene::Mutate(double Amount, const Array<double> Weighting)
+void Biology::Gene::Mutate(double Amount, const std::vector<double> Weighting)
 {
     int b = gen->GetInt(0, data.size());
-    data.getReference(b).Mutate(Amount, Weighting);
+    data[b].Mutate(Amount, Weighting);
 }
 
 void Biology::Gene::Mutate(double Amount)
 {
     int b = gen->GetInt(0, data.size());
-    data.getReference(b).Mutate(Amount);
+    data[b].Mutate(Amount);
 }
 
 int Biology::Gene::GetNumFrames() const { return data.size(); }
-const Array<double>& Biology::Gene::GetSpectrum() const { return spectrum; }
+const std::vector<double>& Biology::Gene::GetSpectrum() const { return spectrum; }
 const std::complex<double>& Biology::Gene::GetLocation() const { return location; }
-const Biology::ComplexFrame& Biology::Gene::GetFrame(int i) const { return data.getReference(i); }
+const Biology::ComplexFrame& Biology::Gene::GetFrame(int i) const { return data[i]; }
 
 void Biology::Gene::CalculateSpectrumOrLocation()
 {
     if (timbreMode) {
 
-        spectrum.resize(data[0].GetFrameSize());
-        for (int i = 0; i < spectrum.size(); i++)
-            spectrum.getReference(i) = 0;
+        spectrum.resize(data[0].GetFrameSize(), 0);
 
         for (int d = 0; d < data.size(); d++) {
-            const Array<std::complex<double> >& frame = data.getReference(d).GetData();
+            const std::vector<std::complex<double> >& frame = data[d].GetData();
             for (int i = 0; i < frame.size(); i++) {
-                spectrum.getReference(i) += std::sqrt(std::pow(frame[i].real(), 2) + std::pow(frame[i].imag(), 2)) / data.size();
+                spectrum[i] += std::sqrt(std::pow(frame[i].real(), 2) + std::pow(frame[i].imag(), 2)) / data.size();
             }
         }
     }
@@ -95,7 +93,7 @@ void Biology::Gene::CalculateSpectrumOrLocation()
 
         location = std::complex<double>{ 0, 0 };
         for (int d = 0; d < data.size(); d++) {
-            location += data.getReference(d).GetAveragePanning() / static_cast<double>(data.size());
+            location += data[d].GetAveragePanning() / static_cast<double>(data.size());
         }
     }
 }

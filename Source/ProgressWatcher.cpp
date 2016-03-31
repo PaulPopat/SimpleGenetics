@@ -49,11 +49,11 @@ void ProgressWatcher::BreedComplete(const BreedCompleteData& data)
         SetUpBounds();
     }
     if (type == "Frame")
-        progress.getReference(data.ident) = data.framesComplete;
+        progress[data.ident] = data.framesComplete;
     else if (type == "Timbre")
-        progress.getReference(data.ident) = data.timbreMetric;
+        progress[data.ident] = data.timbreMetric;
     else if (type == "Panning")
-        progress.getReference(data.ident) = data.panningMetric;
+        progress[data.ident] = data.panningMetric;
     triggerAsyncUpdate();
 }
 
@@ -65,6 +65,6 @@ void ProgressWatcher::SetUpBounds()
     int width = getWidth() - 4;
     bounds.clear();
     for (int i = 0; i < progress.size(); i++) {
-        bounds.add(Rectangle<int>(2, 2 + (height * i), width, height));
+        bounds.emplace_back(Rectangle<int>(2, 2 + (height * i), width, height));
     }
 }

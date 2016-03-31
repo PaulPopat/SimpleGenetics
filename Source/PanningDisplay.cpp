@@ -63,8 +63,8 @@ void PanningDisplay::BreedComplete(const BreedCompleteData& data)
         positions.resize(data.ident + 1);
     if (data.ident + 1 > targets.size())
         targets.resize(data.ident + 1);
-    positions.getReference(data.ident) = data.position;
-    targets.getReference(data.ident) = data.targetPos;
+    positions[data.ident] = data.position;
+    targets[data.ident] = data.targetPos;
     triggerAsyncUpdate();
 }
 

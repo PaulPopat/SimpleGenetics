@@ -26,13 +26,13 @@ int Utilities::GetBandBase(int NumBands, int Band, int FFTSize)
     return splitSize * Band;
 }
 
-Array<double> Utilities::SplitToBand(const Array<double>& input, int NumBands, int Band)
+std::vector<double> Utilities::SplitToBand(const std::vector<double>& input, int NumBands, int Band)
 {
     int bandSize = GetBandSize(NumBands, Band, input.size());
     int bandBase = GetBandBase(NumBands, Band, input.size());
-    Array<double> output;
+    std::vector<double> output;
     for (int i = 0; i < bandSize; i++) {
-        output.add(input[bandBase + i]);
+        output.emplace_back(input[bandBase + i]);
     }
     return output;
 }

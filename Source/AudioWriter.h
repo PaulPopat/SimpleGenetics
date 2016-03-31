@@ -15,7 +15,7 @@
 #include "ComplexFrame.h"
 #include "FFTWHelper.h"
 
-using ComplexVector = Array<std::complex<double> >;
+using ComplexVector = std::vector<std::complex<double> >;
 
 namespace FFTW {
 
@@ -35,9 +35,9 @@ private:
     SelfDestructPlan ifft;
     double progress;
 
-    Array<ScopedPointer<AudioFormatWriter> > writer;
-    Array<ScopedPointer<InputStream> > data;
-    Array<int> dataSize;
+    std::vector<ScopedPointer<AudioFormatWriter> > writer;
+    std::vector<ScopedPointer<InputStream> > data;
+    std::vector<int> dataSize;
     AudioSampleBuffer buffer;
 
     int fftSize;

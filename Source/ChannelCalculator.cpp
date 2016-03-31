@@ -21,22 +21,22 @@ std::complex<double> Utilities::GetChannelLocation(int Channel, int NumChannels)
 
 double Utilities::GetChannelAmp(std::complex<double> Location, int NumChannels, int Channel)
 {
-    Array<double> output;
+    std::vector<double> output;
     double total = 0;
     for (int i = 0; i < NumChannels; i++) {
         std::complex<double> channelLoc = GetChannelLocation(i, NumChannels);
-        output.add(1 - (std::sqrt(std::pow(channelLoc.real() - Location.real(), 2) + std::pow(channelLoc.imag() - Location.imag(), 2)) * 0.5));
-        output.getReference(i) = std::pow(output[i], 6);
+        output.emplace_back(1 - (std::sqrt(std::pow(channelLoc.real() - Location.real(), 2) + std::pow(channelLoc.imag() - Location.imag(), 2)) * 0.5));
+        output[i] = std::pow(output[i], 6);
         total += output[i];
     }
     total = 1 / total;
     for (int i = 0; i < NumChannels; i++) {
-        output.getReference(i) *= total;
+        output[i] *= total;
     }
     return output[Channel];
 }
 
-std::complex<double> Utilities::GetPosition(Array<double> Channels)
+std::complex<double> Utilities::GetPosition(std::vector<double> Channels)
 {
     double total = 0;
     for (int i = 0; i < Channels.size(); i++) {
@@ -44,7 +44,7 @@ std::complex<double> Utilities::GetPosition(Array<double> Channels)
     }
     double multiplier = 1 / total;
     for (int i = 0; i < Channels.size(); i++) {
-        Channels.getReference(i) *= multiplier;
+        Channels[i] *= multiplier;
     }
     std::complex<double> output{ 0, 0 };
 
