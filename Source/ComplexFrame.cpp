@@ -32,14 +32,15 @@ void Biology::ComplexFrame::Mutate(double Amount,
 {
     int t = gen->GetInt(0, data.size());
     std::complex<double>& r = data[t];
+    double weighting = std::pow(Weighting[t], 2);
 
     if (gen->GetBool()) {
-        r += std::complex<double>{ gen->GetDouble(-1, 0) * Amount * Weighting[t],
-            gen->GetDouble(0, 1) * Amount * Weighting[t] };
+        r += std::complex<double>{ gen->GetDouble(-1, 0) * Amount * weighting,
+            gen->GetDouble(0, 1) * Amount * weighting };
     }
     else {
-        r += std::complex<double>{ gen->GetDouble(0, 1) * Amount * Weighting[t],
-            gen->GetDouble(-1, 0) * Amount * Weighting[t] };
+        r += std::complex<double>{ gen->GetDouble(0, 1) * Amount * weighting,
+            gen->GetDouble(-1, 0) * Amount * weighting };
     }
 }
 
