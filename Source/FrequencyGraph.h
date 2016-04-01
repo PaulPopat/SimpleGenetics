@@ -22,7 +22,7 @@ public:
     void paint(Graphics&) override;
     void resized() override;
 
-    void BreedComplete(const BreedCompleteData& data) override;
+    void BreedComplete(const BreedData& d, const SettingsData & s) override;
 
 private:
     Path BuildPath(const std::vector<std::vector<double> >& data, int xmod, int ymod, int width, int height) const;

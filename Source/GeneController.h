@@ -16,19 +16,53 @@
 #include "Gene.h"
 #include "RandomGen.h"
 #include "Settings.h"
-
 /** A simple contain for holding a metric and an index so that the Gene with that
  metric can be accessed later*/
 struct Metric {
     int Index;
     double Metric;
     Biology::Gene Gene;
-
+    
     bool operator==(const struct Metric& rhs) const { return Metric == rhs.Metric; }
     bool operator<(const struct Metric& rhs) const { return Metric < rhs.Metric; }
     bool operator>(const struct Metric& rhs) const { return Metric > rhs.Metric; }
     bool operator<=(const struct Metric& rhs) const { return Metric <= rhs.Metric; }
     bool operator>=(const struct Metric& rhs) const { return Metric >= rhs.Metric; }
+};
+
+/** A simple struct to hold all the settings from the config */
+struct SettingsData {
+    int FFTSize;
+    int FramesPerGene;
+    int BreedingLoops;
+    int CalculationLoops;
+    int BreedingFactor;
+    int BandSize;
+    
+    int FrequencyBand;
+    
+    std::vector<double> CaptureInterval;
+    std::vector<double> MutationAmount;
+    std::vector<double> MutationNumber;
+    std::vector<double> Population;
+    std::vector<double> FrequencyWeighting;
+    std::vector<double> PanningMutation;
+    std::vector<String> TargetIdent;
+    std::vector<FFTW::AudioAnalysis> AudioBin;
+};
+
+/** A simple struct to hold all of the data relevant to the breeding process
+ this can then be passed with ease */
+struct BreedData {
+    std::vector<Biology::Gene> Timbre;
+    std::vector<Biology::Gene> Panning;
+    
+    SortedSet<Metric> TimbreMetric;
+    SortedSet<Metric> PanningMetric;
+    int Loop = 0;
+    int Breed = 0;
+    FFTW::AudioAnalysis CurrentTarget;
+    double CapturePosition = 0;
 };
 
 /** The controller class will be in charge of creating the population, gathering the metrics.
@@ -41,22 +75,8 @@ public:
     class Listener {
     public:
         virtual ~Listener() = default;
-        /** a simple way to transfer the data. Allowing for expansion at a later data
-         without breaking other classes */
-        struct BreedCompleteData {
-            const std::vector<double>& amplitude;
-            const std::vector<double>& target;
-            const std::complex<double>& position;
-            const std::complex<double>& targetPos;
-            const Biology::Gene& timbreData;
-            const Biology::Gene& panningData;
-            const double& timbreMetric;
-            const double& panningMetric;
-            const int& framesComplete;
-            int ident;
-        };
         // this method is going to be called a lot. Don't do anything intensive here
-        virtual void BreedComplete(const BreedCompleteData& data) = 0;
+        virtual void BreedComplete(const BreedData& data, const SettingsData & settings) = 0;
     };
 
     /** does what you expect a simple way to get updates on progress */
@@ -75,33 +95,20 @@ private:
     void WriteData(const Biology::Gene& timbre, const Biology::Gene& paning);
     /** takes the population with the metrics attached and breeds them together for a shiney new one! */
     std::vector<Biology::Gene> BreedPopulation(const SortedSet<Metric>& metric, int targetPopulation, int factor) const;
+    
+    /** Returns the desired target audio file for that point in time */
+    FFTW::AudioAnalysis GetTarget(int Breed) const;
 
     /** the bin file for writing to */
     ScopedPointer<FileOutputStream> data;
 
     /** listeners for the updates */
     ListenerList<Listener> listeners;
-    /** frequency band number to identify on call listener calls */
-    int ident;
+
     /** random generator for the population to use */
     Utilities::Random* gen;
-
-    // all the relevent data from the settings while the algorithm is running
-    int fftSize;
-    int framesPerGene;
-    int breedingLoops;
-    int calculationLoops;
-    int breedingFactor;
-    int bandSize;
-
-    std::vector<double> captureInterval;
-    std::vector<double> mutationAmount;
-    std::vector<double> mutationNumber;
-    std::vector<double> population;
-    std::vector<double> frequencyWeighting;
-    std::vector<double> panningMutation;
-    std::vector<int> targetIdent;
-    std::vector<FFTW::AudioAnalysis> target;
+    
+    SettingsData set;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GeneController)
 };

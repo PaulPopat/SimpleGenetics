@@ -23,7 +23,7 @@ public:
     void paint(Graphics&) override;
     void resized() override;
 
-    void BreedComplete(const BreedCompleteData& data) override;
+    void BreedComplete(const BreedData& d, const SettingsData & s) override;
 
 private:
     std::vector<std::complex<double> > positions;

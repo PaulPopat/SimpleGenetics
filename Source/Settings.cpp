@@ -167,10 +167,10 @@ std::vector<double> Settings::GetGraph(String Name, int Size) const
 std::vector<FFTW::AudioAnalysis> Settings::GetAudioData(String Name, int FFTSize, int NumBands, int Band) const
 {
     std::vector<File> files;
-    XmlElement* data = mainElement->getChildByName(Name);
-    forEachXmlChildElement(*data, d)
-    {
-        files.emplace_back(File(workingDir.getFullPathName() + "/Audio/" + d->getStringAttribute("value") + ".aif"));
+    DirectoryIterator iter(File(workingDir.getFullPathName() + "/Audio"), true, "*.aif");
+    while (iter.next()) {
+        File res(iter.getFile());
+        files.emplace_back(res);
     }
     FFTW::AudioLoader loader(FFTSize);
     std::vector<FFTW::AudioAnalysis> out;
@@ -180,24 +180,26 @@ std::vector<FFTW::AudioAnalysis> Settings::GetAudioData(String Name, int FFTSize
     return out;
 }
 
-std::vector<int> Settings::GetAudioGraph(String Name, int Size) const
+std::vector<String> Settings::GetAudioGraph(String Name, int Size) const
 {
-    std::vector<int> out;
+    std::vector<String> out;
     std::vector<double> positions;
+    std::vector<String> names;
 
     XmlElement* data = mainElement->getChildByName(Name);
     forEachXmlChildElement(*data, d)
     {
         positions.emplace_back(d->getDoubleAttribute("loc"));
+        names.emplace_back(d->getStringAttribute("value"));
     }
 
     int pos = 0;
     for (int i = 0; i < Size; i++) {
-        if (pos < positions.size()) {
+        if (pos < positions.size() - 1) {
             if ((double)i / (double)Size >= positions[pos + 1])
                 pos++;
         }
-        out.emplace_back(pos);
+        out.emplace_back(names[pos]);
     }
     return out;
 }

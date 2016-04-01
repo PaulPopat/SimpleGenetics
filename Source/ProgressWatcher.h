@@ -23,7 +23,7 @@ public:
     void paint(Graphics&) override;
     void resized() override;
 
-    void BreedComplete(const BreedCompleteData& data) override;
+    void BreedComplete(const BreedData& data, const SettingsData & settings) override;
 
 private:
     std::vector<double> progress;

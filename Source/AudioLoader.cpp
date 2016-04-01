@@ -24,14 +24,13 @@ FFTW::AudioAnalysis FFTW::AudioLoader::AnalyzeAudio(File Path, int NumBands, int
     int base = Utilities::GetBandBase(NumBands, Band, fftSize);
 
     if (Path.getFileNameWithoutExtension() == "None")
-        return AudioAnalysis(cur);
+        return AudioAnalysis(cur, "None");
 
-    AudioAnalysis out;
+    AudioAnalysis out(cur, Path.getFileNameWithoutExtension());
 
     AudioSampleBuffer buf = LoadAudio(Path);
     std::vector<std::vector<double> > amp = GetAmplitudes(buf);
-
-    out.Amplitude.resize(cur, 0);
+    
     for (int s = 0; s < cur; s++) {
         for (int c = 0; c < amp.size(); c++)
             out.Amplitude[s] += amp[c][base + s] / amp.size();
@@ -68,8 +67,9 @@ std::vector<std::vector<double> > FFTW::AudioLoader::GetAmplitudes(const AudioSa
     const int framesInFile = Buf.getNumSamples() / (fftSize * 2);
     for (int c = 0; c < Buf.getNumChannels(); c++) {
         std::vector<double>& r = out[c];
+        r.resize(fftSize);
         for (int s = 0; s < fftSize; s++)
-            r.emplace_back(0);
+            r[s] = 0;
         for (int f = 0; f < framesInFile; f++) {
 
             for (int s = 0; s < fftSize * 2; s++) {

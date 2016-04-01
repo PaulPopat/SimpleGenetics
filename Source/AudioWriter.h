@@ -22,6 +22,7 @@ namespace FFTW {
 class AudioWriter : public Thread {
 public:
     AudioWriter(File DataPath, File OutputPath, int SampleRate, int Channels, int BitDepth);
+    ~AudioWriter() { fftw_destroy_plan(ifft); }
     double& Progress;
 
 private:
@@ -32,7 +33,7 @@ private:
 
     fftw_c input;
     fftw_r output;
-    SelfDestructPlan ifft;
+    fftw_plan ifft;
     double progress;
 
     std::vector<ScopedPointer<AudioFormatWriter> > writer;

@@ -57,14 +57,14 @@ void PanningDisplay::resized()
     bounds = Rectangle<int>(2, 2, getWidth() - 4, getHeight() - 4);
 }
 
-void PanningDisplay::BreedComplete(const BreedCompleteData& data)
+void PanningDisplay::BreedComplete(const BreedData& d, const SettingsData & s)
 {
-    if (data.ident + 1 > positions.size())
-        positions.resize(data.ident + 1);
-    if (data.ident + 1 > targets.size())
-        targets.resize(data.ident + 1);
-    positions[data.ident] = data.position;
-    targets[data.ident] = data.targetPos;
+    if (s.FrequencyBand + 1 > positions.size())
+        positions.resize(s.FrequencyBand + 1);
+    if (s.FrequencyBand + 1 > targets.size())
+        targets.resize(s.FrequencyBand + 1);
+    positions[s.FrequencyBand] = d.PanningMetric[0].Gene.GetLocation();
+    targets[s.FrequencyBand] = d.CurrentTarget.Position;
     triggerAsyncUpdate();
 }
 

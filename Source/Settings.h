@@ -75,9 +75,9 @@ public:
     /** returns the analysis of each audio file in the targets in order
      call get audio graph to find out when to look at each target */
     std::vector<FFTW::AudioAnalysis> GetAudioData(String Name, int FFTSize, int NumBands, int Band) const;
-    /** returns the index in the GetAudioData return that needs to be looked at
+    /** returns the name of the audio file that needs to be looked at
      at any point in time */
-    std::vector<int> GetAudioGraph(String Name, int Size) const;
+    std::vector<String> GetAudioGraph(String Name, int Size) const;
     /** returns the name of the file in the GetAudioData return that needs to be looked at
      at any point in time */
     std::vector<String> GetAudioNameGraph(String Name) const;

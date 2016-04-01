@@ -21,9 +21,13 @@ namespace FFTW {
 
 struct AudioAnalysis {
     AudioAnalysis() = default;
-    AudioAnalysis(int bandSize) { Amplitude.resize(bandSize, 0); }
+    AudioAnalysis(int bandSize, String name) {
+        Amplitude.resize(bandSize, 0);
+        Name = name;
+    }
     std::vector<double> Amplitude;
     std::complex<double> Position;
+    String Name;
 };
 
 class AudioLoader {

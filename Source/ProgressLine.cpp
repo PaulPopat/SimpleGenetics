@@ -35,13 +35,12 @@ void ProgressLine::resized()
     bounds = Rectangle<int>(2, 2, getWidth() - 4, getHeight() - 4);
 }
 
-void ProgressLine::BreedComplete(const BreedCompleteData& data)
+void ProgressLine::BreedComplete(const BreedData& d, const SettingsData & s)
 {
-    if (data.ident >= progress.size())
-        progress.resize(data.ident + 1);
+    if (s.FrequencyBand >= progress.size())
+        progress.resize(s.FrequencyBand + 1);
 
-    progress[data.ident] = std::fmod((double)data.framesComplete,
-                                     settings->GetDoubleValue("CalculationLoops"))
-                                    / settings->GetDoubleValue("BreedingLoops");
+    progress[s.FrequencyBand] = std::fmod((double)d.Breed / settings->GetDoubleValue("BreedingLoops"),
+                                     settings->GetDoubleValue("CalculationLoops"));
     triggerAsyncUpdate();
 }

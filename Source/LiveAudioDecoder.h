@@ -25,7 +25,7 @@ public:
     /* main thread loop */
     void run() override;
     /* called from one of the gene threads populating data to transform */
-    void BreedComplete(const BreedCompleteData& data) override;
+    void BreedComplete(const BreedData& data, const SettingsData & settings) override;
     /* called from the audio thread to get any complete data */
     std::vector<double> GetCurrentAudio(int numSamples);
 

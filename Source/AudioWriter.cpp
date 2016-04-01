@@ -43,7 +43,7 @@ FFTW::AudioWriter::AudioWriter(File DataPath, File OutputPath, int SampleRate, i
 
     input = fftw_c(fftw_alloc_complex(fftSize + 1));
     output = fftw_r(fftw_alloc_real(fftSize * 2));
-    ifft = SelfDestructPlan(fftw_plan_dft_c2r_1d(fftSize * 2, input.get(), output.get(), FFTW_ESTIMATE));
+    ifft = fftw_plan_dft_c2r_1d(fftSize * 2, input.get(), output.get(), FFTW_ESTIMATE);
 }
 
 void FFTW::AudioWriter::run()

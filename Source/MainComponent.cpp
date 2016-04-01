@@ -244,11 +244,9 @@ void MainContentComponent::SaveAudio() const
     writeAudio->setVisible(true);
     writeAudio->setUsingNativeTitleBar(true);
     writeAudio->centreWithSize(200, 300);
-
-    writeAudio->setContentOwned(
-        new AudioOutputSettings(File(settings->GetWorkingDirectory().getFullPathName() + "/Data"),
-            path),
-        false);
+    
+    writeAudio->setContentOwned(new AudioOutputSettings(File(settings->GetWorkingDirectory().getFullPathName() + "/Data"),
+                                                        path), false);
 }
 
 void MainContentComponent::AudioSettings()

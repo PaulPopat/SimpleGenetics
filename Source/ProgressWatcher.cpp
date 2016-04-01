@@ -42,18 +42,18 @@ void ProgressWatcher::resized()
     SetUpBounds();
 }
 
-void ProgressWatcher::BreedComplete(const BreedCompleteData& data)
+void ProgressWatcher::BreedComplete(const BreedData& data, const SettingsData & settings)
 {
-    if (data.ident >= progress.size()) {
-        progress.resize(data.ident + 1);
+    if (settings.FrequencyBand >= progress.size()) {
+        progress.resize(settings.FrequencyBand + 1);
         SetUpBounds();
     }
     if (type == "Frame")
-        progress[data.ident] = data.framesComplete;
+        progress[settings.FrequencyBand] = data.Breed;
     else if (type == "Timbre")
-        progress[data.ident] = data.timbreMetric;
+        progress[settings.FrequencyBand] = data.TimbreMetric[0].Metric;
     else if (type == "Panning")
-        progress[data.ident] = data.panningMetric;
+        progress[settings.FrequencyBand] = data.PanningMetric[0].Metric;
     triggerAsyncUpdate();
 }
 

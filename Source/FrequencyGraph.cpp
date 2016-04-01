@@ -42,17 +42,17 @@ void FrequencyGraph::resized()
 {
 }
 
-void FrequencyGraph::BreedComplete(const BreedCompleteData& data)
+void FrequencyGraph::BreedComplete(const BreedData& d, const SettingsData & s)
 {
-    if (data.ident >= amplitudes.size())
-        amplitudes.resize(data.ident + 1);
-    std::vector<double>& r = amplitudes[data.ident];
-    r = data.amplitude;
+    if (s.FrequencyBand >= amplitudes.size())
+        amplitudes.resize(s.FrequencyBand + 1);
+    std::vector<double>& r = amplitudes[s.FrequencyBand];
+    r = d.TimbreMetric[0].Gene.GetSpectrum();
 
-    if (data.ident >= targets.size())
-        targets.resize(data.ident + 1);
-    std::vector<double>& t = targets[data.ident];
-    t = data.target;
+    if (s.FrequencyBand >= targets.size())
+        targets.resize(s.FrequencyBand + 1);
+    std::vector<double>& t = targets[s.FrequencyBand];
+    t = d.CurrentTarget.Amplitude;
 
     triggerAsyncUpdate();
 }

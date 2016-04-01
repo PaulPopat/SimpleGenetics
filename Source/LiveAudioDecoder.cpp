@@ -54,9 +54,9 @@ void FFTW::LiveAudioDecoder::run()
     }
 }
 
-void FFTW::LiveAudioDecoder::BreedComplete(const BreedCompleteData& data)
+void FFTW::LiveAudioDecoder::BreedComplete(const BreedData& data, const SettingsData & settings)
 {
-    timbre[data.ident] = data.timbreData;
+    timbre[settings.FrequencyBand] = data.TimbreMetric[0].Gene;
 }
 
 std::vector<double> FFTW::LiveAudioDecoder::GetCurrentAudio(int numSamples)

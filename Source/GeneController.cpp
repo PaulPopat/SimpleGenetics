@@ -13,33 +13,33 @@
 GeneController::GeneController(const Settings& Settings, File Path, int Band, Utilities::Random* Gen)
     : Thread("Gene Thread " + String(Band))
 {
-    fftSize = Settings.GetIntValue("FFTSize");
-    framesPerGene = Settings.GetIntValue("FramesPerGene");
-    breedingLoops = Settings.GetIntValue("BreedingLoops");
-    calculationLoops = Settings.GetIntValue("CalculationLoops");
-    breedingFactor = Settings.GetIntValue("BreedingFactor");
+    set.FFTSize = Settings.GetIntValue("FFTSize");
+    set.FramesPerGene = Settings.GetIntValue("FramesPerGene");
+    set.BreedingLoops = Settings.GetIntValue("BreedingLoops");
+    set.CalculationLoops = Settings.GetIntValue("CalculationLoops");
+    set.BreedingFactor = Settings.GetIntValue("BreedingFactor");
 
-    bandSize = Utilities::GetBandSize(Settings.GetIntValue("FrequencyBands"), Band, fftSize);
+    set.BandSize = Utilities::GetBandSize(Settings.GetIntValue("FrequencyBands"), Band, set.FFTSize);
 
-    captureInterval = Settings.GetGraph("CaptureInterval", breedingLoops);
-    mutationAmount = Settings.GetGraph("MutationAmount", breedingLoops);
-    mutationNumber = Settings.GetGraph("MutationNumber", breedingLoops);
-    population = Settings.GetGraph("Population", breedingLoops);
-    panningMutation = Settings.GetGraph("PanningMutation", breedingLoops);
-    targetIdent = Settings.GetAudioGraph("Target", breedingLoops);
-    target = Settings.GetAudioData("Target", fftSize, Settings.GetIntValue("FrequencyBands"), Band);
+    set.CaptureInterval = Settings.GetGraph("CaptureInterval", set.BreedingLoops);
+    set.MutationAmount = Settings.GetGraph("MutationAmount", set.BreedingLoops);
+    set.MutationNumber = Settings.GetGraph("MutationNumber", set.BreedingLoops);
+    set.Population = Settings.GetGraph("Population", set.BreedingLoops);
+    set.PanningMutation = Settings.GetGraph("PanningMutation", set.BreedingLoops);
+    set.TargetIdent = Settings.GetAudioGraph("Target", set.BreedingLoops);
+    set.AudioBin = Settings.GetAudioData("Target", set.FFTSize, Settings.GetIntValue("FrequencyBands"), Band);
 
-    frequencyWeighting = Utilities::SplitToBand(Settings.GetGraph("FrequencyWeighting", fftSize),
+    set.FrequencyWeighting = Utilities::SplitToBand(Settings.GetGraph("FrequencyWeighting", set.FFTSize),
         Settings.GetIntValue("FrequencyBands"), Band);
 
     if (Path.existsAsFile())
         Path.deleteFile();
     Path.create();
     data = Path.createOutputStream();
-    data->writeInt(fftSize);
-    data->writeInt(bandSize);
+    data->writeInt(set.FFTSize);
+    data->writeInt(set.BandSize);
 
-    ident = Band;
+    set.FrequencyBand = Band;
     gen = Gen;
 }
 
@@ -47,50 +47,37 @@ void GeneController::AddListener(Listener* l) { listeners.add(l); }
 
 void GeneController::run()
 {
-    std::vector<Biology::Gene> timbre = InitializePopulation(population[0], true);
-    std::vector<Biology::Gene> paning = InitializePopulation(population[0], false);
+    BreedData d;
+    d.Timbre = InitializePopulation(set.Population[0], true);
+    d.Panning = InitializePopulation(set.Population[0], false);
+    d.CurrentTarget = GetTarget(0);
 
-    // setting up memory space for this loop
-    FFTW::AudioAnalysis& currenttarget = target[0]; // for putting the current target in
-    double cpos = 0; // capture interval is added to this and when it reaches 1 a snapshot is taken
+    for (d.Loop = 0; d.Loop < set.CalculationLoops; d.Loop++) {
+        for (d.Breed = 0; d.Breed < set.BreedingLoops; d.Breed++) {
+            
+            d.CurrentTarget = GetTarget(d.Breed);
 
-    for (int loop = 0; loop < calculationLoops; loop++) {
-        for (int breed = 0; breed < breedingLoops; breed++) {
+            d.TimbreMetric = GetSortedMetric(d.Timbre, d.CurrentTarget.Amplitude);
+            d.PanningMetric = GetSortedMetric(d.Panning, d.CurrentTarget.Position);
 
-            cpos += 1 / captureInterval[breed];
-            currenttarget = target[targetIdent[breed]];
-
-            SortedSet<Metric> timbreMetric = GetSortedMetric(timbre, currenttarget.Amplitude);
-            SortedSet<Metric> paningMetric = GetSortedMetric(paning, currenttarget.Position);
-
-            if (cpos >= 1) {
-                cpos = 0;
-                WriteData(timbre[timbreMetric[0].Index], paning[paningMetric[0].Index]);
+            d.CapturePosition += 1 / set.CaptureInterval[d.Breed];
+            if (d.CapturePosition >= 1) {
+                d.CapturePosition = 0;
+                WriteData(d.Timbre[d.TimbreMetric[0].Index], d.Panning[d.PanningMetric[0].Index]);
             }
 
             // sending out a progress report for visual feedback
-            listeners.call(&Listener::BreedComplete,
-                Listener::BreedCompleteData{
-                    timbre[timbreMetric[0].Index].GetSpectrum(),
-                    currenttarget.Amplitude,
-                    paning[paningMetric[0].Index].GetLocation(),
-                    currenttarget.Position,
-                    timbre[timbreMetric[0].Index],
-                    paning[paningMetric[0].Index],
-                    timbreMetric[0].Metric,
-                    paningMetric[0].Metric,
-                    breed + loop,
-                    ident });
+            listeners.call(&Listener::BreedComplete, d, set);
 
-            timbre = BreedPopulation(timbreMetric, population[breed], breedingFactor);
-            paning = BreedPopulation(paningMetric, population[breed], breedingFactor);
+            d.Timbre = BreedPopulation(d.TimbreMetric, set.Population[d.Breed], set.BreedingFactor);
+            d.Panning = BreedPopulation(d.PanningMetric, set.Population[d.Breed], set.BreedingFactor);
 
             // defining the mutation inline since the method
             // definition would have been larger than the text
-            for (int i = 0; i < mutationNumber[breed]; i++) {
-                int target = gen->GetDouble(0, timbre.size());
-                timbre[target].Mutate(mutationAmount[breed], frequencyWeighting);
-                paning[target].Mutate(panningMutation[breed]);
+            for (int i = 0; i < set.MutationNumber[d.Breed]; i++) {
+                int target = gen->GetInt(0, d.Timbre.size());
+                d.Timbre[target].Mutate(set.MutationAmount[d.Breed], set.FrequencyWeighting);
+                d.Panning[target].Mutate(set.PanningMutation[d.Breed]);
             }
 
             if (threadShouldExit()) {
@@ -104,7 +91,7 @@ std::vector<Biology::Gene> GeneController::InitializePopulation(int size, bool t
 {
     std::vector<Biology::Gene> out;
     for (int i = 0; i < size; i++) {
-        Biology::Gene input(bandSize, framesPerGene, timbreMode, gen);
+        Biology::Gene input(set.BandSize, set.FramesPerGene, timbreMode, gen);
         out.emplace_back(input);
     }
     return out;
@@ -156,4 +143,16 @@ std::vector<Biology::Gene> GeneController::BreedPopulation(const SortedSet<Metri
         output.emplace_back(input);
     }
     return output;
+}
+
+FFTW::AudioAnalysis GeneController::GetTarget(int Breed) const {
+    for ( const auto & t : set.TargetIdent ) {
+        for ( auto & a : set.AudioBin ) {
+            if ( t == a.Name ) {
+                return a;
+            }
+        }
+    }
+    jassertfalse;
+    return FFTW::AudioAnalysis();
 }
