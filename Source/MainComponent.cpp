@@ -50,6 +50,7 @@ void MainContentComponent::prepareToPlay(int samplesPerBlockExpected, double sam
 
 void MainContentComponent::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill)
 {
+    /*
     if (!isRunning)
         return;
     AudioSampleBuffer* buffer = bufferToFill.buffer;
@@ -61,6 +62,7 @@ void MainContentComponent::getNextAudioBlock(const AudioSourceChannelInfo& buffe
             buffer->setSample(c, s, audio[s % audio.size()]);
         }
     }
+    */
 }
 
 void MainContentComponent::releaseResources()
@@ -276,29 +278,31 @@ void MainContentComponent::RunAlgorithm()
     bands.clear();
     settings->UpdateFromUI();
     int numbands = settings->GetIntValue("FrequencyBands");
-    int fftsize = settings->GetIntValue("FFTSize");
-    int framesPerGene = settings->GetIntValue("FramesPerGene");
-    decoder = new FFTW::LiveAudioDecoder(numbands, fftsize, framesPerGene);
+    //int fftsize = settings->GetIntValue("FFTSize");
+    //int framesPerGene = settings->GetIntValue("FramesPerGene");
+    //decoder = new FFTW::LiveAudioDecoder(numbands, fftsize, framesPerGene);
 
     for (int i = 0; i < numbands; i++) {
         File target(settings->GetWorkingDirectory().getFullPathName() + "/Data/Data" + String(i + 1) + ".bin");
+        if (target.existsAsFile())
+            target.deleteFile();
         GeneController* input = new GeneController(*settings, target, i, &gen);
         input->startThread();
         interface->AddControllerListeners(input);
-        input->AddListener(decoder);
+        //input->AddListener(decoder);
         bands.add(input);
     }
 
-    decoder->startThread();
+    //decoder->startThread();
 
     isRunning = true;
 }
 
 void MainContentComponent::CancelAlgorithm()
 {
-    if (isRunning)
-        if (decoder->isThreadRunning())
-            decoder->stopThread(10000);
+    //if (isRunning)
+        //if (decoder->isThreadRunning())
+            //decoder->stopThread(10000);
     for (auto& b : bands)
         if (b->isThreadRunning())
             b->stopThread(10000);

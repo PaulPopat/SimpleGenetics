@@ -68,7 +68,7 @@ private:
     ScopedPointer<UserInterface> interface;
     Component::SafePointer<SimpleDocumentWindow> audioSettings;
     ScopedPointer<AudioDeviceSelectorComponent> devices;
-    ScopedPointer<FFTW::LiveAudioDecoder> decoder;
+    //ScopedPointer<FFTW::LiveAudioDecoder> decoder;
     ScopedPointer<ApplicationCommandManager> commands;
     bool isRunning = false; // declaring value here so the audio can't be called before it is set
 

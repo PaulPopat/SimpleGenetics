@@ -146,11 +146,9 @@ std::vector<Biology::Gene> GeneController::BreedPopulation(const SortedSet<Metri
 }
 
 FFTW::AudioAnalysis GeneController::GetTarget(int Breed) const {
-    for ( const auto & t : set.TargetIdent ) {
-        for ( auto & a : set.AudioBin ) {
-            if ( t == a.Name ) {
-                return a;
-            }
+    for ( auto & a : set.AudioBin ) {
+        if ( set.TargetIdent[Breed] == a.Name ) {
+            return a;
         }
     }
     jassertfalse;
