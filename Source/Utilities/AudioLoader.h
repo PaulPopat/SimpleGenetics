@@ -13,15 +13,18 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "BandCalculator.h"
 #include "ChannelCalculator.h"
-#include "ComplexFrame.h"
+#include "../Algorithm/ComplexFrame.h"
 #include "FFTWHelper.h"
 #include <cmath>
 
-namespace FFTW {
+namespace FFTW
+{
 
-struct AudioAnalysis {
+struct AudioAnalysis
+{
     AudioAnalysis() = default;
-    AudioAnalysis(int bandSize, String name) {
+    AudioAnalysis(int bandSize, String name)
+    {
         Amplitude.resize(bandSize, 0);
         Name = name;
     }
@@ -30,14 +33,15 @@ struct AudioAnalysis {
     String Name;
 };
 
-class AudioLoader {
-public:
+class AudioLoader
+{
+  public:
     AudioLoader(int FFTSize);
     AudioAnalysis AnalyzeAudio(File Path, int NumBands, int Band);
 
-private:
+  private:
     AudioSampleBuffer LoadAudio(File Path);
-    std::vector<std::vector<double> > GetAmplitudes(const AudioSampleBuffer& Buf);
+    std::vector<std::vector<double>> GetAmplitudes(const AudioSampleBuffer &Buf);
     int fftSize;
     fftw_c output;
     fftw_r input;

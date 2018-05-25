@@ -12,11 +12,11 @@
 #define MAINCOMPONENT_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "AudioOutputSettings.h"
-#include "CustomLookAndFeel.h"
-#include "GeneController.h"
-#include "RandomGen.h"
-#include "Settings.h"
+#include "Settings/AudioOutputSettings.h"
+#include "Settings/CustomLookAndFeel.h"
+#include "Algorithm/GeneController.h"
+#include "Utilities/RandomGen.h"
+#include "Settings/Settings.h"
 #include "UserInterface.h"
 
 class SimpleDocumentWindow : public DocumentWindow

@@ -228,9 +228,6 @@ void MainContentComponent::RunAlgorithm()
     bands.clear();
     settings->UpdateFromUI();
     int numbands = settings->GetIntValue("FrequencyBands");
-    //int fftsize = settings->GetIntValue("FFTSize");
-    //int framesPerGene = settings->GetIntValue("FramesPerGene");
-    //decoder = new FFTW::LiveAudioDecoder(numbands, fftsize, framesPerGene);
 
     for (int i = 0; i < numbands; i++)
     {
@@ -240,7 +237,6 @@ void MainContentComponent::RunAlgorithm()
         GeneController *input = new GeneController(*settings, target, i, &gen);
         input->startThread();
         interface->AddControllerListeners(input);
-        //input->AddListener(decoder);
         bands.add(input);
     }
 
@@ -251,9 +247,6 @@ void MainContentComponent::RunAlgorithm()
 
 void MainContentComponent::CancelAlgorithm()
 {
-    //if (isRunning)
-    //if (decoder->isThreadRunning())
-    //decoder->stopThread(10000);
     for (auto &b : bands)
         if (b->isThreadRunning())
             b->stopThread(10000);

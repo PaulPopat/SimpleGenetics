@@ -12,19 +12,21 @@
 #define LISTENERCOMPONENTS_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "GeneController.h"
-#include "Settings.h"
+#include "../Algorithm/GeneController.h"
+#include "../Settings/Settings.h"
 
 class GeneControllerListenerComponent : public GeneController::Listener,
                                         public Component,
-                                        protected AsyncUpdater {
-public:
+                                        protected AsyncUpdater
+{
+  public:
     void handleAsyncUpdate() override { repaint(); }
 };
 
 class SettingsListenerComponent : public Settings::Listener,
-                                  public Component {
-public:
+                                  public Component
+{
+  public:
     SettingsListenerComponent(String Name)
         : Settings::Listener(Name)
     {

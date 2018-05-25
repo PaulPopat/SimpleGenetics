@@ -13,17 +13,19 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Settings.h"
 
-class CustomLookAndFeel : public LookAndFeel_V3 {
-public:
+class CustomLookAndFeel : public LookAndFeel_V3
+{
+  public:
     CustomLookAndFeel();
-    void drawTickBox(Graphics& g, Component& component,
-        float x, float y, float w, float h,
-        bool ticked,
-        bool isEnabled,
-        bool isMouseOverButton,
-        bool isButtonDown) override;
+    void drawTickBox(Graphics &g, Component &component,
+                     float x, float y, float w, float h,
+                     bool ticked,
+                     bool isEnabled,
+                     bool isMouseOverButton,
+                     bool isButtonDown) override;
 
-    enum ColourIDs {
+    enum ColourIDs
+    {
         Line = 0x20000001,
         Outline = 0x20000002,
         Background = 0x20000003,
@@ -36,7 +38,7 @@ public:
         TextLow = 0x2000000b,
     };
 
-private:
+  private:
     Colour background;
     Colour outline;
     Colour line;

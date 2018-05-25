@@ -11,8 +11,8 @@
 #ifndef SETTINGS_H_INCLUDED
 #define SETTINGS_H_INCLUDED
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "AudioLoader.h"
-#include "Complex.h"
+#include "../Utilities/AudioLoader.h"
+#include "../Utilities/Complex.h"
 
 class Settings
 {

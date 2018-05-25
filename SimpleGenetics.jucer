@@ -10,78 +10,78 @@
     </GROUP>
     <GROUP id="{4F74FEBA-4CF4-BFD5-E050-6E8D63CC37E1}" name="Source">
       <GROUP id="{D3156A54-A3CE-7F99-00AB-C04D56E94C1B}" name="SettingsEditors">
-        <FILE id="bFyG4s" name="AudioBin.cpp" compile="1" resource="0" file="Source/AudioBin.cpp"/>
-        <FILE id="OC2aAH" name="AudioBin.h" compile="0" resource="0" file="Source/AudioBin.h"/>
-        <FILE id="k4fIt1" name="EQCurveEditor.cpp" compile="1" resource="0"
-              file="Source/EQCurveEditor.cpp"/>
-        <FILE id="rRjMFC" name="EQCurveEditor.h" compile="0" resource="0" file="Source/EQCurveEditor.h"/>
-        <FILE id="cTbHOB" name="GraphEditor.cpp" compile="1" resource="0" file="Source/GraphEditor.cpp"/>
-        <FILE id="Wt8mJy" name="GraphEditor.h" compile="0" resource="0" file="Source/GraphEditor.h"/>
-        <FILE id="wt0jA7" name="TargetEditor.cpp" compile="1" resource="0"
-              file="Source/TargetEditor.cpp"/>
-        <FILE id="CMZQWc" name="TargetEditor.h" compile="0" resource="0" file="Source/TargetEditor.h"/>
-        <FILE id="sNy2vc" name="ValueEditor.cpp" compile="1" resource="0" file="Source/ValueEditor.cpp"/>
-        <FILE id="cne24l" name="ValueEditor.h" compile="0" resource="0" file="Source/ValueEditor.h"/>
+        <FILE id="Rw89KX" name="AudioBin.cpp" compile="1" resource="0" file="Source/SettingsEditors/AudioBin.cpp"/>
+        <FILE id="JEN2x1" name="AudioBin.h" compile="0" resource="0" file="Source/SettingsEditors/AudioBin.h"/>
+        <FILE id="Jqlw2l" name="EQCurveEditor.cpp" compile="1" resource="0"
+              file="Source/SettingsEditors/EQCurveEditor.cpp"/>
+        <FILE id="ooWSro" name="EQCurveEditor.h" compile="0" resource="0" file="Source/SettingsEditors/EQCurveEditor.h"/>
+        <FILE id="Ibu9ae" name="GraphEditor.cpp" compile="1" resource="0" file="Source/SettingsEditors/GraphEditor.cpp"/>
+        <FILE id="z37P5R" name="GraphEditor.h" compile="0" resource="0" file="Source/SettingsEditors/GraphEditor.h"/>
+        <FILE id="dXqTEl" name="TargetEditor.cpp" compile="1" resource="0"
+              file="Source/SettingsEditors/TargetEditor.cpp"/>
+        <FILE id="JxfmIX" name="TargetEditor.h" compile="0" resource="0" file="Source/SettingsEditors/TargetEditor.h"/>
+        <FILE id="Mcmf0g" name="ValueEditor.cpp" compile="1" resource="0" file="Source/SettingsEditors/ValueEditor.cpp"/>
+        <FILE id="ZFqooQ" name="ValueEditor.h" compile="0" resource="0" file="Source/SettingsEditors/ValueEditor.h"/>
       </GROUP>
       <GROUP id="{06D2FBFD-BA85-81FF-1E44-269DA3ADDD20}" name="ProgressUpdates">
-        <FILE id="i1vwZs" name="FrequencyGraph.cpp" compile="1" resource="0"
-              file="Source/FrequencyGraph.cpp"/>
-        <FILE id="So90ou" name="FrequencyGraph.h" compile="0" resource="0"
-              file="Source/FrequencyGraph.h"/>
-        <FILE id="ApyoiZ" name="PanningDisplay.cpp" compile="1" resource="0"
-              file="Source/PanningDisplay.cpp"/>
-        <FILE id="oVqqOy" name="PanningDisplay.h" compile="0" resource="0"
-              file="Source/PanningDisplay.h"/>
-        <FILE id="yM8k2A" name="ProgressLine.cpp" compile="1" resource="0"
-              file="Source/ProgressLine.cpp"/>
-        <FILE id="Uujs7V" name="ProgressLine.h" compile="0" resource="0" file="Source/ProgressLine.h"/>
-        <FILE id="ljP2aB" name="ProgressWatcher.cpp" compile="1" resource="0"
-              file="Source/ProgressWatcher.cpp"/>
-        <FILE id="PPxp39" name="ProgressWatcher.h" compile="0" resource="0"
-              file="Source/ProgressWatcher.h"/>
+        <FILE id="rDLzLm" name="FrequencyGraph.cpp" compile="1" resource="0"
+              file="Source/ProgressUpdates/FrequencyGraph.cpp"/>
+        <FILE id="mR5Zub" name="FrequencyGraph.h" compile="0" resource="0"
+              file="Source/ProgressUpdates/FrequencyGraph.h"/>
+        <FILE id="uBzc80" name="PanningDisplay.cpp" compile="1" resource="0"
+              file="Source/ProgressUpdates/PanningDisplay.cpp"/>
+        <FILE id="wjqPR5" name="PanningDisplay.h" compile="0" resource="0"
+              file="Source/ProgressUpdates/PanningDisplay.h"/>
+        <FILE id="aVlkvJ" name="ProgressLine.cpp" compile="1" resource="0"
+              file="Source/ProgressUpdates/ProgressLine.cpp"/>
+        <FILE id="dNRxkU" name="ProgressLine.h" compile="0" resource="0" file="Source/ProgressUpdates/ProgressLine.h"/>
+        <FILE id="yQ9rxJ" name="ProgressWatcher.cpp" compile="1" resource="0"
+              file="Source/ProgressUpdates/ProgressWatcher.cpp"/>
+        <FILE id="FZTovM" name="ProgressWatcher.h" compile="0" resource="0"
+              file="Source/ProgressUpdates/ProgressWatcher.h"/>
       </GROUP>
       <GROUP id="{9F89F9DB-2ACF-07B6-CE61-831191A7F350}" name="Utilities">
-        <FILE id="uxem6x" name="Complex.h" compile="0" resource="0" file="Source/Complex.h"/>
-        <FILE id="wfqfFK" name="FFTWHelper.cpp" compile="1" resource="0" file="Source/FFTWHelper.cpp"/>
-        <FILE id="fTmwxm" name="FFTWHelper.h" compile="0" resource="0" file="Source/FFTWHelper.h"/>
-        <FILE id="MnKCFG" name="ListenerComponents.h" compile="0" resource="0"
-              file="Source/ListenerComponents.h"/>
-        <FILE id="wTPzcG" name="BandCalculator.h" compile="0" resource="0"
-              file="Source/BandCalculator.h"/>
-        <FILE id="EwaXzx" name="BandCalculator.cpp" compile="1" resource="0"
-              file="Source/BandCalculator.cpp"/>
-        <FILE id="xtbcoV" name="ChannelCalculator.h" compile="0" resource="0"
-              file="Source/ChannelCalculator.h"/>
-        <FILE id="FnJr26" name="ChannelCalculator.cpp" compile="1" resource="0"
-              file="Source/ChannelCalculator.cpp"/>
-        <FILE id="qqJhlk" name="AudioLoader.h" compile="0" resource="0" file="Source/AudioLoader.h"/>
-        <FILE id="u7ICck" name="AudioLoader.cpp" compile="1" resource="0" file="Source/AudioLoader.cpp"/>
-        <FILE id="bboGEl" name="RandomGen.h" compile="0" resource="0" file="Source/RandomGen.h"/>
-        <FILE id="NQEoxQ" name="AudioWriter.cpp" compile="1" resource="0" file="Source/AudioWriter.cpp"/>
-        <FILE id="OXgIwA" name="AudioWriter.h" compile="0" resource="0" file="Source/AudioWriter.h"/>
+        <FILE id="SwGAW5" name="AudioLoader.cpp" compile="1" resource="0" file="Source/Utilities/AudioLoader.cpp"/>
+        <FILE id="PMyauI" name="AudioLoader.h" compile="0" resource="0" file="Source/Utilities/AudioLoader.h"/>
+        <FILE id="JnHpwn" name="AudioWriter.cpp" compile="1" resource="0" file="Source/Utilities/AudioWriter.cpp"/>
+        <FILE id="HAtVM0" name="AudioWriter.h" compile="0" resource="0" file="Source/Utilities/AudioWriter.h"/>
+        <FILE id="K0QNa6" name="BandCalculator.cpp" compile="1" resource="0"
+              file="Source/Utilities/BandCalculator.cpp"/>
+        <FILE id="MDLr47" name="BandCalculator.h" compile="0" resource="0"
+              file="Source/Utilities/BandCalculator.h"/>
+        <FILE id="MuLcZm" name="ChannelCalculator.cpp" compile="1" resource="0"
+              file="Source/Utilities/ChannelCalculator.cpp"/>
+        <FILE id="jqKwQj" name="ChannelCalculator.h" compile="0" resource="0"
+              file="Source/Utilities/ChannelCalculator.h"/>
+        <FILE id="iRgNXW" name="Complex.h" compile="0" resource="0" file="Source/Utilities/Complex.h"/>
+        <FILE id="dhPYAi" name="FFTWHelper.cpp" compile="1" resource="0" file="Source/Utilities/FFTWHelper.cpp"/>
+        <FILE id="ItuUUX" name="FFTWHelper.h" compile="0" resource="0" file="Source/Utilities/FFTWHelper.h"/>
+        <FILE id="K2wjNs" name="ListenerComponents.h" compile="0" resource="0"
+              file="Source/Utilities/ListenerComponents.h"/>
+        <FILE id="YMuTFS" name="RandomGen.h" compile="0" resource="0" file="Source/Utilities/RandomGen.h"/>
       </GROUP>
       <GROUP id="{69A41C81-01CC-5A82-4158-A0AB20E3A43B}" name="Settings">
-        <FILE id="nQSLbj" name="AudioOutputSettings.cpp" compile="1" resource="0"
-              file="Source/AudioOutputSettings.cpp"/>
-        <FILE id="eRWSfB" name="AudioOutputSettings.h" compile="0" resource="0"
-              file="Source/AudioOutputSettings.h"/>
-        <FILE id="n6h9mH" name="CustomLookAndFeel.cpp" compile="1" resource="0"
-              file="Source/CustomLookAndFeel.cpp"/>
-        <FILE id="RoquM2" name="CustomLookAndFeel.h" compile="0" resource="0"
-              file="Source/CustomLookAndFeel.h"/>
-        <FILE id="Zn1yCF" name="Settings.cpp" compile="1" resource="0" file="Source/Settings.cpp"/>
-        <FILE id="tUKBay" name="Settings.h" compile="0" resource="0" file="Source/Settings.h"/>
+        <FILE id="DOwmQk" name="AudioOutputSettings.cpp" compile="1" resource="0"
+              file="Source/Settings/AudioOutputSettings.cpp"/>
+        <FILE id="exhkUK" name="AudioOutputSettings.h" compile="0" resource="0"
+              file="Source/Settings/AudioOutputSettings.h"/>
+        <FILE id="bBUYcL" name="CustomLookAndFeel.cpp" compile="1" resource="0"
+              file="Source/Settings/CustomLookAndFeel.cpp"/>
+        <FILE id="sKaM9y" name="CustomLookAndFeel.h" compile="0" resource="0"
+              file="Source/Settings/CustomLookAndFeel.h"/>
+        <FILE id="ZI9Pk3" name="Settings.cpp" compile="1" resource="0" file="Source/Settings/Settings.cpp"/>
+        <FILE id="YLt2hX" name="Settings.h" compile="0" resource="0" file="Source/Settings/Settings.h"/>
       </GROUP>
       <GROUP id="{7EB8C9F5-CB47-0F63-E50E-AF3E7ABD4DCC}" name="Algorithm">
-        <FILE id="QZFZXz" name="Gene.cpp" compile="1" resource="0" file="Source/Gene.cpp"/>
-        <FILE id="twTGbG" name="Gene.h" compile="0" resource="0" file="Source/Gene.h"/>
-        <FILE id="DFEJFU" name="ComplexFrame.cpp" compile="1" resource="0"
-              file="Source/ComplexFrame.cpp"/>
-        <FILE id="mjODSA" name="ComplexFrame.h" compile="0" resource="0" file="Source/ComplexFrame.h"/>
-        <FILE id="JmqD8W" name="GeneController.cpp" compile="1" resource="0"
-              file="Source/GeneController.cpp"/>
-        <FILE id="XnvAcG" name="GeneController.h" compile="0" resource="0"
-              file="Source/GeneController.h"/>
+        <FILE id="EWNqMo" name="ComplexFrame.cpp" compile="1" resource="0"
+              file="Source/Algorithm/ComplexFrame.cpp"/>
+        <FILE id="WlPjNo" name="ComplexFrame.h" compile="0" resource="0" file="Source/Algorithm/ComplexFrame.h"/>
+        <FILE id="FRAQDJ" name="Gene.cpp" compile="1" resource="0" file="Source/Algorithm/Gene.cpp"/>
+        <FILE id="mXnpEo" name="Gene.h" compile="0" resource="0" file="Source/Algorithm/Gene.h"/>
+        <FILE id="UlAOWK" name="GeneController.cpp" compile="1" resource="0"
+              file="Source/Algorithm/GeneController.cpp"/>
+        <FILE id="vOLoId" name="GeneController.h" compile="0" resource="0"
+              file="Source/Algorithm/GeneController.h"/>
       </GROUP>
       <FILE id="JPqNzJ" name="UserInterface.cpp" compile="1" resource="0"
             file="Source/UserInterface.cpp"/>

@@ -12,18 +12,19 @@
 #define EQCURVEEDITOR_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "CustomLookAndFeel.h"
+#include "../Settings/CustomLookAndFeel.h"
 #include "GraphEditor.h"
-#include "ListenerComponents.h"
-#include "Settings.h"
+#include "../Utilities/ListenerComponents.h"
+#include "../Settings/Settings.h"
 
-class EQCurveEditor : public GraphEditor {
+class EQCurveEditor : public GraphEditor
+{
 public:
-    EQCurveEditor(String Title, String Name);
+  EQCurveEditor(String Title, String Name);
 
 private:
-    void floorData() override;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EQCurveEditor)
+  void floorData() override;
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EQCurveEditor)
 };
 
 #endif // EQCURVEEDITOR_H_INCLUDED

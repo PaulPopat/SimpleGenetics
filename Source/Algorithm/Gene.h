@@ -11,7 +11,7 @@
 #ifndef POPMEMBER_H_INCLUDED
 #define POPMEMBER_H_INCLUDED
 #include "ComplexFrame.h"
-#include "RandomGen.h"
+#include "../Utilities/RandomGen.h"
 
 namespace Biology {
 

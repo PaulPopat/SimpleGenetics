@@ -11,10 +11,10 @@
 #ifndef CHANNELCALCULATOR_H_INCLUDED
 #define CHANNELCALCULATOR_H_INCLUDED
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "ComplexFrame.h"
+#include "../Algorithm/ComplexFrame.h"
 
-namespace Utilities {
-
+namespace Utilities
+{
 std::complex<double> GetChannelLocation(int Channel, int NumChannels);
 
 double GetChannelAmp(std::complex<double> Location, int NumChannels, int Channel);
