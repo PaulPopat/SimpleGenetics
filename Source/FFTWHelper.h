@@ -13,18 +13,21 @@
 
 #include <memory>
 
-namespace FFTW {
-struct SelfDestructPlan {
+namespace FFTW
+{
+struct SelfDestructPlan
+{
     SelfDestructPlan() = default;
-    SelfDestructPlan(const fftw_plan& plan);
+    SelfDestructPlan(const fftw_plan &plan);
     virtual ~SelfDestructPlan() noexcept;
-    operator const fftw_plan&() const;
+    operator const fftw_plan &() const;
 
-private:
+  private:
     fftw_plan plan;
 };
 
-struct fftw_ptr_destructor {
+struct fftw_ptr_destructor
+{
     template <typename T>
     void operator()(T t) const noexcept
     {

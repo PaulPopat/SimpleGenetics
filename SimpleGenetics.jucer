@@ -41,14 +41,11 @@
               file="Source/ProgressWatcher.h"/>
       </GROUP>
       <GROUP id="{9F89F9DB-2ACF-07B6-CE61-831191A7F350}" name="Utilities">
+        <FILE id="uxem6x" name="Complex.h" compile="0" resource="0" file="Source/Complex.h"/>
         <FILE id="wfqfFK" name="FFTWHelper.cpp" compile="1" resource="0" file="Source/FFTWHelper.cpp"/>
         <FILE id="fTmwxm" name="FFTWHelper.h" compile="0" resource="0" file="Source/FFTWHelper.h"/>
         <FILE id="MnKCFG" name="ListenerComponents.h" compile="0" resource="0"
               file="Source/ListenerComponents.h"/>
-        <FILE id="CO0GMP" name="LiveAudioDecoder.cpp" compile="1" resource="0"
-              file="Source/LiveAudioDecoder.cpp"/>
-        <FILE id="lYTc26" name="LiveAudioDecoder.h" compile="0" resource="0"
-              file="Source/LiveAudioDecoder.h"/>
         <FILE id="wTPzcG" name="BandCalculator.h" compile="0" resource="0"
               file="Source/BandCalculator.h"/>
         <FILE id="EwaXzx" name="BandCalculator.cpp" compile="1" resource="0"
@@ -121,7 +118,9 @@
         <MODULEPATH id="juce_audio_utils" path="../../Tools/JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" cppLanguageStandard="-std=c++14">
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" cppLanguageStandard="-std=c++14"
+                externalLibraries="fftw3" extraLinkerFlags="-L/usr/local/lib"
+                extraCompilerFlags="-I/usr/local/include">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="SimpleGenetics"
                        libraryPath=""/>
@@ -144,24 +143,6 @@
         <MODULEPATH id="juce_audio_basics" path="../../Tools/JUCE/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
-    <CLION targetFolder="Builds/CLion" clionXcodeEnabled="1" clionMakefileEnabled="1">
-      <MODULEPATHS>
-        <MODULEPATH id="juce_video" path="../../juce"/>
-        <MODULEPATH id="juce_opengl" path="../../juce"/>
-        <MODULEPATH id="juce_gui_extra" path="../../juce"/>
-        <MODULEPATH id="juce_gui_basics" path="../../juce"/>
-        <MODULEPATH id="juce_graphics" path="../../juce"/>
-        <MODULEPATH id="juce_events" path="../../juce"/>
-        <MODULEPATH id="juce_data_structures" path="../../juce"/>
-        <MODULEPATH id="juce_cryptography" path="../../juce"/>
-        <MODULEPATH id="juce_core" path="../../juce"/>
-        <MODULEPATH id="juce_audio_utils" path="../../juce"/>
-        <MODULEPATH id="juce_audio_processors" path="../../juce"/>
-        <MODULEPATH id="juce_audio_formats" path="../../juce"/>
-        <MODULEPATH id="juce_audio_devices" path="../../juce"/>
-        <MODULEPATH id="juce_audio_basics" path="../../juce"/>
-      </MODULEPATHS>
-    </CLION>
   </EXPORTFORMATS>
   <MODULES>
     <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>

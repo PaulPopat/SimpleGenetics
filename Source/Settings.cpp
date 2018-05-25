@@ -23,75 +23,17 @@ Settings::Settings()
 
 void Settings::LoadSettings()
 {
-    FileChooser chooser("Load Settings", File::nonexistent, "*.gene");
+    FileChooser chooser("Load Settings", File::nonexistent, "*.xml");
     if (chooser.browseForFileToOpen())
     {
-        mainElement = XmlDocument::parse(File(chooser.getResult().getFullPathName() + "/Settings.xml"));
-        workingDir = chooser.getResult();
-        save = File(chooser.getResult().getFullPathName() + "/Settings.xml");
+        mainElement = XmlDocument::parse(File(chooser.getResult().getFullPathName()));
+        workingDir = chooser.getResult().getParentDirectory();
+        save = File(chooser.getResult().getFullPathName());
         isLoaded = true;
         listeners.call(&Listener::SettingsChanged, this);
     }
     else
         Reset();
-}
-
-void Settings::SaveSettings()
-{
-    if (!isLoaded)
-        return;
-
-    UpdateFromUI();
-    mainElement->writeToFile(save, String::empty);
-}
-
-void Settings::SaveSettingsAs()
-{
-    if (!isLoaded)
-        return;
-    FileChooser chooser("Save Settings", File::nonexistent, "*.gene");
-    if (!chooser.browseForFileToSave(true))
-        return;
-    File path = chooser.getResult();
-    if (path == workingDir)
-    {
-        SaveSettings();
-        return;
-    }
-    if (path.exists())
-        path.deleteRecursively();
-    path.createDirectory();
-
-    UpdateFromUI();
-    mainElement->writeToFile(File(path.getFullPathName() + "/Settings.xml"), String::empty);
-    File audiodir(path.getFullPathName() + "/Audio");
-    audiodir.createDirectory();
-    File(path.getFullPathName() + "/Data").createDirectory();
-
-    File(workingDir.getFullPathName() + "/Audio").copyDirectoryTo(audiodir);
-
-    save = File(path.getFullPathName() + "/Settings.xml");
-    workingDir = path;
-}
-
-void Settings::CreateNew()
-{
-    FileChooser chooser("Create Settings", File::nonexistent, "*.gene");
-    if (!chooser.browseForFileToSave(true))
-        return;
-    File path = chooser.getResult();
-    if (path.exists())
-        path.deleteRecursively();
-    path.createDirectory();
-
-    mainElement = XmlDocument::parse(BinaryData::GenericSave_xml);
-    mainElement->writeToFile(File(path.getFullPathName() + "/Settings.xml"), String::empty);
-    File(path.getFullPathName() + "/Audio").createDirectory();
-    File(path.getFullPathName() + "/Data").createDirectory();
-    workingDir = path;
-    save = path;
-    isLoaded = true;
-    listeners.call(&Listener::SettingsChanged, this);
 }
 
 void Settings::Reset()
@@ -155,11 +97,11 @@ String Settings::GetStringValue(String Name) const
 
 std::vector<double> Settings::GetGraph(String Name, int Size) const
 {
-    std::vector<FFT::Complex> graph;
+    std::vector<Complex> graph;
     XmlElement *data = mainElement->getChildByName(Name);
     forEachXmlChildElement(*data, d)
     {
-        graph.emplace_back(FFT::Complex{(float)d->getDoubleAttribute("value"), (float)d->getDoubleAttribute("loc")});
+        graph.emplace_back(Complex((float)d->getDoubleAttribute("value"), (float)d->getDoubleAttribute("loc")));
     }
     std::vector<double> out;
     for (int i = 0; i < Size; i++)
@@ -259,22 +201,22 @@ bool Settings::WarningAccepted(String warning)
     return toContinue;
 }
 
-double Settings::Interpolate(double Position, std::vector<FFT::Complex> Data) const
+double Settings::Interpolate(double Position, std::vector<Complex> Data) const
 {
-    double output = Data[Data.size() - 1].r;
+    double output = Data[Data.size() - 1].Real;
     int i = 0;
     while (i < Data.size())
     {
-        if (i == 0 && Position < Data[i].i)
-            return Data[i].r;
-        else if (Position < Data[i].i)
+        if (i == 0 && Position < Data[i].Imaginery)
+            return Data[i].Real;
+        else if (Position < Data[i].Imaginery)
         {
-            double distance = (Position - Data[i - 1].i) / (Data[i].i - Data[i - 1].i);
-            return LinearInterp(distance, Data[i - 1].r, Data[i].r);
+            double distance = (Position - Data[i - 1].Imaginery) / (Data[i].Imaginery - Data[i - 1].Imaginery);
+            return LinearInterp(distance, Data[i - 1].Real, Data[i].Real);
         }
-        else if (Position == Data[i].i)
+        else if (Position == Data[i].Imaginery)
         {
-            return Data[i].r;
+            return Data[i].Real;
         }
         i++;
     }

@@ -12,9 +12,9 @@
 MainContentComponent::MainContentComponent()
     : laf(new CustomLookAndFeel)
 {
+    this->menuBar.reset(new MenuBarComponent(this));
+    addAndMakeVisible(menuBar.get());
     settings = new Settings();
-    devices = new AudioDeviceSelectorComponent(deviceManager, 0, 0, 0, 256, false, false, false, false);
-
     setLookAndFeel(laf);
 
     ScopedPointer<XmlElement> e = XmlDocument::parse(BinaryData::UILayout_xml);
@@ -34,18 +34,8 @@ MainContentComponent::MainContentComponent()
 
 MainContentComponent::~MainContentComponent()
 {
-    shutdownAudio();
     CancelAlgorithm();
     PopupMenu::dismissAllActiveMenus();
-    audioSettings.deleteAndZero();
-}
-
-void MainContentComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
-{
-}
-
-void MainContentComponent::releaseResources()
-{
 }
 
 void MainContentComponent::paint(Graphics &g)
@@ -54,7 +44,9 @@ void MainContentComponent::paint(Graphics &g)
 
 void MainContentComponent::resized()
 {
-    interface->setBounds(getBounds());
+    auto b = this->getLocalBounds();
+    menuBar->setBounds(b.removeFromTop(LookAndFeel::getDefaultLookAndFeel().getDefaultMenuBarHeight()));
+    interface->setBounds(b);
 }
 
 ApplicationCommandTarget *MainContentComponent::getNextCommandTarget()
@@ -71,7 +63,6 @@ void MainContentComponent::getAllCommands(Array<CommandID> &commands)
         MainContentComponent::CommandIDs::SaveAs,
         MainContentComponent::CommandIDs::Create,
         MainContentComponent::CommandIDs::SaveOutput,
-        MainContentComponent::CommandIDs::PlaybackSettings,
         MainContentComponent::CommandIDs::Run,
         MainContentComponent::CommandIDs::Cancel,
     };
@@ -112,11 +103,6 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
         result.addDefaultKeypress('a', ModifierKeys::commandModifier);
         break;
 
-    case MainContentComponent::CommandIDs::PlaybackSettings:
-        result.setInfo("Playback Settings", "Hardware settings for live playback", audioCat, 0);
-        result.addDefaultKeypress('p', ModifierKeys::commandModifier);
-        break;
-
     case MainContentComponent::CommandIDs::Run:
         result.setInfo("Run", "Run the algorithm with current settings", algorithmCat, 0);
         result.addDefaultKeypress('r', ModifierKeys::commandModifier);
@@ -140,19 +126,13 @@ bool MainContentComponent::perform(const InvocationInfo &info)
         settings->LoadSettings();
         break;
     case MainContentComponent::CommandIDs::Save:
-        settings->SaveSettings();
         break;
     case MainContentComponent::CommandIDs::SaveAs:
-        settings->SaveSettingsAs();
         break;
     case MainContentComponent::CommandIDs::Create:
-        settings->CreateNew();
         break;
     case MainContentComponent::CommandIDs::SaveOutput:
         SaveAudio();
-        break;
-    case MainContentComponent::CommandIDs::PlaybackSettings:
-        AudioSettings();
         break;
     case MainContentComponent::CommandIDs::Run:
         RunAlgorithm();
@@ -190,7 +170,6 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String &nam
     if (menuIndex == 1)
     {
         menu.addCommandItem(commands, MainContentComponent::CommandIDs::SaveOutput);
-        menu.addCommandItem(commands, MainContentComponent::CommandIDs::PlaybackSettings);
     }
 
     if (menuIndex == 2)
@@ -234,21 +213,6 @@ void MainContentComponent::SaveAudio() const
     writeAudio->setContentOwned(new AudioOutputSettings(File(settings->GetWorkingDirectory().getFullPathName() + "/Data"),
                                                         path),
                                 false);
-}
-
-void MainContentComponent::AudioSettings()
-{
-    audioSettings = new SimpleDocumentWindow("Playback Settings",
-                                             findColour(CustomLookAndFeel::ColourIDs::Background),
-                                             DocumentWindow::TitleBarButtons::closeButton,
-                                             true);
-    audioSettings->setLookAndFeel(laf);
-    audioSettings->setResizable(true, true);
-    audioSettings->setVisible(true);
-    audioSettings->setUsingNativeTitleBar(true);
-    audioSettings->centreWithSize(400, 200);
-
-    audioSettings->setContentNonOwned(devices, false);
 }
 
 void MainContentComponent::RunAlgorithm()
