@@ -1,4 +1,4 @@
 .DS_Store
 
-Builds/MacOSX/build
-Builds/LinuxMakefile/build
+Builds/
+JuceLibraryCode/

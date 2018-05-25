@@ -24,7 +24,8 @@ Settings::Settings()
 void Settings::LoadSettings()
 {
     FileChooser chooser("Load Settings", File::nonexistent, "*.gene");
-    if (chooser.browseForFileToOpen()) {
+    if (chooser.browseForFileToOpen())
+    {
         mainElement = XmlDocument::parse(File(chooser.getResult().getFullPathName() + "/Settings.xml"));
         workingDir = chooser.getResult();
         save = File(chooser.getResult().getFullPathName() + "/Settings.xml");
@@ -52,7 +53,8 @@ void Settings::SaveSettingsAs()
     if (!chooser.browseForFileToSave(true))
         return;
     File path = chooser.getResult();
-    if (path == workingDir) {
+    if (path == workingDir)
+    {
         SaveSettings();
         return;
     }
@@ -110,7 +112,8 @@ void Settings::LoadAudio()
     File path = chooser.getResult();
 
     File destination(workingDir.getFullPathName() + "/Audio/" + path.getFileNameWithoutExtension() + ".aif");
-    if (!destination.exists()) {
+    if (!destination.exists())
+    {
         path.copyFileTo(destination);
     }
     listeners.call(&Listener::SettingsChanged, this);
@@ -127,7 +130,8 @@ StringArray Settings::GetAudioBin() const
 {
     StringArray output;
     DirectoryIterator iter(File(workingDir.getFullPathName() + "/Audio"), true, "*.aif");
-    while (iter.next()) {
+    while (iter.next())
+    {
         File res(iter.getFile());
         output.add(res.getFileNameWithoutExtension());
     }
@@ -152,13 +156,14 @@ String Settings::GetStringValue(String Name) const
 std::vector<double> Settings::GetGraph(String Name, int Size) const
 {
     std::vector<FFT::Complex> graph;
-    XmlElement* data = mainElement->getChildByName(Name);
+    XmlElement *data = mainElement->getChildByName(Name);
     forEachXmlChildElement(*data, d)
     {
-        graph.emplace_back(FFT::Complex{ (float)d->getDoubleAttribute("value"), (float)d->getDoubleAttribute("loc") });
+        graph.emplace_back(FFT::Complex{(float)d->getDoubleAttribute("value"), (float)d->getDoubleAttribute("loc")});
     }
     std::vector<double> out;
-    for (int i = 0; i < Size; i++) {
+    for (int i = 0; i < Size; i++)
+    {
         out.emplace_back(Interpolate((double)i / (double)Size, graph));
     }
     return out;
@@ -169,7 +174,8 @@ std::vector<FFTW::AudioAnalysis> Settings::GetAudioData(String Name, int FFTSize
     DirectoryIterator iter(File(workingDir.getFullPathName() + "/Audio"), true, "*.aif");
     FFTW::AudioLoader loader(FFTSize);
     std::vector<FFTW::AudioAnalysis> out;
-    while (iter.next()) {
+    while (iter.next())
+    {
         File res(iter.getFile());
         out.emplace_back(loader.AnalyzeAudio(res, NumBands, Band));
     }
@@ -182,7 +188,7 @@ std::vector<String> Settings::GetAudioGraph(String Name, int Size) const
     std::vector<double> positions;
     std::vector<String> names;
 
-    XmlElement* data = mainElement->getChildByName(Name);
+    XmlElement *data = mainElement->getChildByName(Name);
     forEachXmlChildElement(*data, d)
     {
         positions.emplace_back(d->getDoubleAttribute("loc") * Size);
@@ -190,8 +196,10 @@ std::vector<String> Settings::GetAudioGraph(String Name, int Size) const
     }
 
     int pos = 0;
-    for (int i = 0; i < Size; i++) {
-        if (pos < positions.size() - 1) {
+    for (int i = 0; i < Size; i++)
+    {
+        if (pos < positions.size() - 1)
+        {
             if (i >= positions[pos + 1])
                 pos++;
         }
@@ -203,7 +211,7 @@ std::vector<String> Settings::GetAudioGraph(String Name, int Size) const
 std::vector<String> Settings::GetAudioNameGraph(String Name) const
 {
     std::vector<String> out;
-    XmlElement* data = mainElement->getChildByName(Name);
+    XmlElement *data = mainElement->getChildByName(Name);
     forEachXmlChildElement(*data, d)
     {
         out.emplace_back(d->getStringAttribute("value").trimCharactersAtEnd(".aif"));
@@ -216,19 +224,20 @@ XmlElement Settings::GetRawData(String Name) const
     return *mainElement->getChildByName(Name);
 }
 
-void Settings::AddXmlElement(XmlElement* ToAdd)
+void Settings::AddXmlElement(XmlElement *ToAdd)
 {
-    if (!mainElement->replaceChildElement(mainElement->getChildByName(ToAdd->getTagName()), ToAdd)) {
+    if (!mainElement->replaceChildElement(mainElement->getChildByName(ToAdd->getTagName()), ToAdd))
+    {
         mainElement->addChildElement(ToAdd);
     }
 }
 
-const File& Settings::GetWorkingDirectory() const
+const File &Settings::GetWorkingDirectory() const
 {
     return workingDir;
 }
 
-void Settings::AddListener(Listener* l)
+void Settings::AddListener(Listener *l)
 {
     listeners.add(l);
     listeners.call(&Listener::SettingsChanged, this);
@@ -254,14 +263,17 @@ double Settings::Interpolate(double Position, std::vector<FFT::Complex> Data) co
 {
     double output = Data[Data.size() - 1].r;
     int i = 0;
-    while (i < Data.size()) {
+    while (i < Data.size())
+    {
         if (i == 0 && Position < Data[i].i)
             return Data[i].r;
-        else if (Position < Data[i].i) {
+        else if (Position < Data[i].i)
+        {
             double distance = (Position - Data[i - 1].i) / (Data[i].i - Data[i - 1].i);
             return LinearInterp(distance, Data[i - 1].r, Data[i].r);
         }
-        else if (Position == Data[i].i) {
+        else if (Position == Data[i].i)
+        {
             return Data[i].r;
         }
         i++;
