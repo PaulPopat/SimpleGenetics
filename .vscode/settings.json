@@ -5,6 +5,9 @@
     "**/.hg": true,
     "**/CVS": true,
     "**/.DS_Store": true,
-    ".vscode": true
+    ".vscode": true,
+    "Builds": true,
+    "JuceLibraryCode": true,
+    "SimpleGenetics.jucer": true
   }
 }
