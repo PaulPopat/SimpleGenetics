@@ -12,9 +12,6 @@
 MainContentComponent::MainContentComponent()
     : laf(new CustomLookAndFeel)
 {
-    setAudioChannels(0, 2);
-    MenuBarModel::setMacMainMenu(this);
-
     settings = new Settings();
     devices = new AudioDeviceSelectorComponent(deviceManager, 0, 0, 0, 256, false, false, false, false);
 
@@ -39,7 +36,6 @@ MainContentComponent::~MainContentComponent()
 {
     shutdownAudio();
     CancelAlgorithm();
-    MenuBarModel::setMacMainMenu(nullptr);
     PopupMenu::dismissAllActiveMenus();
     audioSettings.deleteAndZero();
 }
@@ -48,28 +44,11 @@ void MainContentComponent::prepareToPlay(int samplesPerBlockExpected, double sam
 {
 }
 
-void MainContentComponent::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill)
-{
-    /*
-    if (!isRunning)
-        return;
-    AudioSampleBuffer* buffer = bufferToFill.buffer;
-    std::vector<double> audio = decoder->GetCurrentAudio(buffer->getNumSamples());
-    if (audio.size() <= 0)
-        return;
-    for (int c = 0; c < buffer->getNumChannels(); c++) {
-        for (int s = 0; s < buffer->getNumSamples(); s++) {
-            buffer->setSample(c, s, audio[s % audio.size()]);
-        }
-    }
-    */
-}
-
 void MainContentComponent::releaseResources()
 {
 }
 
-void MainContentComponent::paint(Graphics& g)
+void MainContentComponent::paint(Graphics &g)
 {
 }
 
@@ -78,12 +57,12 @@ void MainContentComponent::resized()
     interface->setBounds(getBounds());
 }
 
-ApplicationCommandTarget* MainContentComponent::getNextCommandTarget()
+ApplicationCommandTarget *MainContentComponent::getNextCommandTarget()
 {
     return findFirstTargetParentComponent();
 }
 
-void MainContentComponent::getAllCommands(Array<CommandID>& commands)
+void MainContentComponent::getAllCommands(Array<CommandID> &commands)
 {
     // this returns the set of all commands that this target can perform..
     const CommandID ids[] = {
@@ -100,13 +79,14 @@ void MainContentComponent::getAllCommands(Array<CommandID>& commands)
     commands.addArray(ids, numElementsInArray(ids));
 }
 
-void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationCommandInfo& result)
+void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationCommandInfo &result)
 {
     const String settingsCat("Settings");
     const String audioCat("Audio");
     const String algorithmCat("Algorithm");
 
-    switch (commandID) {
+    switch (commandID)
+    {
     case MainContentComponent::CommandIDs::Open:
         result.setInfo("Open", "Open up a new settings xml file", settingsCat, 0);
         result.addDefaultKeypress('o', ModifierKeys::commandModifier);
@@ -152,9 +132,10 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
     }
 }
 
-bool MainContentComponent::perform(const InvocationInfo& info)
+bool MainContentComponent::perform(const InvocationInfo &info)
 {
-    switch (info.commandID) {
+    switch (info.commandID)
+    {
     case MainContentComponent::CommandIDs::Open:
         settings->LoadSettings();
         break;
@@ -189,28 +170,31 @@ bool MainContentComponent::perform(const InvocationInfo& info)
 
 StringArray MainContentComponent::getMenuBarNames()
 {
-    const char* const names[] = { "Settings", "Audio", "Algorithm", nullptr };
+    const char *const names[] = {"Settings", "Audio", "Algorithm", nullptr};
     return StringArray(names);
 }
 
-PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& name)
+PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String &name)
 {
     PopupMenu menu;
     if (commands == nullptr)
         commands = new ApplicationCommandManager();
-    if (menuIndex == 0) {
+    if (menuIndex == 0)
+    {
         menu.addCommandItem(commands, MainContentComponent::CommandIDs::Open);
         menu.addCommandItem(commands, MainContentComponent::CommandIDs::Save);
         menu.addCommandItem(commands, MainContentComponent::CommandIDs::SaveAs);
         menu.addCommandItem(commands, MainContentComponent::CommandIDs::Create);
     }
 
-    if (menuIndex == 1) {
+    if (menuIndex == 1)
+    {
         menu.addCommandItem(commands, MainContentComponent::CommandIDs::SaveOutput);
         menu.addCommandItem(commands, MainContentComponent::CommandIDs::PlaybackSettings);
     }
 
-    if (menuIndex == 2) {
+    if (menuIndex == 2)
+    {
         menu.addCommandItem(commands, MainContentComponent::CommandIDs::Run);
         menu.addCommandItem(commands, MainContentComponent::CommandIDs::Cancel);
     }
@@ -238,25 +222,26 @@ void MainContentComponent::SaveAudio() const
         path.deleteRecursively();
 
     Component::SafePointer<SimpleDocumentWindow> writeAudio = new SimpleDocumentWindow("Audio Output Settings",
-        findColour(CustomLookAndFeel::ColourIDs::Background),
-        DocumentWindow::TitleBarButtons::closeButton,
-        true);
+                                                                                       findColour(CustomLookAndFeel::ColourIDs::Background),
+                                                                                       DocumentWindow::TitleBarButtons::closeButton,
+                                                                                       true);
     writeAudio->setLookAndFeel(laf);
     writeAudio->setResizable(true, true);
     writeAudio->setVisible(true);
     writeAudio->setUsingNativeTitleBar(true);
     writeAudio->centreWithSize(200, 300);
-    
+
     writeAudio->setContentOwned(new AudioOutputSettings(File(settings->GetWorkingDirectory().getFullPathName() + "/Data"),
-                                                        path), false);
+                                                        path),
+                                false);
 }
 
 void MainContentComponent::AudioSettings()
 {
     audioSettings = new SimpleDocumentWindow("Playback Settings",
-        findColour(CustomLookAndFeel::ColourIDs::Background),
-        DocumentWindow::TitleBarButtons::closeButton,
-        true);
+                                             findColour(CustomLookAndFeel::ColourIDs::Background),
+                                             DocumentWindow::TitleBarButtons::closeButton,
+                                             true);
     audioSettings->setLookAndFeel(laf);
     audioSettings->setResizable(true, true);
     audioSettings->setVisible(true);
@@ -271,7 +256,8 @@ void MainContentComponent::RunAlgorithm()
     if (!settings->IsLoaded())
         return;
     File data(settings->GetWorkingDirectory().getFullPathName() + "/Data/Data1.bin");
-    if (data.exists()) {
+    if (data.exists())
+    {
         if (!Settings::WarningAccepted("There is already data saved to these settings. Do you wish to overwrite this?"))
             return;
     }
@@ -282,11 +268,12 @@ void MainContentComponent::RunAlgorithm()
     //int framesPerGene = settings->GetIntValue("FramesPerGene");
     //decoder = new FFTW::LiveAudioDecoder(numbands, fftsize, framesPerGene);
 
-    for (int i = 0; i < numbands; i++) {
+    for (int i = 0; i < numbands; i++)
+    {
         File target(settings->GetWorkingDirectory().getFullPathName() + "/Data/Data" + String(i + 1) + ".bin");
         if (target.existsAsFile())
             target.deleteFile();
-        GeneController* input = new GeneController(*settings, target, i, &gen);
+        GeneController *input = new GeneController(*settings, target, i, &gen);
         input->startThread();
         interface->AddControllerListeners(input);
         //input->AddListener(decoder);
@@ -301,13 +288,13 @@ void MainContentComponent::RunAlgorithm()
 void MainContentComponent::CancelAlgorithm()
 {
     //if (isRunning)
-        //if (decoder->isThreadRunning())
-            //decoder->stopThread(10000);
-    for (auto& b : bands)
+    //if (decoder->isThreadRunning())
+    //decoder->stopThread(10000);
+    for (auto &b : bands)
         if (b->isThreadRunning())
             b->stopThread(10000);
     bands.clear();
     isRunning = false;
 }
 
-Component* createMainContentComponent() { return new MainContentComponent(); }
+Component *createMainContentComponent() { return new MainContentComponent(); }
