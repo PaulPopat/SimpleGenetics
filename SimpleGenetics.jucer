@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="bK1vf3" name="SimpleGenetics" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.PaulPopat.SimpleGenetics" includeBinaryInAppConfig="1"
-              jucerVersion="4.1.0" companyName="PaulPopat" companyEmail="p.t.popat@googlemail.com">
+              jucerVersion="4.3.0" companyName="PaulPopat" companyEmail="p.t.popat@googlemail.com">
   <MAINGROUP id="POgAaW" name="SimpleGenetics">
     <GROUP id="{E4B5AD75-D513-CD06-274E-264422D0E387}" name="Layouts">
       <FILE id="TH1JAo" name="GenericSave.xml" compile="0" resource="1" file="Layouts/GenericSave.xml"/>
@@ -123,6 +123,28 @@
         <MODULEPATH id="juce_audio_utils" path="JuceLibraryCode/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" cppLanguageStandard="-std=c++14">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="SimpleGenetics"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="SimpleGenetics"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_video" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_opengl" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_graphics" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_events" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_data_structures" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_cryptography" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_core" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="JuceLibraryCode/modules"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
   </EXPORTFORMATS>
   <MODULES>
     <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="1"/>
