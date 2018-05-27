@@ -13,7 +13,8 @@
       "group": {
         "kind": "build",
         "isDefault": true
-      }
+      },
+      "problemMatcher": []
     },
     {
       "label": "clean-build-folder",
@@ -28,7 +29,6 @@
       "type": "shell",
       "command": "GDK_BACKEND=x11 ./Projucer ${workspaceFolder}/SimpleGenetics.jucer",
       "options": {
-        // Afraid you are going to have to deal with this. HANDS OFF MY EASY LAUNCH!
         "cwd": "../../Tools/JUCE"
       },
       "group": {

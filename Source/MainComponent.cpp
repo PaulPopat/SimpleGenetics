@@ -227,20 +227,13 @@ void MainContentComponent::RunAlgorithm()
     }
     bands.clear();
     settings->UpdateFromUI();
-    int numbands = settings->GetIntValue("FrequencyBands");
-
-    for (int i = 0; i < numbands; i++)
-    {
-        File target(settings->GetWorkingDirectory().getFullPathName() + "/Data/Data" + String(i + 1) + ".bin");
-        if (target.existsAsFile())
-            target.deleteFile();
-        GeneController *input = new GeneController(*settings, target, i, &gen);
-        input->startThread();
-        interface->AddControllerListeners(input);
-        bands.add(input);
-    }
-
-    //decoder->startThread();
+    File target(settings->GetWorkingDirectory().getFullPathName() + "/Data/Data.bin");
+    if (target.existsAsFile())
+        target.deleteFile();
+    GeneController *input = new GeneController(*settings, target, &this->gen);
+    input->startThread();
+    interface->AddControllerListeners(input);
+    bands.add(input);
 
     isRunning = true;
 }

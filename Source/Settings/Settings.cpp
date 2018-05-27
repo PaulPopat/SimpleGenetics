@@ -111,7 +111,7 @@ std::vector<double> Settings::GetGraph(String Name, int Size) const
     return out;
 }
 
-std::vector<FFTW::AudioAnalysis> Settings::GetAudioData(String Name, int FFTSize, int NumBands, int Band) const
+std::vector<FFTW::AudioAnalysis> Settings::GetAudioData(String Name, int FFTSize) const
 {
     DirectoryIterator iter(File(workingDir.getFullPathName() + "/Audio"), true, "*.aif");
     FFTW::AudioLoader loader(FFTSize);
@@ -119,7 +119,7 @@ std::vector<FFTW::AudioAnalysis> Settings::GetAudioData(String Name, int FFTSize
     while (iter.next())
     {
         File res(iter.getFile());
-        out.emplace_back(loader.AnalyzeAudio(res, NumBands, Band));
+        out.emplace_back(loader.AnalyzeAudio(res, 1, 0));
     }
     return out;
 }

@@ -71,8 +71,13 @@
               file="Source/Settings/CustomLookAndFeel.h"/>
         <FILE id="ZI9Pk3" name="Settings.cpp" compile="1" resource="0" file="Source/Settings/Settings.cpp"/>
         <FILE id="YLt2hX" name="Settings.h" compile="0" resource="0" file="Source/Settings/Settings.h"/>
+        <FILE id="CqresC" name="SettingsDataFactory.cpp" compile="1" resource="0"
+              file="Source/Settings/SettingsDataFactory.cpp"/>
+        <FILE id="dizeRD" name="SettingsDataFactory.h" compile="0" resource="0"
+              file="Source/Settings/SettingsDataFactory.h"/>
       </GROUP>
       <GROUP id="{7EB8C9F5-CB47-0F63-E50E-AF3E7ABD4DCC}" name="Algorithm">
+        <FILE id="eS9dl2" name="BreedData.h" compile="0" resource="0" file="Source/Algorithm/BreedData.h"/>
         <FILE id="EWNqMo" name="ComplexFrame.cpp" compile="1" resource="0"
               file="Source/Algorithm/ComplexFrame.cpp"/>
         <FILE id="WlPjNo" name="ComplexFrame.h" compile="0" resource="0" file="Source/Algorithm/ComplexFrame.h"/>
@@ -82,6 +87,8 @@
               file="Source/Algorithm/GeneController.cpp"/>
         <FILE id="vOLoId" name="GeneController.h" compile="0" resource="0"
               file="Source/Algorithm/GeneController.h"/>
+        <FILE id="dJD4Fu" name="JobQueue.cpp" compile="1" resource="0" file="Source/Algorithm/JobQueue.cpp"/>
+        <FILE id="PMdqX1" name="JobQueue.h" compile="0" resource="0" file="Source/Algorithm/JobQueue.h"/>
       </GROUP>
       <FILE id="JPqNzJ" name="UserInterface.cpp" compile="1" resource="0"
             file="Source/UserInterface.cpp"/>

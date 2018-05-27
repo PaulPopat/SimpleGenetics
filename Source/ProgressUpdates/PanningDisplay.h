@@ -27,8 +27,8 @@ public:
   void BreedComplete(const BreedData &d, const SettingsData &s) override;
 
 private:
-  std::vector<std::complex<double>> positions;
-  std::vector<std::complex<double>> targets;
+  std::complex<double> positions;
+  std::complex<double> targets;
   Rectangle<int> bounds;
 
   static Colour InterpolateColour(Colour c1, Colour c2, double progress);

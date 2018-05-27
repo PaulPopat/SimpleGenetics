@@ -22,17 +22,12 @@ public:
   ~ProgressWatcher();
 
   void paint(Graphics &) override;
-  void resized() override;
 
   void BreedComplete(const BreedData &data, const SettingsData &settings) override;
 
 private:
-  std::vector<double> progress;
-  std::vector<Rectangle<int>> bounds;
-
+  double progress;
   String type;
-
-  void SetUpBounds();
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ProgressWatcher)
 };
 

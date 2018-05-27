@@ -13,42 +13,44 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include <cmath>
 
-namespace Utilities {
+namespace Utilities
+{
 
-class Random {
-public:
+class Random
+{
+  public:
     Random()
     {
-        rng.setSeedRandomly();
+        this->rng.setSeedRandomly();
     }
     double GetDouble(double min, double max)
     {
-        return rng.nextDouble() * (max - min) + min;
+        return this->rng.nextDouble() * (max - min) + min;
     }
     float GetFloat(float min, float max)
     {
-        return rng.nextFloat() * (max - min) + min;
+        return this->rng.nextFloat() * (max - min) + min;
     }
     int GetInt(int min, int max)
     {
-        return rng.nextInt(Range<int>(min, max));
+        return this->rng.nextInt(Range<int>(min, max));
     }
     int GetWeightedInt(int min, int max, double weighting)
     {
-        return std::pow(rng.nextDouble(), weighting) * ((double)max - (double)min) + (double)min;
+        return std::pow(this->rng.nextDouble(), weighting) * ((double)max - (double)min) + (double)min;
     }
     double GetWeightedDouble(double min, double max, double weighting)
     {
-        return std::pow(rng.nextDouble(), weighting) * (max - min) + min;
+        return std::pow(this->rng.nextDouble(), weighting) * (max - min) + min;
     }
     bool GetBool()
     {
-        return rng.nextBool();
+        return this->rng.nextBool();
     }
 
-private:
+  private:
     juce::Random rng;
 };
-}
+} // namespace Utilities
 
 #endif // RANDOMGEN_H_INCLUDED

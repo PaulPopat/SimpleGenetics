@@ -70,7 +70,7 @@ public:
   std::vector<double> GetGraph(String Name, int Size) const;
   /** returns the analysis of each audio file in the targets in order
      call get audio graph to find out when to look at each target */
-  std::vector<FFTW::AudioAnalysis> GetAudioData(String Name, int FFTSize, int NumBands, int Band) const;
+  std::vector<FFTW::AudioAnalysis> GetAudioData(String Name, int FFTSize) const;
   /** returns the name of the audio file that needs to be looked at
      at any point in time */
   std::vector<String> GetAudioGraph(String Name, int Size) const;

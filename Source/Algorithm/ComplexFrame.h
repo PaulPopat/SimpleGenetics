@@ -23,7 +23,7 @@ public:
   ComplexFrame() = default;
   /** creates new data with the random generator pointer. stores generator but
    does not take owner ship so keep it in scope!*/
-  ComplexFrame(int Size, Utilities::Random *Gen);
+  ComplexFrame(int Size, Utilities::Random *gen);
 
   /** returns the average location of the frame on a 2d plane.
    assuming that each complex number is a coordinate not frequency data*/
@@ -42,6 +42,6 @@ private:
   std::vector<std::complex<double>> data;
   Utilities::Random *gen;
 };
-};
+}; // namespace Biology
 
 #endif // COMPLEXFRAME_H_INCLUDED

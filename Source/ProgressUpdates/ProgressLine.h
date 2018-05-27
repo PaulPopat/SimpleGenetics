@@ -29,7 +29,7 @@ public:
 
 private:
   Rectangle<int> bounds;
-  std::vector<double> progress;
+  double progress;
   Settings *settings;
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ProgressLine)
 };

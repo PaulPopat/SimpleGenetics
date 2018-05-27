@@ -7,7 +7,7 @@
   
   <BreedingFactor value="3"/>
   <CalculationLoops value="1"/>
-  <FrequencyBands value="6"/>
+  <Threads value="6"/>
   
   <CaptureInterval>
       <Ele1 value="300" loc="0"/>
